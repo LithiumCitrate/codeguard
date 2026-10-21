@@ -49,7 +49,7 @@ codeguard doctor
 ```
 
 ```
-codeguard 0.2.1 · Python 3.14.3
+codeguard 0.3.0 · Python 3.14.3
 工作目录：D:/code/lanying/codeguard/.codeguard
 索引：documents=585 chunks=36193 packages=20 buckets=771597
 许可证：Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0-or-later, LGPL-2.1, LGPL-3.0-only, MIT, MPL-2.0, PSF-2.0

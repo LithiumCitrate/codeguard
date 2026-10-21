@@ -4,6 +4,29 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.3.0] - 2026-10-21
+
+### Changed
+
+- **Workbench redesigned** as a console: dark command bar with three sections
+  (`#review` / `#license` / `#about`, now real deep links with back-button
+  support), a risk dial that reads the last scan (S0–S4 sector, confidence,
+  span/coverage/verbatim gauges), corpus and engine panels fed from
+  `/api/health`, and export buttons that appear only once a receipt exists.
+  Every figure on the page comes from the live index or the scan result.
+- Results are ledger rows instead of bordered cards: cut-corner risk tags
+  (accent fill for S3/S4), hairline-separated findings, and the same evidence
+  payload as before. Light and dark themes, `prefers-reduced-motion`, and a
+  44px touch target on every control.
+- **Saira (SIL OFL 1.1) is now bundled** as the Latin interface face
+  (`static/fonts/Saira.ttf` plus `Saira-OFL.txt`); Chinese stays on the system
+  sans. The font is served from the local package only - the workbench still
+  loads no external resource (CSP `default-src 'self'`).
+- The workbench's "方法与边界" page no longer repeats the AI-usage paragraph;
+  the disclosure remains in README §6, the technical report, the resource list
+  and every exported receipt (`ai_usage`).
+- Version 0.3.0.
+
 ## [0.2.1] - 2026-10-21
 
 ### Added

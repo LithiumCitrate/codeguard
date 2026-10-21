@@ -38,7 +38,7 @@ codeguard scan src/                # 扫描目录，输出 JSON / CycloneDX / �
 codeguard gate --diff pr.diff      # CI 门禁：阻断级风险返回 1；--sarif 供 Code Scanning
 codeguard licenses GPL-3.0-only MIT --usage distribution   # 纯许可证推理
 codeguard eval --manifest samples.jsonl --out .codeguard/eval  # 外部干净/复制样本评测
-codeguard doctor                   # 自检：索引规模、参数、模型、AI 使用声明
+codeguard doctor                   # 自检：索引规模、参数、模型与 AI 使用声明
 
 sh scripts/reproduce.sh            # 一条命令复现上面全部步骤 + 测试 + 门禁自检
 python scripts/eval_humaneval.py   # 外部干净负例：下载并按 SHA-256 校验 HumanEval，生成证据

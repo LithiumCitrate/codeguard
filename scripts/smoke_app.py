@@ -25,7 +25,7 @@ try:
     assert health['ready'] and health['corpus']['readable'] == 585
     with urllib.request.urlopen(url,timeout=15) as response:
         assert response.status == 200 and 'CodeGuard' in response.read().decode('utf-8')
-    for asset in ['app.js','style.css']:
+    for asset in ['app.js','style.css','fonts/Saira.ttf']:
         assert urllib.request.urlopen(url+'/'+asset,timeout=15).status == 200
     cases = []
     for kind in ['copy','rename','clean']:

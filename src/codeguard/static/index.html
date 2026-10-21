@@ -1,11 +1,190 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CodeGuard · 开源代码溯源工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body><aside><a class="brand" href="/">▣ <span>CodeGuard<small>开源代码溯源工作台</small></span></a><div class="nav-label">WORKSPACE</div><nav><button class="nav active" data-tab="review">◎ 代码审查</button><button class="nav" data-tab="license">◇ 许可证推演</button><button class="nav" data-tab="about">▤ 方法与边界</button></nav><div class="aside-bottom"><span class="dot"></span> LOCAL FIRST<p>代码留在本机<br>无需 GPU / API Key</p><small>AI + 开源 · 开发工具与协作</small></div></aside>
-<main><header><span>工程治理 / <b id="pageTitle">代码审查</b></span><span id="connection" class="pill">正在连接本机引擎</span></header>
-<section class="hero"><div><div class="eyebrow">TRACE THE ORIGIN. UNDERSTAND THE OBLIGATIONS.</div><h1>让每一段 AI 代码，<br>都有可核验的出处。</h1><p>从相似片段到来源证据，再到许可证义务。<br>用轻量判定模型辅助审查，把开源治理前移到发布之前。</p></div><div class="hero-mark">CG<span>代码 → 指纹 → 证据 → 决策</span></div></section>
-<div class="metrics"><div><small>本地来源文件</small><strong id="docs">—</strong></div><div><small>检索片段</small><strong id="chunks">—</strong></div><div><small>开源项目</small><strong id="packages">—</strong></div><div><small>判定引擎</small><strong id="model">—</strong></div></div>
-<section id="review" class="tab"><div class="workspace-grid"><div class="panel input-panel"><div class="panel-title"><h2>01 / 待审查代码</h2><label class="file-button">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt" hidden></label></div><div class="demo-bar"><span>体验案例</span><button data-demo="copy">原文复制</button><button data-demo="rename">变量改名</button><button data-demo="clean">独立实现</button></div><p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p><label for="name">文件名称</label><input id="name" value="review.py" maxlength="120"><label for="code">源代码 <span id="codeCount">0 字符</span></label><textarea id="code" spellcheck="false" placeholder="粘贴需要审查的源代码…&#10;&#10;代码只用于相似度分析，不会被执行。"></textarea><div class="field-row"><div><label for="targetLicense">目标项目许可证</label><select id="targetLicense"><option>MIT</option><option>Apache-2.0</option><option>GPL-3.0-only</option><option>GPL-2.0-or-later</option><option>BSD-3-Clause</option><option value="LicenseRef-Proprietary">专有软件</option></select></div><div><label for="usage">使用方式</label><select id="usage"><option value="distribution">对外分发</option><option value="inline_copy">源码内联复制</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select></div></div><button id="scan" class="primary">开始来源审查 <span>↗</span></button><p class="note">多层 LSH 检索 → 精确验证 → 判定模型 → 许可证推理</p></div>
-<div class="panel results-panel"><div class="panel-title"><h2>02 / 审查结果</h2><span class="pill" id="resultBadge">等待输入</span></div><div id="empty" class="empty"><div class="empty-symbol">⌕</div><h3>证据比猜测更有价值</h3><p>审查后，在这里查看来源项目、风险等级、<br>命中行号与原文对照。</p><div class="pipeline"><span>检索</span> → <span>验证</span> → <span>溯源</span></div></div><div id="result" hidden></div><div id="exports" hidden class="exports"><button data-export="receipt">出处证书 JSON</button><button data-export="sbom">CycloneDX SBOM</button><button data-export="html">HTML 报告</button></div></div></div></section>
-<section id="license" class="tab" hidden><div class="panel"><div class="panel-title"><h2>许可证义务推演</h2><span class="pill">确定性规则</span></div><p class="note">独立于相似度检索，根据来源许可证、目标许可证和使用方式分析许可条件。</p><div class="field-row"><div><label for="sourceLicense">来源许可证 / SPDX 表达式</label><input id="sourceLicense" value="GPL-3.0-only"></div><div><label for="destinationLicense">目标许可证</label><input id="destinationLicense" value="MIT"></div><div><label for="licenseUsage">使用方式</label><select id="licenseUsage"><option value="distribution">对外分发</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="inline_copy">源码复制</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select></div></div><button id="reason" class="primary">分析义务与冲突 ↗</button><div id="licenseResult" aria-live="polite"></div></div></section>
-<section id="about" class="tab" hidden><div class="about-grid"><article class="panel"><h2>以证据为中心的四阶段审查</h2><ol><li><b>多层指纹检索</b><p>字面、局部别名、角色与结构边视图；默认用角色、抽象、结构边进行 LSH 候选检索，验证时计算四层相似度。</p></li><li><b>回读原文，精确验证</b><p>Jaccard、IDF 加权包含度和最长逐字 token 命中共同形成证据。</p></li><li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分是模型输出，不应解释为经过校准的来源概率。</p></li><li><b>义务推理与门禁</b><p>结合声明的许可证和使用方式给出工程风险；证据不足时降级复核。</p></li></ol></article><article class="panel"><h2>适用边界与开放价值</h2><p>CodeGuard 检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。</p><p>未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。许可证标签与规则存在误差，需要人工核验原项目授权。</p><p>演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p><p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。</p><h3>AI 工具使用说明</h3><p>本次网页、后端与文档改进使用 Codex 辅助开发。团队仍需阅读实现、复现实验，并如实说明人工审核与自主贡献。运行时不调用外部生成模型。</p></article></div></section>
-<footer>本机离线 · 不执行提交代码 · 工程风险提示，不构成法律意见 <span>CodeGuard / Review Workbench</span></footer><div id="status" role="status" aria-live="polite"></div></main></body></html>
+<!--
+  变体卡（改界面的人照这张卡做）
+  变体：冷库 ice / cool / tight / grid / standard / calm
+  主视觉：风险分级环 S0–S4；中心读数来自最近一次真实审查
+  页面类型：控制台（审查与许可推演），方法与边界用阅读体
+  强调色只做填充：当前位置、可点击、要看一眼；红色只给删除
+-->
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeGuard · 开源代码溯源工作台</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body class="cg">
+
+<div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="cmdbar">
+  <a class="brand" href="#review"><span class="seal" aria-hidden="true">CG</span><span>CODEGUARD<small>代码溯源工作台</small></span></a>
+  <nav aria-label="分区">
+    <button class="here" data-tab="review" aria-current="page">审查<small>Review</small></button>
+    <button data-tab="license">许可推演<small>Licences</small></button>
+    <button data-tab="about">方法与边界<small>Method</small></button>
+  </nav>
+  <div class="util">
+    <span id="connection" class="engine">● 正在连接本机引擎</span>
+    <button id="themeToggle" class="btn small" type="button" aria-label="切换深浅主题">深浅</button>
+  </div>
+</header>
+
+<main>
+  <section id="review" class="tab">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">ORIGIN TRACE</p>
+        <h1>让 AI 代码的每一段来源，都有可核验的证据。</h1>
+        <p class="lede">从相似片段到来源原文，再到许可证义务。全部在本机完成，不上传、不执行、不依赖外部模型。</p>
+      </div>
+      <dl class="figs hero-figs">
+        <div><dt>语料文件</dt><dd id="docs">—</dd></div>
+        <div><dt>指纹片段</dt><dd id="chunks">—</dd></div>
+        <div><dt>开源项目</dt><dd id="packages">—</dd></div>
+        <div><dt>判定引擎</dt><dd id="model" class="word">—</dd></div>
+      </dl>
+    </div>
+
+    <div class="board">
+      <figure class="hub">
+        <svg id="dial" viewBox="0 0 600 600" role="img" aria-label="风险分级环，等待审查"></svg>
+        <figcaption><span class="eyebrow">RISK SCALE</span>风险分级环 · 中心读数为最近一次审查结果</figcaption>
+      </figure>
+
+      <section class="panel cut-br p-corpus">
+        <h2><span class="eyebrow">Corpus</span>语料<span class="tab-lip" aria-hidden="true"></span></h2>
+        <ul class="ledger">
+          <li><span>文件</span><b id="corpusFiles">—</b></li>
+          <li><span>片段</span><b id="corpusChunks">—</b></li>
+          <li><span>项目</span><b id="corpusPackages">—</b></li>
+          <li><span>原文可读</span><b id="corpusReadable">—</b></li>
+        </ul>
+      </section>
+
+      <section class="panel cut-tl p-engine">
+        <h2><span class="eyebrow">Engine</span>引擎<span class="tab-lip" aria-hidden="true"></span></h2>
+        <ul class="ledger">
+          <li><span>判定器</span><b id="engineModel">—</b></li>
+          <li><span>检索层</span><b id="engineLayers">—</b></li>
+          <li><span>索引版本</span><b id="engineIndex">—</b></li>
+          <li><span>语料许可</span><b id="engineLicences">—</b></li>
+        </ul>
+      </section>
+
+      <section class="panel cut-bl p-scan">
+        <h2><span class="eyebrow">This scan</span>本次审查<span class="tab-lip" aria-hidden="true"></span></h2>
+        <ul class="ledger">
+          <li><span>命中片段</span><b id="scanSpans">—</b></li>
+          <li><span>检索耗时</span><b id="scanProbe">—</b></li>
+          <li><span>验证耗时</span><b id="scanVerify">—</b></li>
+          <li><span>最高风险</span><b id="scanRisk">—</b></li>
+        </ul>
+      </section>
+
+      <section class="panel cut-tr p-export">
+        <h2><span class="eyebrow">Export</span>导出<span class="tab-lip" aria-hidden="true"></span></h2>
+        <div class="hatch-band" aria-hidden="true"></div>
+        <div id="exports" class="export-list" hidden>
+          <button class="btn cut" data-export="receipt">出处证书<small>JSON</small></button>
+          <button class="btn cut" data-export="sbom">物料清单<small>CycloneDX</small></button>
+          <button class="btn cut" data-export="html">审查报告<small>HTML</small></button>
+        </div>
+        <p class="note" id="exportNote">审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。</p>
+      </section>
+    </div>
+
+    <div class="work">
+      <section class="panel input">
+        <div class="panel-head">
+          <h2><span class="eyebrow">01 / Input</span>待审查代码</h2>
+          <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
+        </div>
+        <div class="demo-bar" role="group" aria-label="体验案例">
+          <span class="field-label">体验案例</span>
+          <button class="chip" data-demo="copy">原文复制</button>
+          <button class="chip" data-demo="rename">变量改名</button>
+          <button class="chip" data-demo="clean">独立实现</button>
+        </div>
+        <p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p>
+        <label class="field" for="name"><span>文件名称</span><input id="name" value="review.py" maxlength="120"></label>
+        <label class="field" for="code"><span>源代码 <b id="codeCount" class="count">0 字符</b></span><textarea id="code" spellcheck="false" placeholder="粘贴需要审查的源代码…&#10;&#10;代码只用于相似度分析，不会被执行。"></textarea></label>
+        <div class="field-row">
+          <label class="field" for="targetLicense"><span>目标项目许可证</span>
+            <select id="targetLicense"><option>MIT</option><option>Apache-2.0</option><option>GPL-3.0-only</option><option>GPL-2.0-or-later</option><option>BSD-3-Clause</option><option value="LicenseRef-Proprietary">专有软件</option></select>
+          </label>
+          <label class="field" for="usage"><span>使用方式</span>
+            <select id="usage"><option value="distribution">对外分发</option><option value="inline_copy">源码内联复制</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
+          </label>
+        </div>
+        <button id="scan" class="btn go" type="button">开始来源审查</button>
+        <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
+      </section>
+
+      <section class="panel results">
+        <div class="panel-head">
+          <h2><span class="eyebrow">02 / Result</span>审查结果</h2>
+          <span id="resultBadge" class="state">等待输入</span>
+        </div>
+        <div id="empty" class="empty">
+          <p class="eyebrow">NO SUBMISSION YET</p>
+          <h3>先给出一段代码，再谈结论。</h3>
+          <p class="note">审查后在这里查看来源项目、风险分级、命中行号与原文对照。所有计数来自本次运行。</p>
+          <div class="hatch-band" aria-hidden="true"></div>
+        </div>
+        <div id="result" hidden></div>
+        <p class="note">证据评分反映相似度判定，不是法律结论；未发现命中不等于已排查所有开源项目。</p>
+      </section>
+    </div>
+  </section>
+
+  <section id="license" class="tab read" hidden>
+    <div class="read-head">
+      <p class="eyebrow">LICENCE DUTY</p>
+      <h1>许可证义务推演</h1>
+      <p class="lede">独立于相似度检索：根据来源许可证、目标许可证与使用方式推导义务和冲突，规则确定、可复算。</p>
+    </div>
+    <section class="panel">
+      <div class="field-row three">
+        <label class="field" for="sourceLicense"><span>来源许可证 / SPDX 表达式</span><input id="sourceLicense" value="GPL-3.0-only"></label>
+        <label class="field" for="destinationLicense"><span>目标许可证</span><input id="destinationLicense" value="MIT"></label>
+        <label class="field" for="licenseUsage"><span>使用方式</span>
+          <select id="licenseUsage"><option value="distribution">对外分发</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="inline_copy">源码复制</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
+        </label>
+      </div>
+      <button id="reason" class="btn go" type="button">分析义务与冲突</button>
+      <div id="licenseResult" class="licence-result" aria-live="polite"></div>
+    </section>
+    <p class="note">结论是工程风险提示，不构成法律意见；许可证标签与条款存在版本差异，发布前需人工核验原项目授权。</p>
+  </section>
+
+  <section id="about" class="tab read" hidden>
+    <div class="read-head">
+      <p class="eyebrow">METHOD AND LIMITS</p>
+      <h1>方法与边界</h1>
+      <p class="lede">CodeGuard 只回答一个问题：这段代码与本地语料里的哪些原文相似，按声明许可证要承担什么义务。</p>
+    </div>
+    <article class="read-body">
+      <h2>四阶段审查</h2>
+      <ol class="steps">
+        <li><b>多层指纹检索</b><p>字面、局部别名、角色与结构边四层视图；默认用角色、抽象与结构边做 LSH 候选检索，验证时计算四层相似度。</p></li>
+        <li><b>回读原文，精确验证</b><p>Jaccard、IDF 加权包含度与最长逐字 token 命中共同构成证据，原文只读回本机语料。</p></li>
+        <li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分是模型输出，不应解释为经过校准的来源概率。</p></li>
+        <li><b>义务推理与门禁</b><p>结合声明的许可证与使用方式给出工程风险；证据不足时降级为复核提示，而不是直接阻断。</p></li>
+      </ol>
+      <h2>适用边界</h2>
+      <p>检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p>
+      <p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。语料版本已锁定，索引与判定权重随发布包一同提供。</p>
+    </article>
+  </section>
+
+  <footer>
+    <span>本机离线 │ 不执行提交代码 │ 工程风险提示，不构成法律意见</span>
+    <span class="eyebrow">CodeGuard / Review Workbench</span>
+  </footer>
+</main>
+
+<div id="status" role="status" aria-live="polite"></div>
+</body>
+</html>

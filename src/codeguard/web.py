@@ -138,7 +138,9 @@ def handler_for(app):
                     if kind not in {'copy', 'rename', 'clean'}:
                         raise ValueError('无效演示')
                     return self.send(200, app.demo(kind))
-                assets = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'), '/style.css': ('style.css', 'text/css')}
+                assets = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'),
+                          '/style.css': ('style.css', 'text/css'),
+                          '/fonts/Saira.ttf': ('fonts/Saira.ttf', 'font/ttf')}
                 if self.path not in assets:
                     return self.send(404, {'error': '页面不存在'})
                 name, mime = assets[self.path]

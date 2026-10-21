@@ -15,6 +15,7 @@ PyInstaller、setuptools、packaging 等打包工具不作为应用运行依赖�
 - 本仓库**不内置任何第三方源码**。语料包由 `codeguard corpus` 在使用者本机按需下载到
   `.codeguard/corpus/`（已被 `.gitignore` 排除），仅作为只读输入构建指纹索引。
 - CodeGuard 自研代码与所有第三方资源的边界在每一处引用点都有注释说明（模块首段 docstring）。
+- 随应用分发的第三方**资产**只有界面字体 Saira（OFL-1.1，见第 1 节表格），它与只读语料一起构成本作品的全部外部内容；检测算法不依赖任何第三方字形、图片或代码。
 
 ## 1. 自研与标准基础设施
 
@@ -24,6 +25,7 @@ PyInstaller、setuptools、packaging 等打包工具不作为应用运行依赖�
 | Python 标准库（`tokenize`、`hashlib`、`struct`、`zlib`、`argparse`、`urllib` 等） | 运行时依赖，Python ≥ 3.9 | PSF-2.0 / Python-2.0 | 仅作为运行库调用，未修改、未再分发其源码 | PSF 许可仅需保留版权声明；本项目不重新分发 CPython | 我们自研的是四层指纹、验证与打分逻辑；标准库只提供 tokenizer、哈希、压缩等原语 | 合规（内部使用与再分发脚本均满足） |
 | SPDX License List | https://spdx.org/licenses/ ，快照 2026-10 存为 `src/codeguard/data/spdx_licenses.json` | CC0-1.0 | 数据文件随仓库分发，用于 SPDX 标识规范化与别名归一 | CC0 无义务（已放弃著作权），仍保留来源说明 | 自研部分为解析链与义务模型；SPDX 只提供标识与名称 | 合规 |
 | Keep a Changelog / SemVer 约定 | 仅文档写作规范（未复制代码或数据） | 文本约定 | `CHANGELOG.md` 排版参考 | 无代码级义务 | 文档结构参考，内容全部自撰 | 合规 |
+| Saira 可变字体（界面字体） | Saira Project Authors，随应用分发 `src/codeguard/static/fonts/Saira.ttf` | SIL OFL 1.1 | 仅作网页界面字体，经本机 `@font-face` 加载；不修改字形 | 保留版权声明与许可证（`static/fonts/Saira-OFL.txt` 同目录分发）；若修改字体文件须改用新名称 | 界面样式与页面实现为自研；字体只提供字形 | 合规 |
 
 ## 2. 语料库（只读输入，不在仓库中分发）
 

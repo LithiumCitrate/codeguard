@@ -17,6 +17,13 @@
 干净源码包不包含下载语料。首次运行先执行 `python scripts/restore_corpus.py`（需要联网，固定到本次评测的原包与文件哈希），再执行 `pip install .`、`codeguard index`、`codeguard benchmark --files 24`。
 已有Windows包中的原始发布包可通过 `--archive-dir` 传给恢复脚本，免去再次下载；不会安装或执行这些上游源码。
 
+## 界面
+
+工作台是一屏控制台，三个分区用地址栏深链接区分：`#review`（审查）、`#license`（许可推演）、`#about`（方法与边界）。
+审查页顶部的分级环 S0–S4 读的是**最近一次真实审查**的最高风险与置信度，三条刻度分别是最长逐字命中、覆盖率与命中片段比例；
+左侧「语料」「本次审查」与右侧「引擎」「导出」四个字段面板全部来自 `/api/health` 与本次扫描结果，没有任何占位数字。
+审查完成后导出按钮才出现，导出内容与页面证据同源。右上角可切换深浅主题（记住选择），界面字体 Saira 随包分发、离线加载。
+
 ## 建议演示流程（约 4 分钟）
 
 1. 展示索引规模和本地运行方式，解释为何需要检查内联代码来源。
@@ -26,7 +33,7 @@
 5. 切换“内部使用”重新扫描，说明使用方式如何影响工程判断。
 6. 选择“独立实现”，观察当前语料范围内的结果；强调没有命中不能证明普遍安全。
 7. 切换“许可证推演”，尝试 GPL-3.0-only 到 MIT、对外分发，查看冲突与义务。
-8. 展示“方法与边界”，说明轻量模型、开源复用、生成式 AI 辅助开发披露与限制。
+8. 展示“方法与边界”，说明轻量模型、开源复用与限制；AI 使用披露在 README、技术报告与导出的出处证书里（`ai_usage` 字段）。
 
 ## 隐私和限制
 
@@ -46,12 +53,13 @@
 
 ## 在 Windows 重建应用包
 
-在项目目录建立隔离构建环境：`python -m venv release/build-env`，再用该环境的 Python 安装 `pyinstaller`。
+在项目目录建立隔离构建环境：`python -m venv build/venv-exe`，再用该环境的 Python 安装 `pyinstaller`。
+若本机 user site 装有旧版 `pathlib` 后向包，PyInstaller 会拒绝启动；用仓库内虚拟环境可绕开，不必改动全局环境。
 先运行 `python scripts/prepare_release_corpus.py` 核验语料原包并保留许可材料。
 使用 `release/build-env/Scripts/python.exe -m PyInstaller CodeGuard.spec --noconfirm` 编译启动器；生成目录应与 `scripts/package_release.py` 期待的 `release/app/CodeGuard` 对齐，或直接使用以下命令：
 
 ```
-release/build-env/Scripts/python.exe -m PyInstaller --noconfirm --onedir --name CodeGuard --paths src --add-data "src/codeguard/data:codeguard/data" --add-data "src/codeguard/static:codeguard/static" --distpath release/app --workpath release/build launch.py
+build/venv-exe/Scripts/python.exe -m PyInstaller --noconfirm --onedir --name CodeGuard --paths src --add-data "src/codeguard/data:codeguard/data" --add-data "src/codeguard/static:codeguard/static" --distpath release/app --workpath release/build launch.py
 python scripts/package_release.py
 python scripts/smoke_app.py
 ```
