@@ -1,0 +1,42 @@
+# 本地工作目录：语料原文、索引、模型与报告产物都不入库（体积、隐私、可复现性）
+.codeguard/
+*.codeguard/
+.codeguard-work/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+release/
+output/
+.venv/
+venv/
+
+# 测试与工具
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+htmlcov/
+
+# 编辑器与系统
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# 演示视频原始素材
+*.mp4
+*.mov
+
+# 参赛材料（报告/PPT/需求文档/讲稿/幻灯片 SVG）不入库，只保留 docs 引用到的测量证据
+submission/*
+!submission/evidence
+
+# 生成参赛材料的脚本
+scripts/create_requirements_doc.py
+scripts/create_submission_pdf.py
+scripts/record_demo.sh

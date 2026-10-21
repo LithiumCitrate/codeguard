@@ -1,0 +1,7824 @@
+{
+ "schema": "codeguard.realworld/v1",
+ "generated_at": "2026-10-20T09:39:01Z",
+ "method": {
+  "sample": "deterministic SHA-256 rank by repository-relative path",
+  "file_size_bytes": [
+   900,
+   90000
+  ],
+  "usage": "distribution",
+  "target_license": "each repository LICENSE file (verified at pinned commit)",
+  "exclusions": "tests/docs/examples/__pycache__; vendor directories only in the explicit *-vendor entries",
+  "not_redistributed": "repositories stay under .codeguard/github (gitignored); evidence contains findings only"
+ },
+ "metadata": {
+  "tool": "codeguard",
+  "version": "0.2.0",
+  "index_fingerprint": "b2a8ae368a2c3295713b833b3a0699ea",
+  "model_sha256": "a0633627d2a76f46ea1d7e18f4dbdd51a75443136428edb6ab348cd40ea362e2",
+  "elapsed_s": 142.8
+ },
+ "summary": {
+  "repositories": 12,
+  "sampled_files": 447,
+  "scanned_files": 447,
+  "findings": 320,
+  "blocking": 0,
+  "files_with_blocking": 0,
+  "risk_counts": {
+   "S0": 259,
+   "S1": 43,
+   "S2": 18,
+   "S3": 0,
+   "S4": 0
+  },
+  "expected_hits": 50,
+  "latency_ms": {
+   "p50": 182.1,
+   "p95": 1090.4,
+   "max": 3717.1
+  },
+  "regression": {
+   "case": "setuptools/_vendor/wheel/_commands/__init__.py",
+   "old_risk": "S3 (false block)",
+   "new_risk": "S2 (review)",
+   "evidence": "6 generic argparse spans, coverage 0.222, 5 verbatim tokens, confidence 0.671"
+  }
+ },
+ "repositories": [
+  {
+   "name": "requests",
+   "repo": "psf/requests",
+   "commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+   "license": "Apache-2.0",
+   "roots": [
+    "src/requests",
+    "requests"
+   ],
+   "sampled_files": 17,
+   "scanned_files": 17,
+   "total_spans": 973,
+   "errors": [],
+   "findings": 12,
+   "risk_counts": {
+    "S0": 12,
+    "S1": 0,
+    "S2": 0,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 297.3,
+    "p95": 1949.1,
+    "max": 3717.1
+   },
+   "files": [
+    {
+     "file": "src/requests/packages.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/sessions.py",
+     "spans": 132,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/exceptions.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/adapters.py",
+     "spans": 102,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/help.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/_types.py",
+     "spans": 34,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/hooks.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/api.py",
+     "spans": 15,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/status_codes.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/utils.py",
+     "spans": 176,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/models.py",
+     "spans": 187,
+     "findings": 5,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/__init__.py",
+     "spans": 26,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/auth.py",
+     "spans": 76,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/cookies.py",
+     "spans": 108,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/_internal_utils.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/compat.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/requests/structures.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/retry.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6288,
+     "coverage": 0.0053,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      364,
+      372
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5109,
+     "coverage": 0.0107,
+     "spans": 2,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      35
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4857,
+     "coverage": 0.0196,
+     "spans": 2,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      48
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4721,
+     "coverage": 0.0152,
+     "spans": 2,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      46
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4691,
+     "coverage": 0.0769,
+     "spans": 2,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      167,
+      186
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4668,
+     "coverage": 0.0057,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      36
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4108,
+     "coverage": 0.0076,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      36,
+      53
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/poolmanager.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3964,
+     "coverage": 0.0057,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      57,
+      73
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/tags.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3795,
+     "coverage": 0.0057,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      27
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.379,
+     "coverage": 0.0053,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      320,
+      327
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/asyncio/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.374,
+     "coverage": 0.0053,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      27,
+      40
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3729,
+     "coverage": 0.0053,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      35,
+      49
+     ]
+    }
+   ]
+  },
+  {
+   "name": "flask",
+   "repo": "pallets/flask",
+   "commit": "d086db856be187255b8ec61ef409357393020f32",
+   "license": "BSD-3-Clause",
+   "roots": [
+    "src/flask",
+    "flask"
+   ],
+   "sampled_files": 22,
+   "scanned_files": 22,
+   "total_spans": 1212,
+   "errors": [],
+   "findings": 17,
+   "risk_counts": {
+    "S0": 16,
+    "S1": 1,
+    "S2": 0,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 265.8,
+    "p95": 1088.3,
+    "max": 1196.3
+   },
+   "files": [
+    {
+     "file": "src/flask/templating.py",
+     "spans": 44,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/sansio/scaffold.py",
+     "spans": 89,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/sessions.py",
+     "spans": 44,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/logging.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/__init__.py",
+     "spans": 11,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/json/tag.py",
+     "spans": 53,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/debughelpers.py",
+     "spans": 35,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/sansio/app.py",
+     "spans": 97,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/json/__init__.py",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/testing.py",
+     "spans": 49,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/cli.py",
+     "spans": 185,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/json/provider.py",
+     "spans": 28,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/wrappers.py",
+     "spans": 23,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/globals.py",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/config.py",
+     "spans": 44,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/views.py",
+     "spans": 21,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/app.py",
+     "spans": 185,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/helpers.py",
+     "spans": 65,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/typing.py",
+     "spans": 21,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/sansio/blueprints.py",
+     "spans": 110,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/blueprints.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/flask/ctx.py",
+     "spans": 62,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9498,
+     "coverage": 1.0,
+     "spans": 11,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      39
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6069,
+     "coverage": 0.0054,
+     "spans": 1,
+     "verbatim": 35,
+     "verdict": "compatible",
+     "query_lines": [
+      425,
+      436
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/utils.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.586,
+     "coverage": 0.0161,
+     "spans": 1,
+     "verbatim": 32,
+     "verdict": "compatible",
+     "query_lines": [
+      506,
+      518
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5563,
+     "coverage": 0.0103,
+     "spans": 1,
+     "verbatim": 17,
+     "verdict": "compatible",
+     "query_lines": [
+      289,
+      298
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/sync/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5169,
+     "coverage": 0.0154,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      205,
+      249
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4372,
+     "coverage": 0.0054,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      317,
+      328
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/poolmanager.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4268,
+     "coverage": 0.0227,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      158,
+      165
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_winconsole.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4268,
+     "coverage": 0.0103,
+     "spans": 1,
+     "verbatim": 11,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      14
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4147,
+     "coverage": 0.0154,
+     "spans": 1,
+     "verbatim": 14,
+     "verdict": "compatible",
+     "query_lines": [
+      662,
+      674
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.411,
+     "coverage": 0.0204,
+     "spans": 1,
+     "verbatim": 11,
+     "verdict": "compatible",
+     "query_lines": [
+      255,
+      271
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4069,
+     "coverage": 0.0054,
+     "spans": 1,
+     "verbatim": 24,
+     "verdict": "compatible",
+     "query_lines": [
+      1062,
+      1075
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/_base_connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4053,
+     "coverage": 0.0091,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      178,
+      183
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4052,
+     "coverage": 0.0161,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      525,
+      540
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/utils.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3987,
+     "coverage": 0.0154,
+     "spans": 1,
+     "verbatim": 14,
+     "verdict": "compatible",
+     "query_lines": [
+      659,
+      669
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.382,
+     "coverage": 0.0103,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      827,
+      866
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3756,
+     "coverage": 0.0091,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      183,
+      190
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/application.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3711,
+     "coverage": 0.0103,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      9,
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fastapi",
+   "repo": "tiangolo/fastapi",
+   "commit": "051bdfe2da49eb2ee45c9a0d36e22c2b1c94ac4e",
+   "license": "MIT",
+   "roots": [
+    "fastapi"
+   ],
+   "sampled_files": 27,
+   "scanned_files": 27,
+   "total_spans": 1585,
+   "errors": [],
+   "findings": 23,
+   "risk_counts": {
+    "S0": 19,
+    "S1": 2,
+    "S2": 2,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 220.0,
+    "p95": 887.7,
+    "max": 1171.3
+   },
+   "files": [
+    {
+     "file": "fastapi/utils.py",
+     "spans": 25,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/param_functions.py",
+     "spans": 204,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/background.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/params.py",
+     "spans": 162,
+     "findings": 6,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/encoders.py",
+     "spans": 54,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/dependencies/utils.py",
+     "spans": 227,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/exception_handlers.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/openapi/docs.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/datastructures.py",
+     "spans": 21,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/_compat/v2.py",
+     "spans": 99,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/openapi/models.py",
+     "spans": 103,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/exceptions.py",
+     "spans": 27,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/security/http.py",
+     "spans": 41,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/telemetry/_api.py",
+     "spans": 50,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/__init__.py",
+     "spans": 5,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/security/open_id_connect_url.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/sse.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/_compat/__init__.py",
+     "spans": 9,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/security/oauth2.py",
+     "spans": 48,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/telemetry/_runtime.py",
+     "spans": 49,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/responses.py",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/dependencies/models.py",
+     "spans": 54,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/openapi/utils.py",
+     "spans": 159,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/_compat/shared.py",
+     "spans": 42,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/concurrency.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/telemetry/_asgi.py",
+     "spans": 96,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fastapi/security/api_key.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9871,
+     "coverage": 0.6667,
+     "spans": 6,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      38
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8775,
+     "coverage": 0.8,
+     "spans": 4,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      9,
+      25
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7384,
+     "coverage": 0.1358,
+     "spans": 22,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      86,
+      741
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7142,
+     "coverage": 0.1127,
+     "spans": 23,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      326,
+      2279
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/_base_connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.628,
+     "coverage": 0.0988,
+     "spans": 16,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      36,
+      682
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/pkey.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.6042,
+     "coverage": 0.0612,
+     "spans": 3,
+     "verbatim": 3,
+     "verdict": "conditional",
+     "query_lines": [
+      108,
+      125
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/sync/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.508,
+     "coverage": 0.0185,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      298,
+      311
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_mp.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5073,
+     "coverage": 0.0044,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      687,
+      696
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/adapters.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5043,
+     "coverage": 0.0044,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      18
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4979,
+     "coverage": 0.04,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      17
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/pkey.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.4794,
+     "coverage": 0.0101,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "conditional",
+     "query_lines": [
+      20,
+      27
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4737,
+     "coverage": 0.0088,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      18,
+      52
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/trio/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4692,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      80,
+      91
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4669,
+     "coverage": 0.0049,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      2249,
+      2261
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.429,
+     "coverage": 0.0247,
+     "spans": 4,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      29,
+      397
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/response.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4022,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      704,
+      711
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3962,
+     "coverage": 0.0204,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      122,
+      128
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3959,
+     "coverage": 0.0101,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      195,
+      204
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/asyncio/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3959,
+     "coverage": 0.0063,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      21,
+      35
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.393,
+     "coverage": 0.0123,
+     "spans": 2,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      625,
+      717
+     ]
+    }
+   ]
+  },
+  {
+   "name": "httpx",
+   "repo": "encode/httpx",
+   "commit": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+   "license": "BSD-3-Clause",
+   "roots": [
+    "httpx"
+   ],
+   "sampled_files": 21,
+   "scanned_files": 21,
+   "total_spans": 1520,
+   "errors": [],
+   "findings": 24,
+   "risk_counts": {
+    "S0": 23,
+    "S1": 0,
+    "S2": 1,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 257.9,
+    "p95": 1422.8,
+    "max": 1671.7
+   },
+   "files": [
+    {
+     "file": "httpx/_content.py",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_transports/default.py",
+     "spans": 81,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_transports/mock.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_auth.py",
+     "spans": 68,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/__init__.py",
+     "spans": 11,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_config.py",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_transports/wsgi.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_client.py",
+     "spans": 335,
+     "findings": 7,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_urlparse.py",
+     "spans": 93,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_types.py",
+     "spans": 21,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_decoders.py",
+     "spans": 69,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_utils.py",
+     "spans": 40,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_transports/asgi.py",
+     "spans": 31,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_models.py",
+     "spans": 256,
+     "findings": 6,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_transports/base.py",
+     "spans": 9,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_main.py",
+     "spans": 107,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_multipart.py",
+     "spans": 61,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_status_codes.py",
+     "spans": 23,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_exceptions.py",
+     "spans": 25,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_api.py",
+     "spans": 64,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "httpx/_urls.py",
+     "spans": 91,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7918,
+     "coverage": 0.3636,
+     "spans": 4,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      29,
+      88
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/utils.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6418,
+     "coverage": 0.0117,
+     "spans": 3,
+     "verbatim": 41,
+     "verdict": "compatible",
+     "query_lines": [
+      111,
+      125
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/trio/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6014,
+     "coverage": 0.1111,
+     "spans": 1,
+     "verbatim": 17,
+     "verdict": "compatible",
+     "query_lines": [
+      66,
+      77
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5897,
+     "coverage": 0.12,
+     "spans": 3,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      271,
+      318
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_tokenizer.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5803,
+     "coverage": 0.0215,
+     "spans": 2,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      141,
+      148
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5673,
+     "coverage": 0.0312,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      307,
+      401
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5083,
+     "coverage": 0.0156,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      18
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5081,
+     "coverage": 0.009,
+     "spans": 3,
+     "verbatim": 11,
+     "verdict": "compatible",
+     "query_lines": [
+      658,
+      1386
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5074,
+     "coverage": 0.0123,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      38,
+      55
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5044,
+     "coverage": 0.003,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      31,
+      48
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/cookies.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5001,
+     "coverage": 0.0039,
+     "spans": 1,
+     "verbatim": 39,
+     "verdict": "compatible",
+     "query_lines": [
+      1141,
+      1155
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/sessions.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.498,
+     "coverage": 0.0039,
+     "spans": 1,
+     "verbatim": 13,
+     "verdict": "compatible",
+     "query_lines": [
+      505,
+      512
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4978,
+     "coverage": 0.0119,
+     "spans": 4,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      664,
+      1875
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/protocol.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4876,
+     "coverage": 0.003,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      25
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/sync/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4821,
+     "coverage": 0.009,
+     "spans": 3,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      843,
+      1577
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/exceptions.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4798,
+     "coverage": 0.04,
+     "spans": 1,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      265,
+      280
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/fava_options.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4721,
+     "coverage": 0.04,
+     "spans": 1,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      67,
+      97
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4591,
+     "coverage": 0.0078,
+     "spans": 2,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      24,
+      51
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/sftp_client.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.4583,
+     "coverage": 0.0476,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "conditional",
+     "query_lines": [
+      1,
+      25
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_iv.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4456,
+     "coverage": 0.0039,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      13,
+      33
+     ]
+    }
+   ]
+  },
+  {
+   "name": "poetry",
+   "repo": "python-poetry/poetry",
+   "commit": "38a86661d2ae58694c76d0bb4e628e1400d6dc6f",
+   "license": "MIT",
+   "roots": [
+    "src/poetry"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 1893,
+   "errors": [],
+   "findings": 54,
+   "risk_counts": {
+    "S0": 53,
+    "S1": 0,
+    "S2": 1,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 162.9,
+    "p95": 723.6,
+    "max": 1146.0
+   },
+   "files": [
+    {
+     "file": "src/poetry/publishing/uploader.py",
+     "spans": 86,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/self/show/plugins.py",
+     "spans": 23,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/installation/uninstaller.py",
+     "spans": 54,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/masonry/builders/editable.py",
+     "spans": 72,
+     "findings": 5,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/debug/resolve.py",
+     "spans": 32,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/utils/isolated_build.py",
+     "spans": 45,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/mixology/version_solver.py",
+     "spans": 103,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/utils/env/virtual_env.py",
+     "spans": 39,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/repositories/link_sources/html.py",
+     "spans": 20,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/python/install.py",
+     "spans": 26,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/repositories/cached_repository.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/factory.py",
+     "spans": 81,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/run.py",
+     "spans": 18,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/packages/direct_origin.py",
+     "spans": 25,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/packages/locker.py",
+     "spans": 136,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/update.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/puzzle/transaction.py",
+     "spans": 38,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/repositories/repository.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/version.py",
+     "spans": 24,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/packages/transitive_package_info.py",
+     "spans": 6,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/inspection/lazy_wheel.py",
+     "spans": 113,
+     "findings": 5,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/self/sync.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/vcs/git/backend.py",
+     "spans": 119,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/installation/chooser.py",
+     "spans": 59,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/repositories/pypi_repository.py",
+     "spans": 51,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/installation/installer.py",
+     "spans": 79,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/show.py",
+     "spans": 137,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/puzzle/provider.py",
+     "spans": 213,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/self/self_command.py",
+     "spans": 27,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/env/use.py",
+     "spans": 6,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/sync.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/config/config.py",
+     "spans": 89,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/pyproject/toml.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/publishing/publisher.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/python/remove.py",
+     "spans": 19,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/installer_command.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/source/show.py",
+     "spans": 15,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/lock.py",
+     "spans": 5,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/utils/env/python/providers.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/poetry/console/commands/env/activate.py",
+     "spans": 13,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/types.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7756,
+     "coverage": 0.2,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      16
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/types.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7406,
+     "coverage": 0.1667,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      16
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/exceptions.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6141,
+     "coverage": 0.0177,
+     "spans": 2,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      47,
+      68
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6079,
+     "coverage": 0.0444,
+     "spans": 2,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      15,
+      30
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/application.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5848,
+     "coverage": 0.0084,
+     "spans": 1,
+     "verbatim": 13,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      16
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/accounts.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5689,
+     "coverage": 0.1667,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      12
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5477,
+     "coverage": 0.0177,
+     "spans": 2,
+     "verbatim": 30,
+     "verdict": "compatible",
+     "query_lines": [
+      180,
+      320
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5456,
+     "coverage": 0.0392,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      14,
+      23
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5451,
+     "coverage": 0.0769,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      15
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5432,
+     "coverage": 0.0225,
+     "spans": 2,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      11,
+      25
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5388,
+     "coverage": 0.0169,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      15
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5278,
+     "coverage": 0.0094,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      53
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.523,
+     "coverage": 0.0194,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      11,
+      21
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5038,
+     "coverage": 0.0221,
+     "spans": 3,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      42
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.482,
+     "coverage": 0.0526,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      9,
+      15
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4815,
+     "coverage": 0.04,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      15
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4783,
+     "coverage": 0.05,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      13
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/file.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4761,
+     "coverage": 0.0116,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      17
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4761,
+     "coverage": 0.0127,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      25,
+      31
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4752,
+     "coverage": 0.0385,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      13,
+      17
+     ]
+    }
+   ]
+  },
+  {
+   "name": "pip",
+   "repo": "pypa/pip",
+   "commit": "f6e52de21c12c4b0caa083945dd870825bc14c0b",
+   "license": "MIT",
+   "roots": [
+    "src/pip"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 1298,
+   "errors": [],
+   "findings": 10,
+   "risk_counts": {
+    "S0": 10,
+    "S1": 0,
+    "S2": 0,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 133.2,
+    "p95": 522.4,
+    "max": 676.3
+   },
+   "files": [
+    {
+     "file": "src/pip/_internal/build_env/virtual.py",
+     "spans": 24,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/distributions/sdist.py",
+     "spans": 34,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/cli/base_command.py",
+     "spans": 48,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/_log.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/metadata/importlib/_dists.py",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/subprocess.py",
+     "spans": 38,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/distributions/installed.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/req/pep723.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/commands/__init__.py",
+     "spans": 15,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/cache.py",
+     "spans": 48,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/commands/debug.py",
+     "spans": 38,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/exceptions/network.py",
+     "spans": 35,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/models/search_scope.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/operations/build/wheel.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/filesystem.py",
+     "spans": 38,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/locations/base.py",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/self_outdated_check.py",
+     "spans": 45,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/temp_dir.py",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/metadata/__init__.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/vcs/versioncontrol.py",
+     "spans": 107,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/commands/search.py",
+     "spans": 36,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/commands/check.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/index/sources.py",
+     "spans": 46,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/exceptions/_base.py",
+     "spans": 27,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/wheel.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/req/constructors.py",
+     "spans": 121,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/resolution/resolvelib/reporter.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/vcs/bazaar.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/entrypoints.py",
+     "spans": 13,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/vcs/git.py",
+     "spans": 94,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/commands/hash.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/virtualenv.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/index/collector.py",
+     "spans": 83,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/operations/build/wheel_editable.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/metadata/_json.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/utils/compatibility_tags.py",
+     "spans": 34,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/models/format_control.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/resolution/resolvelib/provider.py",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/req/req_set.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_internal/req/__init__.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5843,
+     "coverage": 0.0278,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      22
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5155,
+     "coverage": 0.0165,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      27,
+      34
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5137,
+     "coverage": 0.012,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      37,
+      41
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4571,
+     "coverage": 0.0208,
+     "spans": 1,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      204,
+      222
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4431,
+     "coverage": 0.0526,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      15,
+      22
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/_base_connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4396,
+     "coverage": 0.037,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      60,
+      66
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.438,
+     "coverage": 0.0222,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      25
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/sync/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4135,
+     "coverage": 0.0083,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      488,
+      500
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/poolmanager.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3957,
+     "coverage": 0.0294,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      17
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3855,
+     "coverage": 0.0083,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      540,
+      549
+     ]
+    }
+   ]
+  },
+  {
+   "name": "pip-vendor",
+   "repo": "pypa/pip",
+   "commit": "f6e52de21c12c4b0caa083945dd870825bc14c0b",
+   "license": "MIT",
+   "roots": [
+    "src/pip/_vendor"
+   ],
+   "sampled_files": 60,
+   "scanned_files": 60,
+   "total_spans": 3576,
+   "errors": [],
+   "findings": 45,
+   "risk_counts": {
+    "S0": 25,
+    "S1": 19,
+    "S2": 1,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [
+    "requests",
+    "urllib3",
+    "packaging"
+   ],
+   "expected_hits": [
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.999,
+     "coverage": 0.9211,
+     "spans": 140,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1191
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/url.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6251,
+     "coverage": 0.0066,
+     "spans": 1,
+     "verbatim": 41,
+     "verdict": "compatible",
+     "query_lines": [
+      1151,
+      1163
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/__init__.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9994,
+     "coverage": 1.0,
+     "spans": 25,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      32,
+      198
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/response.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 1.0,
+     "spans": 46,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      281
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/fetch.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 1.0,
+     "spans": 116,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      726
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/proxy.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.998,
+     "coverage": 1.0,
+     "spans": 3,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      43
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/ssltransport.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4469,
+     "coverage": 0.0141,
+     "spans": 1,
+     "verbatim": 15,
+     "verdict": "compatible",
+     "query_lines": [
+      226,
+      235
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/socks.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9993,
+     "coverage": 0.931,
+     "spans": 27,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      228
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/adapters.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.497,
+     "coverage": 0.0074,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      16,
+      53
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/filepost.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9983,
+     "coverage": 1.0,
+     "spans": 13,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      89
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/direct_url.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9985,
+     "coverage": 1.0,
+     "spans": 69,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      349
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/cookies.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 1.0,
+     "spans": 108,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      625
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/models.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7468,
+     "coverage": 0.3333,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      22
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/packages.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9974,
+     "coverage": 0.5,
+     "spans": 3,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      25
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4667,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      24
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/adapters.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.411,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      17
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/markers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 83,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      576
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4961,
+     "coverage": 0.0093,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      19
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/url.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9972,
+     "coverage": 0.7632,
+     "spans": 58,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      469
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 0.9966,
+     "spans": 294,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      2067
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/specifiers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6522,
+     "coverage": 0.0034,
+     "spans": 1,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      1549,
+      1557
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/requirements.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 31,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      192
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/connection.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 17,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      137
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/metadata.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9997,
+     "coverage": 0.9941,
+     "spans": 169,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1054
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/ssltransport.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 1.0,
+     "spans": 56,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      271
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/retry.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 0.8,
+     "spans": 56,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      557
+     ]
+    }
+   ],
+   "latency_ms": {
+    "p50": 174.6,
+    "p95": 893.1,
+    "max": 1831.2
+   },
+   "files": [
+    {
+     "file": "src/pip/_vendor/urllib3/connectionpool.py",
+     "spans": 152,
+     "findings": 3,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/licenses/__init__.py",
+     "spans": 25,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/contrib/emscripten/response.py",
+     "spans": 46,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/styles/_mapping.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/tree.py",
+     "spans": 56,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/contrib/emscripten/fetch.py",
+     "spans": 116,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/util/proxy.py",
+     "spans": 3,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/truststore/_api.py",
+     "spans": 71,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/segment.py",
+     "spans": 114,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/contrib/socks.py",
+     "spans": 29,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/idna/core.py",
+     "spans": 102,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/distro/distro.py",
+     "spans": 136,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/_win32_console.py",
+     "spans": 99,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/formatters/__init__.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/filepost.py",
+     "spans": 13,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/cachecontrol/wrapper.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/measure.py",
+     "spans": 21,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/_loop.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/direct_url.py",
+     "spans": 69,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/live_render.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/requests/cookies.py",
+     "spans": 108,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/idna/__init__.py",
+     "spans": 3,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/abc.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/lexers/__init__.py",
+     "spans": 62,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/requests/packages.py",
+     "spans": 6,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/traceback.py",
+     "spans": 161,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/cachecontrol/_cmd.py",
+     "spans": 10,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/markers.py",
+     "spans": 83,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/terminal_theme.py",
+     "spans": 36,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/control.py",
+     "spans": 36,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/lexers/python.py",
+     "spans": 299,
+     "findings": 3,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/platformdirs/windows.py",
+     "spans": 81,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/resolvelib/resolvers/resolution.py",
+     "spans": 108,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/scanner.py",
+     "spans": 13,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/platformdirs/unix.py",
+     "spans": 66,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/util/url.py",
+     "spans": 76,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/ranges.py",
+     "spans": 295,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/resolvelib/providers.py",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/cachecontrol/adapter.py",
+     "spans": 31,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/pygments/unistring.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/live.py",
+     "spans": 77,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/cachecontrol/caches/file_cache.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/align.py",
+     "spans": 60,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/status.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/requirements.py",
+     "spans": 31,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/__init__.py",
+     "spans": 15,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/default_styles.py",
+     "spans": 75,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/color.py",
+     "spans": 122,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/distro/__init__.py",
+     "spans": 4,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/resolvelib/resolvers/criterion.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/idna/intranges.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/repr.py",
+     "spans": 34,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/rich/diagnose.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/util/connection.py",
+     "spans": 17,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/packaging/metadata.py",
+     "spans": 170,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/platformdirs/__main__.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/platformdirs/api.py",
+     "spans": 77,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/platformdirs/macos.py",
+     "spans": 38,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/util/ssltransport.py",
+     "spans": 56,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/pip/_vendor/urllib3/util/retry.py",
+     "spans": 70,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/retry.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 0.8,
+     "spans": 56,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      557
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/metadata.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9997,
+     "coverage": 0.9941,
+     "spans": 169,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1054
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/ssltransport.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 1.0,
+     "spans": 56,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      271
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/__init__.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9994,
+     "coverage": 1.0,
+     "spans": 25,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      32,
+      198
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/socks.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9993,
+     "coverage": 0.931,
+     "spans": 27,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      228
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/cookies.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 1.0,
+     "spans": 108,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      625
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 0.9966,
+     "spans": 294,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      2067
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/connectionpool.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.999,
+     "coverage": 0.9211,
+     "spans": 140,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1191
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/markers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 83,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      576
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/connection.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 17,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      137
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/direct_url.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9985,
+     "coverage": 1.0,
+     "spans": 69,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      349
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/filepost.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9983,
+     "coverage": 1.0,
+     "spans": 13,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      89
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/response.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 1.0,
+     "spans": 46,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      281
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/fetch.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 1.0,
+     "spans": 116,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      726
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/proxy.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.998,
+     "coverage": 1.0,
+     "spans": 3,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      43
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/requirements.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 31,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      192
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/packages.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9974,
+     "coverage": 0.5,
+     "spans": 3,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      25
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/util/url.py",
+     "license": "MIT",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9972,
+     "coverage": 0.7632,
+     "spans": 58,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      469
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_iv.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8608,
+     "coverage": 0.25,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      23
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/models.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7468,
+     "coverage": 0.3333,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      22
+     ]
+    }
+   ]
+  },
+  {
+   "name": "setuptools",
+   "repo": "pypa/setuptools",
+   "commit": "301e27a484f17e175acf6b692fccc634f9a20c49",
+   "license": "MIT",
+   "roots": [
+    "setuptools"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 1945,
+   "errors": [],
+   "findings": 7,
+   "risk_counts": {
+    "S0": 7,
+    "S1": 0,
+    "S2": 0,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 152.8,
+    "p95": 766.2,
+    "max": 1114.0
+   },
+   "files": [
+    {
+     "file": "setuptools/_distutils/cmd.py",
+     "spans": 89,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/build.py",
+     "spans": 30,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compat/numpy.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/clean.py",
+     "spans": 13,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/version.py",
+     "spans": 32,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compilers/C/cygwin.py",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/spawn.py",
+     "spans": 13,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/file_util.py",
+     "spans": 37,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/sdist.py",
+     "spans": 40,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compilers/C/base.py",
+     "spans": 210,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/msvc.py",
+     "spans": 216,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/install_data.py",
+     "spans": 19,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/install_scripts.py",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/bdist_wheel.py",
+     "spans": 132,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/bdist_egg.py",
+     "spans": 107,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/rotate.py",
+     "spans": 15,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compilers/platform/detect.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compilers/platform/macos.py",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/build_clib.py",
+     "spans": 33,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/filelist.py",
+     "spans": 78,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/compilers/C/unix.py",
+     "spans": 91,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/discovery.py",
+     "spans": 95,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/extension.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/config/_validate_pyproject/__init__.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_normalization.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/setopt.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/install_lib.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/build_meta.py",
+     "spans": 79,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/dir_util.py",
+     "spans": 35,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/check.py",
+     "spans": 28,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/build_ext.py",
+     "spans": 139,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/sdist.py",
+     "spans": 84,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/ccompiler.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/installer.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/dist_info.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/build_scripts.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/warnings.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/command/install.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/install_lib.py",
+     "spans": 36,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_distutils/command/install_headers.py",
+     "spans": 8,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "requests",
+     "version": "2.34.2",
+     "path": "requests-2.34.2/src/requests/models.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5431,
+     "coverage": 0.0048,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      24
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/shell_completion.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5242,
+     "coverage": 0.125,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      33,
+      40
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/setup.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4681,
+     "coverage": 0.0072,
+     "spans": 1,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      467,
+      478
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/setup.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.466,
+     "coverage": 0.0303,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "compatible",
+     "query_lines": [
+      145,
+      156
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/functions/hypergeometric.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4255,
+     "coverage": 0.011,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      238,
+      245
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4193,
+     "coverage": 0.0048,
+     "spans": 1,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      783,
+      788
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/_base_connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3973,
+     "coverage": 0.0112,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      485,
+      490
+     ]
+    }
+   ]
+  },
+  {
+   "name": "setuptools-vendor",
+   "repo": "pypa/setuptools",
+   "commit": "301e27a484f17e175acf6b692fccc634f9a20c49",
+   "license": "MIT",
+   "roots": [
+    "setuptools/_vendor"
+   ],
+   "sampled_files": 60,
+   "scanned_files": 60,
+   "total_spans": 3748,
+   "errors": [],
+   "findings": 38,
+   "risk_counts": {
+    "S0": 16,
+    "S1": 20,
+    "S2": 2,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [
+    "packaging"
+   ],
+   "expected_hits": [
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/tags.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4459,
+     "coverage": 0.0079,
+     "spans": 1,
+     "verbatim": 20,
+     "verdict": "compatible",
+     "query_lines": [
+      141,
+      147
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 1.0,
+     "spans": 150,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      836
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 0.9952,
+     "spans": 208,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      943
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/direct_url.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6427,
+     "coverage": 0.0048,
+     "spans": 1,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      113,
+      122
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_structures.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 1.0,
+     "coverage": 1.0,
+     "spans": 1,
+     "verbatim": 43,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      33
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_parser.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9998,
+     "coverage": 1.0,
+     "spans": 72,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      418
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/markers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 83,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      576
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/specifiers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9993,
+     "coverage": 0.9885,
+     "spans": 172,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      1457
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6578,
+     "coverage": 0.0115,
+     "spans": 2,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      678,
+      1330
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/dependency_groups.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9991,
+     "coverage": 1.0,
+     "spans": 51,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      335
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/_spdx.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9998,
+     "coverage": 1.0,
+     "spans": 391,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      2,
+      799
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_tokenizer.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9991,
+     "coverage": 1.0,
+     "spans": 35,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      200
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/direct_url.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9985,
+     "coverage": 1.0,
+     "spans": 69,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      349
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 0.9966,
+     "spans": 294,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      2067
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/specifiers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6522,
+     "coverage": 0.0034,
+     "spans": 1,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      1549,
+      1557
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/metadata.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9997,
+     "coverage": 0.9941,
+     "spans": 169,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1054
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/tags.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.999,
+     "coverage": 1.0,
+     "spans": 160,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      1053
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/errors.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9969,
+     "coverage": 1.0,
+     "spans": 12,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      94
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_elffile.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 20,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      108
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/__init__.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9994,
+     "coverage": 1.0,
+     "spans": 25,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      32,
+      198
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_musllinux.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9983,
+     "coverage": 1.0,
+     "spans": 16,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      88
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/requirements.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 31,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      192
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/utils.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9996,
+     "coverage": 1.0,
+     "spans": 33,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      370
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/version.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 1.0,
+     "spans": 186,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      1252
+     ]
+    }
+   ],
+   "latency_ms": {
+    "p50": 186.5,
+    "p95": 1145.8,
+    "max": 1696.3
+   },
+   "files": [
+    {
+     "file": "setuptools/_vendor/autocommand/autoparse.py",
+     "spans": 35,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_bdist_wheel.py",
+     "spans": 126,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_ranges.py",
+     "spans": 150,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_functools.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/wheelfile.py",
+     "spans": 56,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/pylock.py",
+     "spans": 209,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/macosx_libfile.py",
+     "spans": 69,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/zipp/__init__.py",
+     "spans": 61,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/zipp/glob.py",
+     "spans": 14,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/bdist_wheel.py",
+     "spans": 2,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/more_itertools/recipes.py",
+     "spans": 150,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/__init__.py",
+     "spans": 150,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_structures.py",
+     "spans": 1,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_parser.py",
+     "spans": 72,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_commands/unpack.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/markers.py",
+     "spans": 83,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/specifiers.py",
+     "spans": 174,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_meta.py",
+     "spans": 11,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/dependency_groups.py",
+     "spans": 51,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/compat/py39.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/autocommand/autoasync.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/licenses/_spdx.py",
+     "spans": 391,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_tokenizer.py",
+     "spans": 35,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/macos.py",
+     "spans": 22,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/windows.py",
+     "spans": 48,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/__main__.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_commands/__init__.py",
+     "spans": 27,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/direct_url.py",
+     "spans": 69,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/unix.py",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/jaraco/text/show-newlines.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/ranges.py",
+     "spans": 295,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_commands/convert.py",
+     "spans": 73,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_commands/pack.py",
+     "spans": 19,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/metadata.py",
+     "spans": 170,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_commands/tags.py",
+     "spans": 33,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/tags.py",
+     "spans": 160,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_compat.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_text.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/autocommand/autocommand.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/errors.py",
+     "spans": 12,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/autocommand/automain.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/autocommand/__init__.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_itertools.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_elffile.py",
+     "spans": 20,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/__init__.py",
+     "spans": 79,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/licenses/__init__.py",
+     "spans": 25,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/jaraco/text/__init__.py",
+     "spans": 58,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/_musllinux.py",
+     "spans": 16,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/wheel/_metadata.py",
+     "spans": 33,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/jaraco/functools/__init__.py",
+     "spans": 57,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/api.py",
+     "spans": 40,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/jaraco/context/__init__.py",
+     "spans": 39,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/platformdirs/android.py",
+     "spans": 34,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/tomli/_parser.py",
+     "spans": 173,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/requirements.py",
+     "spans": 31,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/autocommand/errors.py",
+     "spans": 0,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/tomli/_re.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/utils.py",
+     "spans": 33,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/importlib_metadata/_adapters.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "setuptools/_vendor/packaging/version.py",
+     "spans": 186,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_structures.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 1.0,
+     "coverage": 1.0,
+     "spans": 1,
+     "verbatim": 43,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      33
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/version.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 1.0,
+     "spans": 186,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      1252
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_parser.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9998,
+     "coverage": 1.0,
+     "spans": 72,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      418
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/_spdx.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9998,
+     "coverage": 1.0,
+     "spans": 391,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      2,
+      799
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/metadata.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9997,
+     "coverage": 0.9941,
+     "spans": 169,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1054
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/utils.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9996,
+     "coverage": 1.0,
+     "spans": 33,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      370
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 1.0,
+     "spans": 150,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      836
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 0.9952,
+     "spans": 208,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      943
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/licenses/__init__.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9994,
+     "coverage": 1.0,
+     "spans": 25,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      32,
+      198
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/specifiers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9993,
+     "coverage": 0.9885,
+     "spans": 172,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      1457
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/ranges.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9992,
+     "coverage": 0.9966,
+     "spans": 294,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      2067
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/dependency_groups.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9991,
+     "coverage": 1.0,
+     "spans": 51,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      335
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_tokenizer.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9991,
+     "coverage": 1.0,
+     "spans": 35,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      200
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/tags.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.999,
+     "coverage": 1.0,
+     "spans": 160,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      1053
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/markers.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9986,
+     "coverage": 1.0,
+     "spans": 83,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      5,
+      576
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/direct_url.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9985,
+     "coverage": 1.0,
+     "spans": 69,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      349
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_musllinux.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9983,
+     "coverage": 1.0,
+     "spans": 16,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      88
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/_elffile.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 20,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      108
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/requirements.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9977,
+     "coverage": 1.0,
+     "spans": 31,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      192
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/errors.py",
+     "license": "BSD-2-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9969,
+     "coverage": 1.0,
+     "spans": 12,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      94
+     ]
+    }
+   ]
+  },
+  {
+   "name": "pytest",
+   "repo": "pytest-dev/pytest",
+   "commit": "49ea4d08714f9ae519b86ee17b6b50c1dd080f32",
+   "license": "MIT",
+   "roots": [
+    "src/_pytest"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 2939,
+   "errors": [],
+   "findings": 31,
+   "risk_counts": {
+    "S0": 27,
+    "S1": 0,
+    "S2": 4,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 234.8,
+    "p95": 1155.4,
+    "max": 1652.6
+   },
+   "files": [
+    {
+     "file": "src/_pytest/pytester_assertions.py",
+     "spans": 14,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/unittest.py",
+     "spans": 122,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_typing.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/_io/pprint.py",
+     "spans": 135,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_compare_mapping.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/_code/source.py",
+     "spans": 59,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/logging.py",
+     "spans": 176,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/nodes.py",
+     "spans": 120,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/doctest.py",
+     "spans": 139,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_guards.py",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_compare_any.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_compare_sequence.py",
+     "spans": 18,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/warnings.py",
+     "spans": 23,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/subtests.py",
+     "spans": 77,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/rewrite.py",
+     "spans": 291,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/stepwise.py",
+     "spans": 42,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/freeze_support.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/tmpdir.py",
+     "spans": 56,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/_py/error.py",
+     "spans": 21,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/compat.py",
+     "spans": 46,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/threadexception.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/approx.py",
+     "spans": 180,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/cacheprovider.py",
+     "spans": 129,
+     "findings": 3,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/main.py",
+     "spans": 218,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/setuponly.py",
+     "spans": 21,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/_code/code.py",
+     "spans": 311,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/outcomes.py",
+     "spans": 29,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/recwarn.py",
+     "spans": 62,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/pastebin.py",
+     "spans": 25,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/util.py",
+     "spans": 34,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/faulthandler.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/runner.py",
+     "spans": 115,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/truncate.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/debugging.py",
+     "spans": 78,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/_compare_set.py",
+     "spans": 19,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/mark/structures.py",
+     "spans": 115,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/hookspec.py",
+     "spans": 54,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/_io/saferepr.py",
+     "spans": 27,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/assertion/__init__.py",
+     "spans": 44,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/_pytest/terminalprogress.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "glances",
+     "version": "4.5.7",
+     "path": "glances-4.5.7/glances/main.py",
+     "license": "LGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.5707,
+     "coverage": 0.0476,
+     "spans": 2,
+     "verbatim": 7,
+     "verdict": "unknown",
+     "query_lines": [
+      27,
+      50
+     ]
+    },
+    {
+     "package": "glances",
+     "version": "4.5.7",
+     "path": "glances-4.5.7/glances/main.py",
+     "license": "LGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.5643,
+     "coverage": 0.0367,
+     "spans": 8,
+     "verbatim": 7,
+     "verdict": "unknown",
+     "query_lines": [
+      152,
+      223
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/ext/fava_ext_test/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5512,
+     "coverage": 0.0238,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      13
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/pylock.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5042,
+     "coverage": 0.0087,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      294,
+      300
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4964,
+     "coverage": 0.0455,
+     "spans": 2,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      22
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/contrib/emscripten/connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4936,
+     "coverage": 0.0083,
+     "spans": 1,
+     "verbatim": 11,
+     "verdict": "compatible",
+     "query_lines": [
+      693,
+      708
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4915,
+     "coverage": 0.0174,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      24,
+      35
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.46,
+     "coverage": 0.0556,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      10
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4559,
+     "coverage": 0.0167,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      27,
+      37
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4543,
+     "coverage": 0.0294,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      23
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_termui_impl.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4529,
+     "coverage": 0.0345,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      24,
+      33
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.451,
+     "coverage": 0.017,
+     "spans": 3,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      22,
+      41
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4438,
+     "coverage": 0.0057,
+     "spans": 1,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      381,
+      389
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/sync/client.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4261,
+     "coverage": 0.013,
+     "spans": 1,
+     "verbatim": 12,
+     "verdict": "compatible",
+     "query_lines": [
+      164,
+      193
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/serialisation.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4218,
+     "coverage": 0.0083,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      2,
+      14
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4217,
+     "coverage": 0.0155,
+     "spans": 2,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      21,
+      33
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/serialisation.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4191,
+     "coverage": 0.0072,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      26,
+      33
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4183,
+     "coverage": 0.04,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      2,
+      15
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4105,
+     "coverage": 0.0476,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      10
+     ]
+    },
+    {
+     "package": "packaging",
+     "version": "26.3",
+     "path": "packaging-26.3/src/packaging/version.py",
+     "license": "BSD-2-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4103,
+     "coverage": 0.0169,
+     "spans": 1,
+     "verbatim": 14,
+     "verdict": "compatible",
+     "query_lines": [
+      44,
+      55
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sqlmap",
+   "repo": "sqlmapproject/sqlmap",
+   "commit": "9b0e2625605281237e3e58af76d7657127507945",
+   "license": "GPL-2.0-or-later",
+   "roots": [
+    "lib"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 3129,
+   "errors": [],
+   "findings": 46,
+   "risk_counts": {
+    "S0": 40,
+    "S1": 0,
+    "S2": 6,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 259.0,
+    "p95": 1155.5,
+    "max": 1952.2
+   },
+   "files": [
+    {
+     "file": "lib/parse/payloads.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/decorators.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/pkihandler.py",
+     "spans": 11,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/threads.py",
+     "spans": 51,
+     "findings": 5,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/blind/multibit.py",
+     "spans": 192,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/xpath/inject.py",
+     "spans": 206,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/grpcweb.py",
+     "spans": 67,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/update.py",
+     "spans": 40,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/rangehandler.py",
+     "spans": 4,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/agent.py",
+     "spans": 373,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/enums.py",
+     "spans": 69,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/parse/handler.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/takeover/icmpsh.py",
+     "spans": 28,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/parse/configfile.py",
+     "spans": 20,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/controller/handler.py",
+     "spans": 56,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/replication.py",
+     "spans": 28,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/paraminer.py",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/purge.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/compat.py",
+     "spans": 69,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/keepalive.py",
+     "spans": 64,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/sgmllib.py",
+     "spans": 103,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/dns/use.py",
+     "spans": 35,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/error/use.py",
+     "spans": 128,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/controller/action.py",
+     "spans": 60,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/datatype.py",
+     "spans": 42,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/inject.py",
+     "spans": 215,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/dicts.py",
+     "spans": 135,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/deps.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/progress.py",
+     "spans": 28,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/interactsh.py",
+     "spans": 92,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/parse/cmdline.py",
+     "spans": 309,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "lib/core/wordlist.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/comparison.py",
+     "spans": 66,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/takeover/web.py",
+     "spans": 112,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/webhooksite.py",
+     "spans": 19,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/utils/har.py",
+     "spans": 63,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "lib/takeover/udf.py",
+     "spans": 84,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/jwt/inject.py",
+     "spans": 81,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "lib/techniques/dns/test.py",
+     "spans": 6,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "lib/request/ntlm.py",
+     "spans": 104,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "glances",
+     "version": "4.5.7",
+     "path": "glances-4.5.7/glances/main.py",
+     "license": "LGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.9453,
+     "coverage": 0.4239,
+     "spans": 131,
+     "verbatim": 5,
+     "verdict": "unknown",
+     "query_lines": [
+      111,
+      972
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6937,
+     "coverage": 0.1667,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      3,
+      13
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6651,
+     "coverage": 0.1429,
+     "spans": 8,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      53,
+      80
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6613,
+     "coverage": 0.0196,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      23,
+      29
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6554,
+     "coverage": 0.0196,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      23
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6352,
+     "coverage": 0.0179,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      3,
+      13
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6121,
+     "coverage": 0.1,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      19
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5779,
+     "coverage": 0.0455,
+     "spans": 3,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      14,
+      38
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5772,
+     "coverage": 0.0052,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      47,
+      52
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.575,
+     "coverage": 0.05,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      3,
+      13
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5705,
+     "coverage": 0.025,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      23
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/beans/create.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5571,
+     "coverage": 0.0312,
+     "spans": 6,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      38,
+      67
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.557,
+     "coverage": 0.0152,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      26
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/file.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5397,
+     "coverage": 0.0196,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      26
+     ]
+    },
+    {
+     "package": "argparse",
+     "version": "1.4.0",
+     "path": "argparse-1.4.0/argparse.py",
+     "license": "PSF-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5272,
+     "coverage": 0.0909,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      23,
+      30
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5207,
+     "coverage": 0.0129,
+     "spans": 4,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      73,
+      88
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/core/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5144,
+     "coverage": 0.0167,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      3,
+      13
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/events.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4922,
+     "coverage": 0.0159,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "compatible",
+     "query_lines": [
+      145,
+      151
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/server.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.4918,
+     "coverage": 0.0097,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "conditional",
+     "query_lines": [
+      457,
+      475
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/json_api.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4917,
+     "coverage": 0.0357,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      3,
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "name": "mitmproxy",
+   "repo": "mitmproxy/mitmproxy",
+   "commit": "c8a55fff43df386024c97181bcc08b0c61335a66",
+   "license": "MIT",
+   "roots": [
+    "mitmproxy"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 1721,
+   "errors": [],
+   "findings": 13,
+   "risk_counts": {
+    "S0": 11,
+    "S1": 1,
+    "S2": 1,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 148.4,
+    "p95": 768.0,
+    "max": 943.4
+   },
+   "files": [
+    {
+     "file": "mitmproxy/platform/__init__.py",
+     "spans": 6,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/hooks.py",
+     "spans": 13,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/utils/vt_codes.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/save.py",
+     "spans": 41,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/net/dns/https_records.py",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tools/console/keybindings.py",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tools/console/master.py",
+     "spans": 60,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/layers/quic/_commands.py",
+     "spans": 14,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/connection.py",
+     "spans": 50,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/wbxml/GlobalTokens.py",
+     "spans": 2,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/wbxml/ASWBXML.py",
+     "spans": 226,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/layers/dns.py",
+     "spans": 44,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/click/__init__.py",
+     "spans": 27,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/utils/asyncio_utils.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/imghdr.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/kaitaistruct/google_protobuf.py",
+     "spans": 21,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/io/tnetstring.py",
+     "spans": 45,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/net/http/multipart.py",
+     "spans": 20,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/command_history.py",
+     "spans": 24,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tls.py",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/intercept.py",
+     "spans": 12,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/layers/http/_hooks.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/server.py",
+     "spans": 137,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tools/console/flowdetailview.py",
+     "spans": 40,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/maplocal.py",
+     "spans": 31,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tools/console/grideditor/editors.py",
+     "spans": 52,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/wbxml/ASCommandResponse.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/layers/tls.py",
+     "spans": 128,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/platform/pf.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/asgiapp.py",
+     "spans": 28,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/io/har.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/view.py",
+     "spans": 172,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/strip_dns_https_records.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/addons/export.py",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/platform/linux.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/proxy/layers/websocket.py",
+     "spans": 58,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/utils/typecheck.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/tools/console/options.py",
+     "spans": 69,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/net/http/cookies.py",
+     "spans": 58,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mitmproxy/contrib/kaitaistruct/jpeg.py",
+     "spans": 70,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/termui.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9996,
+     "coverage": 0.4074,
+     "spans": 11,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      13,
+      159
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/events.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.554,
+     "coverage": 0.0286,
+     "spans": 2,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      167,
+      192
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/nodes.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5233,
+     "coverage": 0.0286,
+     "spans": 2,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      123,
+      161
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/events.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4564,
+     "coverage": 0.0476,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      110,
+      116
+     ]
+    },
+    {
+     "package": "snowballstemmer",
+     "version": "3.1.1",
+     "path": "snowballstemmer-3.1.1/src/snowballstemmer/danish_stemmer.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4538,
+     "coverage": 0.0417,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      36,
+      42
+     ]
+    },
+    {
+     "package": "snowballstemmer",
+     "version": "3.1.1",
+     "path": "snowballstemmer-3.1.1/src/snowballstemmer/basestemmer.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4456,
+     "coverage": 0.0833,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      38,
+      50
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_iv.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4394,
+     "coverage": 0.0192,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      81,
+      89
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/functions/elliptic.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4146,
+     "coverage": 0.0323,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      53,
+      63
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/application.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4046,
+     "coverage": 0.0345,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      20
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/packet.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.3966,
+     "coverage": 0.0073,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "conditional",
+     "query_lines": [
+      58,
+      65
+     ]
+    },
+    {
+     "package": "snowballstemmer",
+     "version": "3.1.1",
+     "path": "snowballstemmer-3.1.1/src/snowballstemmer/yiddish_stemmer.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3933,
+     "coverage": 0.0073,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      163,
+      170
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/scanner.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3864,
+     "coverage": 0.0116,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      456,
+      464
+     ]
+    },
+    {
+     "package": "snowballstemmer",
+     "version": "3.1.1",
+     "path": "snowballstemmer-3.1.1/src/snowballstemmer/danish_stemmer.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3775,
+     "coverage": 0.0143,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      243,
+      249
+     ]
+    }
+   ]
+  }
+ ],
+ "notes": [
+  "真实仓库扫描不做变异；阻断级发现必须逐条人工复核，可能包含真实 vendoring、通用代码形状或误报。",
+  "采样文件数与仓库总量不同；本结果不外推到未采样文件或未测试项目。",
+  "目标许可证按仓库 LICENSE 固定；更换使用方式（内部/网络服务）会改变风险等级。"
+ ]
+}

@@ -1,0 +1,84 @@
+name: codeguard-gate
+
+# 合规门禁：任何 PR 的新增代码都会被扫描；检出阻断级许可证污染即失败。
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeguard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (no runtime dependencies to fetch)
+        run: pip install -e ".[dev]"
+      - name: Tests (fully offline, fixture based)
+        run: python -m pytest
+      - name: Self-scan (CodeGuard scanning its own source)
+        run: |
+          codeguard corpus --workers 4 --max-files 12
+          codeguard index
+          codeguard benchmark --files 8 --chars 3000 --no-train
+          codeguard scan src/ --license Apache-2.0 --usage distribution \
+            --format json,cdx,html,sarif
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeguard-reports
+          path: .codeguard/reports/
+      - name: Upload SARIF to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: .codeguard/reports/src.sarif
+          category: codeguard-self-scan
+
+  license-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Build knowledge base
+        run: |
+          codeguard corpus --workers 6 --max-files 40
+          codeguard index
+      - name: Scan the pull request diff
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff "origin/${{ github.base_ref }}...HEAD" > pr.diff
+          else
+            git show --format= HEAD > pr.diff
+          fi
+          # exit 0 = clear, 1 = blocking licence pollution, 2 = usage error
+          codeguard gate --diff pr.diff --license Apache-2.0 --usage distribution \
+            --sarif .codeguard/reports/pr.sarif
+      - name: Report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeguard-gate-report
+          path: .codeguard/reports/
+      - name: Upload diff SARIF to GitHub Code Scanning
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: .codeguard/reports/pr.sarif
+          category: codeguard-pr-gate

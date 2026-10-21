@@ -1,0 +1,352 @@
+{
+ "schema": "codeguard.provenance/v1",
+ "metadata": {
+  "tool": "codeguard",
+  "version": "0.2.0",
+  "generated_at": "2026-10-20T09:13:57Z",
+  "index_fingerprint": "b2a8ae368a2c3295713b833b3a0699ea",
+  "corpus_root": "D:/code/lanying/codeguard/.codeguard/corpus",
+  "ai_usage": {
+   "provider": "offline-template",
+   "external_calls": false,
+   "model": "",
+   "statement": "CodeGuard 默认使用确定性模板生成器产出合规说明，全程离线、无外部模型调用、结果可逐字节复现；仅当显式配置 CODEGUARD_LLM_BASE_URL 与 API Key 时才会调用第三方大模型接口，且调用情况会被写入报告的 ai_usage 字段以供审计。"
+  }
+ },
+ "subject": {
+  "target": ".codeguard/demo/feature_flags.py",
+  "target_license": "MIT",
+  "usage_mode": "distribution",
+  "total_spans": 10,
+  "matched_spans": 8
+ },
+ "findings": [
+  {
+   "source": {
+    "package": "mercurial",
+    "version": "7.2.4",
+    "path": "mercurial-7.2.4/contrib/automation/automation.py",
+    "license_spdx": "GPL-2.0-or-later",
+    "license_resolved_from": "pep639-expression"
+   },
+   "confidence": 0.994,
+   "span_coverage": 0.8,
+   "risk": "S4",
+   "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+   "verdict": {
+    "source_spdx": "GPL-2.0-or-later",
+    "target_spdx": "MIT",
+    "usage": "distribution",
+    "status": "incompatible",
+    "obligations": [
+     "保留版权/许可声明",
+     "随分发提供对应源码（或书面要约）"
+    ],
+    "conflicts": [
+     "目标许可证 MIT 的 copyleft 强度低于 GPL-2.0-or-later 所要求的 GPL-2.0-or-later；来源代码许可证 GPL-2.0-or-later 的传染性范围为整件作品。"
+    ],
+    "notes": []
+   },
+   "explanation": "目标 .codeguard/demo/feature_flags.py 中 8 个代码片段命中语料库来源 mercurial@7.2.4 的 mercurial-7.2.4/contrib/automation/automation.py（第 10-74 行），单片段最长逐字连续命中 32 个代码 token。\n许可证判定：GPL-2.0-or-later → 目标 MIT 的使用方式为 distribution，结论 incompatible。\n冲突依据：目标许可证 MIT 的 copyleft 强度低于 GPL-2.0-or-later 所要求的 GPL-2.0-or-later；来源代码许可证 GPL-2.0-or-later 的传染性范围为整件作品。\n需履行的义务：保留版权/许可声明；随分发提供对应源码（或书面要约）\n风险等级 S4（严重：分发/网络服务与许可证条款直接冲突）。\n处置建议：停止以当前方式集成该代码；改为 (1) 用自研实现替换，(2) 寻找同等功能的宽松许可替代实现，或 (3) 将本项目整体改为满足 GPL-2.0-or-later 条款的许可证并公开源码。",
+   "evidence": [
+    {
+     "query_lines": [
+      1,
+      13
+     ],
+     "source_lines": [
+      10,
+      39
+     ],
+     "probability": 0.8795,
+     "verbatim_token_run": 32,
+     "weighted_containment": 0.5014,
+     "exact_layer_jaccard": {
+      "role": 0.3529,
+      "abs": 0.0481,
+      "edge": 0.5556,
+      "lit": 0.254
+     },
+     "lsh_band_hits": 1,
+     "features": {
+      "j_role": 0.3529,
+      "j_abs": 0.0481,
+      "j_edge": 0.5556,
+      "j_lit": 0.254,
+      "est_role": 0.451,
+      "wc": 0.5014,
+      "verbatim_norm": 0.5333,
+      "verbatim_run": 32,
+      "len_ratio": 0.25,
+      "band_hits_norm": 0.0333,
+      "lit_minus_role": -0.0989,
+      "max_sim": 0.5556,
+      "mean_sim": 0.3189,
+      "probability": 0.8795
+     }
+    },
+    {
+     "query_lines": [
+      9,
+      18
+     ],
+     "source_lines": [
+      17,
+      53
+     ],
+     "probability": 0.7507,
+     "verbatim_token_run": 26,
+     "weighted_containment": 0.4561,
+     "exact_layer_jaccard": {
+      "role": 0.3279,
+      "abs": 0.0039,
+      "edge": 0.4211,
+      "lit": 0.1304
+     },
+     "lsh_band_hits": 2,
+     "features": {
+      "j_role": 0.3279,
+      "j_abs": 0.0039,
+      "j_edge": 0.4211,
+      "j_lit": 0.1304,
+      "est_role": 0.7176,
+      "wc": 0.4561,
+      "verbatim_norm": 0.4333,
+      "verbatim_run": 26,
+      "len_ratio": 0.2,
+      "band_hits_norm": 0.0667,
+      "lit_minus_role": -0.1975,
+      "max_sim": 0.4211,
+      "mean_sim": 0.251,
+      "probability": 0.7507
+     }
+    },
+    {
+     "query_lines": [
+      26,
+      36
+     ],
+     "source_lines": [
+      33,
+      67
+     ],
+     "probability": 0.7443,
+     "verbatim_token_run": 23,
+     "weighted_containment": 0.5522,
+     "exact_layer_jaccard": {
+      "role": 0.352,
+      "abs": 0.0336,
+      "edge": 0.3333,
+      "lit": 0.1456
+     },
+     "lsh_band_hits": 6,
+     "features": {
+      "j_role": 0.352,
+      "j_abs": 0.0336,
+      "j_edge": 0.3333,
+      "j_lit": 0.1456,
+      "est_role": 0.6706,
+      "wc": 0.5522,
+      "verbatim_norm": 0.3833,
+      "verbatim_run": 23,
+      "len_ratio": 0.2,
+      "band_hits_norm": 0.2,
+      "lit_minus_role": -0.2064,
+      "max_sim": 0.352,
+      "mean_sim": 0.2396,
+      "probability": 0.7443
+     }
+    },
+    {
+     "query_lines": [
+      33,
+      38
+     ],
+     "source_lines": [
+      33,
+      67
+     ],
+     "probability": 0.7185,
+     "verbatim_token_run": 20,
+     "weighted_containment": 0.7032,
+     "exact_layer_jaccard": {
+      "role": 0.312,
+      "abs": 0.0844,
+      "edge": 0.1579,
+      "lit": 0.1613
+     },
+     "lsh_band_hits": 2,
+     "features": {
+      "j_role": 0.312,
+      "j_abs": 0.0844,
+      "j_edge": 0.1579,
+      "j_lit": 0.1613,
+      "est_role": 0.6706,
+      "wc": 0.7032,
+      "verbatim_norm": 0.3333,
+      "verbatim_run": 20,
+      "len_ratio": 0.2,
+      "band_hits_norm": 0.0667,
+      "lit_minus_role": -0.1507,
+      "max_sim": 0.312,
+      "mean_sim": 0.1848,
+      "probability": 0.7185
+     }
+    },
+    {
+     "query_lines": [
+      36,
+      45
+     ],
+     "source_lines": [
+      48,
+      74
+     ],
+     "probability": 0.7901,
+     "verbatim_token_run": 18,
+     "weighted_containment": 0.4726,
+     "exact_layer_jaccard": {
+      "role": 0.3583,
+      "abs": 0.0041,
+      "edge": 0.5,
+      "lit": 0.1806
+     },
+     "lsh_band_hits": 2,
+     "features": {
+      "j_role": 0.3583,
+      "j_abs": 0.0041,
+      "j_edge": 0.5,
+      "j_lit": 0.1806,
+      "est_role": 0.5922,
+      "wc": 0.4726,
+      "verbatim_norm": 0.3,
+      "verbatim_run": 18,
+      "len_ratio": 0.2,
+      "band_hits_norm": 0.0667,
+      "lit_minus_role": -0.1777,
+      "max_sim": 0.5,
+      "mean_sim": 0.2875,
+      "probability": 0.7901
+     }
+    },
+    {
+     "query_lines": [
+      38,
+      53
+     ],
+     "source_lines": [
+      53,
+      74
+     ],
+     "probability": 0.8668,
+     "verbatim_token_run": 29,
+     "weighted_containment": 0.54,
+     "exact_layer_jaccard": {
+      "role": 0.44,
+      "abs": 0.0297,
+      "edge": 0.3571,
+      "lit": 0.2564
+     },
+     "lsh_band_hits": 2,
+     "features": {
+      "j_role": 0.44,
+      "j_abs": 0.0297,
+      "j_edge": 0.3571,
+      "j_lit": 0.2564,
+      "est_role": 0.702,
+      "wc": 0.54,
+      "verbatim_norm": 0.4833,
+      "verbatim_run": 29,
+      "len_ratio": 0.25,
+      "band_hits_norm": 0.0667,
+      "lit_minus_role": -0.1836,
+      "max_sim": 0.44,
+      "mean_sim": 0.2756,
+      "probability": 0.8668
+     }
+    },
+    {
+     "query_lines": [
+      45,
+      57
+     ],
+     "source_lines": [
+      55,
+      74
+     ],
+     "probability": 0.99,
+     "verbatim_token_run": 25,
+     "weighted_containment": 0.99,
+     "exact_layer_jaccard": {
+      "role": 0.5375,
+      "abs": 0.3415,
+      "edge": 0.6364,
+      "lit": 0.3516
+     },
+     "lsh_band_hits": 27,
+     "features": {
+      "j_role": 0.5375,
+      "j_abs": 0.3415,
+      "j_edge": 0.6364,
+      "j_lit": 0.3516,
+      "est_role": 0.9843,
+      "wc": 0.99,
+      "verbatim_norm": 0.4167,
+      "verbatim_run": 25,
+      "len_ratio": 0.3333,
+      "band_hits_norm": 0.9,
+      "lit_minus_role": -0.1859,
+      "max_sim": 0.6364,
+      "mean_sim": 0.5051,
+      "probability": 0.99
+     }
+    },
+    {
+     "query_lines": [
+      45,
+      57
+     ],
+     "source_lines": [
+      55,
+      74
+     ],
+     "probability": 0.9908,
+     "verbatim_token_run": 26,
+     "weighted_containment": 1.0,
+     "exact_layer_jaccard": {
+      "role": 0.5375,
+      "abs": 0.3525,
+      "edge": 0.6364,
+      "lit": 0.3516
+     },
+     "lsh_band_hits": 30,
+     "features": {
+      "j_role": 0.5375,
+      "j_abs": 0.3525,
+      "j_edge": 0.6364,
+      "j_lit": 0.3516,
+      "est_role": 1.0,
+      "wc": 1.0,
+      "verbatim_norm": 0.4333,
+      "verbatim_run": 26,
+      "len_ratio": 0.3333,
+      "band_hits_norm": 1.0,
+      "lit_minus_role": -0.1859,
+      "max_sim": 0.6364,
+      "mean_sim": 0.5088,
+      "probability": 0.9908
+     }
+    }
+   ]
+  }
+ ],
+ "timings": {
+  "probe_ms": 17,
+  "verify_ms": 520,
+  "pairs_verified": 40
+ },
+ "notes": [
+  "本结论为工程风险提示，不构成法律意见。"
+ ],
+ "disclaimer": "工程性风险提示，不构成法律意见。"
+}

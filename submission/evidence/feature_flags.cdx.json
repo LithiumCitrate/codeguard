@@ -1,0 +1,122 @@
+{
+ "bomFormat": "CycloneDX",
+ "specVersion": "1.6",
+ "serialNumber": "urn:uuid:7b9ebd58-2a40-467f-84a9-a6c456215401",
+ "version": 1,
+ "metadata": {
+  "timestamp": "2026-10-20T09:13:57Z",
+  "tools": [
+   {
+    "vendor": "codeguard",
+    "name": "codeguard",
+    "version": "0.2.0"
+   }
+  ],
+  "component": {
+   "type": "application",
+   "bom-ref": "file:.codeguard/demo/feature_flags.py",
+   "name": "feature_flags.py",
+   "licenses": [
+    {
+     "license": {
+      "id": "MIT"
+     }
+    }
+   ]
+  }
+ },
+ "components": [
+  {
+   "bom-ref": "pkg:pypi/mercurial@7.2.4#9dc7dd9c991f",
+   "type": "library",
+   "name": "mercurial",
+   "version": "7.2.4",
+   "purl": "pkg:pypi/mercurial@7.2.4",
+   "licenses": [
+    {
+     "license": {
+      "id": "GPL-2.0-or-later"
+     }
+    }
+   ],
+   "evidence": {
+    "occurrences": [
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 1,
+      "additionalContext": "query lines 1-13; source mercurial-7.2.4/contrib/automation/automation.py:10-39"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 9,
+      "additionalContext": "query lines 9-18; source mercurial-7.2.4/contrib/automation/automation.py:17-53"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 26,
+      "additionalContext": "query lines 26-36; source mercurial-7.2.4/contrib/automation/automation.py:33-67"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 33,
+      "additionalContext": "query lines 33-38; source mercurial-7.2.4/contrib/automation/automation.py:33-67"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 36,
+      "additionalContext": "query lines 36-45; source mercurial-7.2.4/contrib/automation/automation.py:48-74"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 38,
+      "additionalContext": "query lines 38-53; source mercurial-7.2.4/contrib/automation/automation.py:53-74"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 45,
+      "additionalContext": "query lines 45-57; source mercurial-7.2.4/contrib/automation/automation.py:55-74"
+     },
+     {
+      "location": ".codeguard/demo/feature_flags.py",
+      "line": 45,
+      "additionalContext": "query lines 45-57; source mercurial-7.2.4/contrib/automation/automation.py:55-74"
+     }
+    ],
+    "identity": [
+     {
+      "field": "purl",
+      "confidence": 0.994,
+      "methods": [
+       {
+        "technique": "source-code-analysis",
+        "confidence": 0.994
+       }
+      ]
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "codeguard:risk",
+     "value": "S4"
+    },
+    {
+     "name": "codeguard:verbatim-token-run",
+     "value": "32"
+    },
+    {
+     "name": "codeguard:verdict",
+     "value": "incompatible"
+    }
+   ]
+  }
+ ],
+ "dependencies": [
+  {
+   "ref": "file:.codeguard/demo/feature_flags.py",
+   "dependsOn": [
+    "pkg:pypi/mercurial@7.2.4#9dc7dd9c991f"
+   ]
+  }
+ ]
+}

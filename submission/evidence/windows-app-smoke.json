@@ -1,0 +1,83 @@
+{
+  "platform": "Windows 11 x64",
+  "artifact": "CodeGuard-Windows-x64.zip",
+  "relocated_unicode_path": true,
+  "cwd_outside_application": true,
+  "bundled_python": true,
+  "health": {
+    "stats": {
+      "index_version": "1.2",
+      "documents": 585,
+      "chunks": 36193,
+      "packages": 20,
+      "licenses": [
+        "Apache-2.0",
+        "BSD-2-Clause",
+        "BSD-3-Clause",
+        "GPL-2.0-or-later",
+        "LGPL-2.1",
+        "LGPL-3.0-only",
+        "MIT",
+        "MPL-2.0",
+        "PSF-2.0"
+      ],
+      "params": {
+        "window": 48,
+        "stride": 24,
+        "min_tokens": 10,
+        "sketch_sizes": {
+          "role": 64,
+          "abs": 64,
+          "edge": 32,
+          "lit": 32
+        },
+        "active_layers": [
+          "role",
+          "abs",
+          "edge"
+        ]
+      },
+      "band_plan": {
+        "role": 12,
+        "abs": 12,
+        "edge": 6,
+        "lit": 4
+      },
+      "sketch_bytes_per_chunk": 160,
+      "payload_bytes": 10134040,
+      "payload_bytes_per_chunk": 280,
+      "buckets": 771597,
+      "built_at": 1791129633
+    },
+    "corpus": {
+      "total": 585,
+      "readable": 585,
+      "mismatched": 0
+    },
+    "ready": true,
+    "model": "12维逻辑回归",
+    "privacy": "本机离线分析；代码不执行、不上传、不持久保存"
+  },
+  "cases": [
+    {
+      "case": "copy",
+      "blocking": true,
+      "findings": 1,
+      "input_sha256": "0551018974d35d2a5487b67e20b799b19b4b92eb39d36c630a1bedc655f98b17"
+    },
+    {
+      "case": "rename",
+      "blocking": true,
+      "findings": 1,
+      "input_sha256": "53e766df0c60c23dca87cb57b4d85a5d12b10871a244fb1736ae48cebaffbd53"
+    },
+    {
+      "case": "clean",
+      "blocking": false,
+      "findings": 0,
+      "input_sha256": "c4348223fe03ea08ad3f3555064d8c8c8e2bd3aa3221a14e9d5f68b89af49004"
+    }
+  ],
+  "status": "passed",
+  "artifact_sha256": "cffcf4695678972319a8fc94a91fddecd68fa2b23c003ffd852c78e098d6bb81"
+}

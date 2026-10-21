@@ -1,0 +1,132 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:676edb44-ca06-4ff3-853e-66bc50463e8a",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-20T09:44:09Z",
+    "tools": [
+      {
+        "vendor": "codeguard",
+        "name": "codeguard",
+        "version": "0.2.0"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "bom-ref": "file:ai_generated_demo.py",
+      "name": "ai_generated_demo.py",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:pypi/mercurial@7.2.4#9dc7dd9c991f",
+      "type": "library",
+      "name": "mercurial",
+      "version": "7.2.4",
+      "purl": "pkg:pypi/mercurial@7.2.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "evidence": {
+        "occurrences": [
+          {
+            "location": "ai_generated_demo.py",
+            "line": 7,
+            "additionalContext": "query lines 7-37; source mercurial-7.2.4/hgext/amend.py:7-42"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 26,
+            "additionalContext": "query lines 26-42; source mercurial-7.2.4/hgext/amend.py:7-50"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 38,
+            "additionalContext": "query lines 38-48; source mercurial-7.2.4/hgext/amend.py:26-54"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 42,
+            "additionalContext": "query lines 42-50; source mercurial-7.2.4/hgext/amend.py:26-54"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 48,
+            "additionalContext": "query lines 48-54; source mercurial-7.2.4/hgext/amend.py:38-69"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 50,
+            "additionalContext": "query lines 50-59; source mercurial-7.2.4/hgext/amend.py:42-73"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 54,
+            "additionalContext": "query lines 54-69; source mercurial-7.2.4/hgext/amend.py:48-74"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 59,
+            "additionalContext": "query lines 59-73; source mercurial-7.2.4/hgext/amend.py:50-76"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 69,
+            "additionalContext": "query lines 69-74; source mercurial-7.2.4/hgext/amend.py:54-76"
+          },
+          {
+            "location": "ai_generated_demo.py",
+            "line": 73,
+            "additionalContext": "query lines 73-76; source mercurial-7.2.4/hgext/amend.py:59-76"
+          }
+        ],
+        "identity": [
+          {
+            "field": "purl",
+            "confidence": 0.9995,
+            "methods": [
+              {
+                "technique": "source-code-analysis",
+                "confidence": 0.9995
+              }
+            ]
+          }
+        ]
+      },
+      "properties": [
+        {
+          "name": "codeguard:risk",
+          "value": "S4"
+        },
+        {
+          "name": "codeguard:verbatim-token-run",
+          "value": "48"
+        },
+        {
+          "name": "codeguard:verdict",
+          "value": "incompatible"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "file:ai_generated_demo.py",
+      "dependsOn": [
+        "pkg:pypi/mercurial@7.2.4#9dc7dd9c991f"
+      ]
+    }
+  ]
+}

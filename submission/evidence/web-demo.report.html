@@ -1,0 +1,47 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8">
+<title>CodeGuard 合规报告 · ai_generated_demo.py</title><style>
+:root{--bg:#0f1115;--card:#171a21;--fg:#e6e9ef;--mut:#9aa4b2;--ok:#3fb950;
+--warn:#d29922;--bad:#f85149;--line:#232833}
+*{box-sizing:border-box}body{margin:0;padding:32px;background:var(--bg);
+color:var(--fg);font:15px/1.6 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:28px 0 10px;color:var(--mut)}
+.sub{color:var(--mut);font-size:13px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:16px 18px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;
+font-weight:600;border:1px solid var(--line)}
+.S0,.S1{color:var(--ok)}.S2{color:var(--warn)}.S3,.S4{color:var(--bad)}
+.incompatible{color:var(--bad)}.conditional,.unknown{color:var(--warn)}
+.compatible{color:var(--ok)}
+code{background:#20242d;padding:1px 5px;border-radius:4px;font-size:12.5px}
+.bar{height:6px;background:#20242d;border-radius:3px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--ok)}
+footer{color:var(--mut);font-size:12px;margin-top:24px;border-top:1px solid var(--line);
+padding-top:12px}
+</style></head><body>
+<h1>CodeGuard 开源许可证污染溯源报告</h1>
+<div class=sub>目标 <code>ai_generated_demo.py</code> ｜ 项目许可证 <code>MIT</code> ｜ 使用方式 <code>distribution</code>
+｜ 片段 10/10 ｜ 索引指纹 <code>b2a8ae368a2c3295713b833b3a0699ea</code> ｜ 生成于 2026-10-20T09:44:09Z</div>
+<div class=card><b>结论：</b>共 1 条来源命中，其中 1 条为阻断级风险（S3/S4）。</div>
+<h2>命中来源</h2>
+<table><tr><th>语料来源</th><th>许可证</th><th>风险</th><th>合规结论</th>
+<th>置信度</th><th>逐字命中</th><th>各层精确相似度</th></tr><tr><td><code>mercurial@7.2.4</code><br><span class=sub>mercurial-7.2.4/hgext/amend.py</span></td><td><b>GPL-2.0-or-later</b><br><span class=sub>解析来源: pep639-expression</span></td><td><span class='badge S4'>S4</span></td><td><span class='incompatible'>incompatible</span></td><td>1.000<div class=bar><i style='width:100%'></i></div></td><td>48</td><td><code>abs=0.55 · edge=0.75 · lit=0.64 · role=0.67</code></td></tr></table>
+<h2>逐片段证据链</h2><div class=card><h2>目标 ai_generated_demo.py 中 10 个代码片段命中语料库来源 mercurial@7.2.4 的 mercurial-7.2.4/hgext/amend.py（第 7-76 行），单片段最长逐字连续命中 48 个代码 token。 ← mercurial@7.2.4</h2>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 7-37 行</td><td>mercurial-7.2.4/hgext/amend.py:7-42</td><td>0.999</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 26-42 行</td><td>mercurial-7.2.4/hgext/amend.py:7-50</td><td>0.998</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 38-48 行</td><td>mercurial-7.2.4/hgext/amend.py:26-54</td><td>0.994</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 42-50 行</td><td>mercurial-7.2.4/hgext/amend.py:26-54</td><td>0.994</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 48-54 行</td><td>mercurial-7.2.4/hgext/amend.py:38-69</td><td>0.973</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 50-59 行</td><td>mercurial-7.2.4/hgext/amend.py:42-73</td><td>0.984</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 54-69 行</td><td>mercurial-7.2.4/hgext/amend.py:48-74</td><td>0.994</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+<table><tr><th>目标片段</th><th>来源行</th><th>判定概率</th><th>逐字连续命中</th><th>加权覆盖率</th><th>LSH 命中带</th></tr><tr><td>第 59-73 行</td><td>mercurial-7.2.4/hgext/amend.py:50-76</td><td>0.989</td><td>48 token</td><td>1.000</td><td>30/30</td></tr></table>
+</div>
+<h2>需要履行的义务 / 冲突条款</h2><ul><li><b>mercurial</b>（GPL-2.0-or-later）：保留版权/许可声明</li>
+<li><b>mercurial</b>（GPL-2.0-or-later）：随分发提供对应源码（或书面要约）</li>
+<li><b>冲突</b> mercurial：目标许可证 MIT 的 copyleft 强度低于 GPL-2.0-or-later 所要求的 GPL-2.0-or-later；来源代码许可证 GPL-2.0-or-later 的传染性范围为整件作品。</li></ul>
+<h2>AI 使用声明</h2><div class=card><b>offline-template</b>（外部调用：False）<br>CodeGuard 默认使用确定性模板生成器产出合规说明，全程离线、无外部模型调用、结果可逐字节复现；仅当显式配置 CODEGUARD_LLM_BASE_URL 与 API Key 时才会调用第三方大模型接口，且调用情况会被写入报告的 ai_usage 字段以供审计。</div>
+<footer>本结论为工程风险提示，不构成法律意见。<br>工程性风险提示，不构成法律意见。<br>由 codeguard v0.2.0 生成，报告与 HTML 不含任何外部资源引用，可离线打开。</footer>
+</body></html>

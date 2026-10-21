@@ -1,0 +1,22 @@
+CodeGuard - AI 生成代码的开源许可证污染溯源与合规门禁
+Copyright 2026 CodeGuard Authors
+
+This product includes software developed as part of the CodeGuard project.
+
+Third-party notices
+-------------------
+The SPDX licence identifier list (src/codeguard/data/spdx_licenses.json) is
+derived from the SPDX License List published by the Linux Foundation / SPDX
+project (https://spdx.org/licenses/), distributed under CC0-1.0.
+
+The fingerprint corpus used to demonstrate the tool is fetched on demand from
+Python Package Index source distributions (six, iniconfig, pyyaml, tqdm,
+requests, urllib3, click, python-dotenv, argparse, snowballstemmer, packaging,
+pylint, paramiko, glances, fava, mpmath, defusedxml, legacy-cgi, websockets,
+mercurial). Those packages remain under their own licences; they are NOT
+redistributed inside this repository, are used only as read-only input for the
+local matcher index, and each is recorded with its SPDX identifier and the
+metadata field the identifier was resolved from. See THIRD_PARTY_NOTICES.md for
+the obligation table.
+
+No component of this product is derived from GPL, AGPL or LGPL sources.

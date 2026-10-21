@@ -1,0 +1,1406 @@
+{
+ "schema": "codeguard.benchmark/v1",
+ "generated_at": 1792489634,
+ "seed": 20260101,
+ "corpus": {
+  "files": 24,
+  "packages": 17,
+  "licenses": [
+   "Apache-2.0",
+   "BSD-2-Clause",
+   "BSD-3-Clause",
+   "GPL-2.0-or-later",
+   "LGPL-2.1",
+   "LGPL-3.0-only",
+   "MIT",
+   "MPL-2.0",
+   "PSF-2.0"
+  ],
+  "mutations": [
+   "identity",
+   "rename",
+   "reformat",
+   "comment_inject",
+   "dead_code",
+   "reorder",
+   "partial",
+   "compound"
+  ],
+  "chars_cap": 5000,
+  "index_chunks": 1008,
+  "payload_bytes_per_chunk": 328,
+  "sketch_bytes_per_chunk": 192
+ },
+ "pairs_verified": 20892,
+ "collect_seconds": 33.93,
+ "threshold": 0.55,
+ "judge": {
+  "pairs": 20892,
+  "positives": 8824,
+  "threshold": 0.4053,
+  "held_out_files": [
+   "legacy-cgi-2.6.4/cgitb.py",
+   "neg:negatives/attempt_loop.py",
+   "neg:negatives/range_fold.py",
+   "neg:negatives/slug_maker.py",
+   "neg:negatives/word_tally.py",
+   "python-dotenv-1.2.4/src/dotenv/cli.py",
+   "pyyaml-6.0.3/lib/yaml/loader.py",
+   "six-1.17.0/documentation/conf.py",
+   "snowballstemmer-3.1.1/src/sample/stemwords.py",
+   "tqdm-4.70.1/tqdm/contrib/itertools.py",
+   "urllib3-2.8.0/src/urllib3/util/retry.py"
+  ],
+  "train": {
+   "tp": 59,
+   "fp": 0,
+   "tn": 79,
+   "fn": 3,
+   "precision": 1.0,
+   "recall": 0.9516,
+   "f1": 0.9752,
+   "specificity": 1.0,
+   "auc": 0.988,
+   "n": 141
+  },
+  "test": {
+   "tp": 20,
+   "fp": 0,
+   "tn": 39,
+   "fn": 1,
+   "precision": 1.0,
+   "recall": 0.9524,
+   "f1": 0.9756,
+   "specificity": 1.0,
+   "auc": 0.9829,
+   "n": 60
+  },
+  "weights": [
+   {
+    "feature": "j_role",
+    "weight": 0.4329
+   },
+   {
+    "feature": "j_lit",
+    "weight": 0.4193
+   },
+   {
+    "feature": "verbatim_norm",
+    "weight": 0.4186
+   },
+   {
+    "feature": "wc",
+    "weight": 0.3618
+   },
+   {
+    "feature": "mean_sim",
+    "weight": 0.3323
+   },
+   {
+    "feature": "est_role",
+    "weight": 0.331
+   },
+   {
+    "feature": "j_abs",
+    "weight": 0.2421
+   },
+   {
+    "feature": "max_sim",
+    "weight": 0.2111
+   }
+  ]
+ },
+ "results": {
+  "sha_exact": {
+   "label": "整文件 SHA-256",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 1.0,
+     "mean_confidence": 1.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.125,
+   "gate_blocking_recall": 0.0,
+   "false_matches_per_case": 0.0,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "norm_sha": {
+   "label": "归一化整文件哈希",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 1.0,
+     "mean_confidence": 1.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.2083,
+     "mean_coverage": 0.2083,
+     "mean_confidence": 0.2083,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 0.375,
+     "mean_coverage": 0.375,
+     "mean_confidence": 0.375,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 0.1667,
+     "mean_coverage": 0.1667,
+     "mean_confidence": 0.1667,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 0.25,
+     "mean_coverage": 0.25,
+     "mean_confidence": 0.25,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.0417,
+     "mean_coverage": 0.0417,
+     "mean_confidence": 0.0417,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.2552,
+   "gate_blocking_recall": 0.0,
+   "false_matches_per_case": 0.0,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "norm_sha_win": {
+   "label": "归一化滑窗哈希（基线）",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 1.0,
+     "mean_confidence": 1.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.2917,
+     "mean_coverage": 0.3615,
+     "mean_confidence": 0.3615,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.9131,
+     "mean_confidence": 0.9131,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 0.25,
+     "mean_coverage": 0.3307,
+     "mean_confidence": 0.3307,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.8155,
+     "mean_confidence": 0.8155,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 0.7083,
+     "mean_coverage": 0.6828,
+     "mean_confidence": 0.6828,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.25,
+     "mean_coverage": 0.216,
+     "mean_confidence": 0.216,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 0.125,
+     "mean_coverage": 0.1604,
+     "mean_confidence": 0.1604,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.5677,
+   "gate_blocking_recall": 0.0,
+   "false_matches_per_case": 0.0,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "L1": {
+   "label": "仅字面层 L1",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9133,
+     "mean_confidence": 0.9976,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.935,
+     "top1_localisation": 0.9308
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.75,
+     "mean_coverage": 0.2627,
+     "mean_confidence": 0.6402,
+     "mean_max_verbatim": 35.42,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.2369,
+     "top1_localisation": 0.2369
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.8328,
+     "mean_confidence": 0.9559,
+     "mean_max_verbatim": 46.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8637,
+     "top1_localisation": 0.8595
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.5628,
+     "mean_confidence": 0.9477,
+     "mean_max_verbatim": 45.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.5415,
+     "top1_localisation": 0.5394
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7333,
+     "mean_confidence": 0.9982,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7862,
+     "top1_localisation": 0.7827
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.6337,
+     "mean_confidence": 0.9644,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.5901,
+     "top1_localisation": 0.5858
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.7917,
+     "mean_coverage": 0.3535,
+     "mean_confidence": 0.7279,
+     "mean_max_verbatim": 35.67,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.4459,
+     "top1_localisation": 0.4286
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 0.6667,
+     "mean_coverage": 0.1606,
+     "mean_confidence": 0.5518,
+     "mean_max_verbatim": 31.71,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.1444,
+     "top1_localisation": 0.1444
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.8906,
+   "gate_blocking_recall": 1.0,
+   "false_matches_per_case": 0.032,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "L2": {
+   "label": "仅抽象层 L2",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9118,
+     "mean_confidence": 0.9984,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9434,
+     "top1_localisation": 0.9434
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.8317,
+     "mean_confidence": 0.9496,
+     "mean_max_verbatim": 40.54,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8847,
+     "top1_localisation": 0.8847
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9118,
+     "mean_confidence": 0.9982,
+     "mean_max_verbatim": 46.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9434,
+     "top1_localisation": 0.9434
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.577,
+     "mean_confidence": 0.9918,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.083,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.5249,
+     "top1_localisation": 0.5228
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7446,
+     "mean_confidence": 0.9967,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7898,
+     "top1_localisation": 0.7898
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.6581,
+     "mean_confidence": 0.9551,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.6073,
+     "top1_localisation": 0.6073
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.75,
+     "mean_coverage": 0.3217,
+     "mean_confidence": 0.6901,
+     "mean_max_verbatim": 33.5,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.381,
+     "top1_localisation": 0.381
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.4094,
+     "mean_confidence": 0.9454,
+     "mean_max_verbatim": 38.96,
+     "false_matches_per_case": 0.083,
+     "gate_block_rate": 0.9583,
+     "retrieval_recall": 0.4029,
+     "top1_localisation": 0.4011
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9635,
+   "gate_blocking_recall": 0.9946,
+   "false_matches_per_case": 0.047,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "L3": {
+   "label": "仅角色层 L3",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.985,
+     "mean_confidence": 0.9984,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9895,
+     "top1_localisation": 0.9832
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8988,
+     "mean_confidence": 0.9774,
+     "mean_max_verbatim": 42.17,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8973,
+     "top1_localisation": 0.891
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.985,
+     "mean_confidence": 0.9982,
+     "mean_max_verbatim": 46.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9895,
+     "top1_localisation": 0.9832
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9441,
+     "mean_confidence": 0.997,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9481,
+     "top1_localisation": 0.9419
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7871,
+     "mean_confidence": 0.9982,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8286,
+     "top1_localisation": 0.8233
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8805,
+     "mean_confidence": 0.9944,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.882,
+     "top1_localisation": 0.8755
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.875,
+     "mean_coverage": 0.7849,
+     "mean_confidence": 0.8662,
+     "mean_max_verbatim": 39.25,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8918,
+     "top1_localisation": 0.8788
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.6428,
+     "mean_confidence": 0.9751,
+     "mean_max_verbatim": 40.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7059,
+     "top1_localisation": 0.7005
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9844,
+   "gate_blocking_recall": 1.0,
+   "false_matches_per_case": 0.042,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "L4": {
+   "label": "仅结构边层 L4",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8969,
+     "mean_confidence": 0.995,
+     "mean_max_verbatim": 47.83,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8994,
+     "top1_localisation": 0.8553
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.7852,
+     "mean_confidence": 0.941,
+     "mean_max_verbatim": 37.25,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8008,
+     "top1_localisation": 0.7338
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8969,
+     "mean_confidence": 0.9948,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8994,
+     "top1_localisation": 0.8553
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8106,
+     "mean_confidence": 0.993,
+     "mean_max_verbatim": 46.33,
+     "false_matches_per_case": 0.083,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8174,
+     "top1_localisation": 0.7261
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7243,
+     "mean_confidence": 0.9864,
+     "mean_max_verbatim": 47.5,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7633,
+     "top1_localisation": 0.7138
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7784,
+     "mean_confidence": 0.989,
+     "mean_max_verbatim": 47.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7897,
+     "top1_localisation": 0.7146
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.9167,
+     "mean_coverage": 0.6814,
+     "mean_confidence": 0.8881,
+     "mean_max_verbatim": 39.21,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.7965,
+     "top1_localisation": 0.6364
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 0.9583,
+     "mean_coverage": 0.5345,
+     "mean_confidence": 0.9122,
+     "mean_max_verbatim": 35.25,
+     "false_matches_per_case": 0.083,
+     "gate_block_rate": 0.9565,
+     "retrieval_recall": 0.615,
+     "top1_localisation": 0.508
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9792,
+   "gate_blocking_recall": 0.9947,
+   "false_matches_per_case": 0.052,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "multi": {
+   "label": "多层，无 IDF",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9984,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9773,
+     "mean_confidence": 0.9895,
+     "mean_max_verbatim": 42.17,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9916,
+     "top1_localisation": 0.9811
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 46.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9782,
+     "mean_confidence": 0.997,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9876,
+     "top1_localisation": 0.9398
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8038,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8463,
+     "top1_localisation": 0.8286
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9274,
+     "mean_confidence": 0.9971,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9571,
+     "top1_localisation": 0.9056
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.9167,
+     "mean_coverage": 0.8488,
+     "mean_confidence": 0.9044,
+     "mean_max_verbatim": 40.04,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9524,
+     "top1_localisation": 0.8485
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7075,
+     "mean_confidence": 0.9824,
+     "mean_max_verbatim": 40.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8146,
+     "top1_localisation": 0.7308
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9896,
+   "gate_blocking_recall": 1.0,
+   "false_matches_per_case": 0.042,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "multi_idf": {
+   "label": "多层 + IDF（规则打分）",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9984,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9773,
+     "mean_confidence": 0.9894,
+     "mean_max_verbatim": 42.17,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9916,
+     "top1_localisation": 0.9811
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 46.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9782,
+     "mean_confidence": 0.997,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9876,
+     "top1_localisation": 0.9398
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8017,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8463,
+     "top1_localisation": 0.8286
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9274,
+     "mean_confidence": 0.9971,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9571,
+     "top1_localisation": 0.9056
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.9167,
+     "mean_coverage": 0.8488,
+     "mean_confidence": 0.9043,
+     "mean_max_verbatim": 40.04,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9524,
+     "top1_localisation": 0.8485
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7034,
+     "mean_confidence": 0.9824,
+     "mean_max_verbatim": 40.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8146,
+     "top1_localisation": 0.7308
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9896,
+   "gate_blocking_recall": 1.0,
+   "false_matches_per_case": 0.042,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  },
+  "multi_idf_ml": {
+   "label": "多层 + IDF + 判定模型",
+   "per_mutation": {
+    "identity": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9984,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "rename": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9773,
+     "mean_confidence": 0.9894,
+     "mean_max_verbatim": 42.17,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9916,
+     "top1_localisation": 0.9811
+    },
+    "reformat": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9894,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 46.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9937,
+     "top1_localisation": 0.9916
+    },
+    "comment_inject": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9782,
+     "mean_confidence": 0.997,
+     "mean_max_verbatim": 46.58,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9876,
+     "top1_localisation": 0.9398
+    },
+    "dead_code": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.8017,
+     "mean_confidence": 0.9983,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8463,
+     "top1_localisation": 0.8286
+    },
+    "reorder": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.9274,
+     "mean_confidence": 0.9971,
+     "mean_max_verbatim": 48.0,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9571,
+     "top1_localisation": 0.9056
+    },
+    "partial": {
+     "cases": 24,
+     "detect_rate": 0.9167,
+     "mean_coverage": 0.8488,
+     "mean_confidence": 0.9043,
+     "mean_max_verbatim": 40.04,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.9524,
+     "top1_localisation": 0.8485
+    },
+    "compound": {
+     "cases": 24,
+     "detect_rate": 1.0,
+     "mean_coverage": 0.7034,
+     "mean_confidence": 0.9824,
+     "mean_max_verbatim": 40.75,
+     "false_matches_per_case": 0.042,
+     "gate_block_rate": 1.0,
+     "retrieval_recall": 0.8146,
+     "top1_localisation": 0.7308
+    },
+    "negative": {
+     "cases": 9,
+     "detect_rate": 0.0,
+     "mean_coverage": 0.0,
+     "mean_confidence": 0.0,
+     "mean_max_verbatim": 0.0,
+     "false_matches_per_case": 0.0,
+     "gate_block_rate": 0.0,
+     "retrieval_recall": 0.0,
+     "top1_localisation": 0.0
+    }
+   },
+   "overall_detect_rate": 0.9896,
+   "gate_blocking_recall": 1.0,
+   "false_matches_per_case": 0.042,
+   "negatives": 9,
+   "false_positives": 0,
+   "precision": 1.0
+  }
+ },
+ "threshold_sensitivity": [
+  {
+   "threshold": 0.55,
+   "idf": {
+    "true_pairs": 7261,
+    "false_pairs": 223
+   },
+   "plain": {
+    "true_pairs": 7314,
+    "false_pairs": 225
+   },
+   "false_pair_reduction": 0.0089
+  },
+  {
+   "threshold": 0.45,
+   "idf": {
+    "true_pairs": 7649,
+    "false_pairs": 231
+   },
+   "plain": {
+    "true_pairs": 7669,
+    "false_pairs": 232
+   },
+   "false_pair_reduction": 0.0043
+  },
+  {
+   "threshold": 0.35,
+   "idf": {
+    "true_pairs": 7931,
+    "false_pairs": 280
+   },
+   "plain": {
+    "true_pairs": 7946,
+    "false_pairs": 284
+   },
+   "false_pair_reduction": 0.0141
+  },
+  {
+   "threshold": 0.25,
+   "idf": {
+    "true_pairs": 8197,
+    "false_pairs": 496
+   },
+   "plain": {
+    "true_pairs": 8201,
+    "false_pairs": 515
+   },
+   "false_pair_reduction": 0.0369
+  }
+ ],
+ "false_positive_study": {
+  "index_documents": 585,
+  "sampled": 200,
+  "vendored_same_name": 2,
+  "unexpected": 77,
+  "files_with_unexpected_match": 44,
+  "per_file_rate": 0.22,
+  "blocking": 0,
+  "blocking_files": 0,
+  "blocking_per_file_rate": 0.0,
+  "by_risk": {
+   "S0": 62,
+   "S1": 2,
+   "S2": 15
+  },
+  "seconds": 88.5,
+  "top_unexpected": [
+   {
+    "query": "urllib3-2.8.0/src/urllib3/util/__init__.py",
+    "query_license": "MIT",
+    "matched": "mpmath@1.4.1:mpmath-1.4.1/mpmath/ctx_mp.py",
+    "matched_license": "BSD-3-Clause",
+    "risk": "S1",
+    "confidence": 0.9143,
+    "coverage": 0.5,
+    "verbatim_tokens": 2
+   },
+   {
+    "query": "paramiko-5.0.0/paramiko/win_openssh.py",
+    "query_license": "LGPL-2.1",
+    "matched": "mpmath@1.4.1:mpmath-1.4.1/mpmath/ctx_iv.py",
+    "matched_license": "BSD-3-Clause",
+    "risk": "S1",
+    "confidence": 0.8837,
+    "coverage": 0.3333,
+    "verbatim_tokens": 5
+   },
+   {
+    "query": "urllib3-2.8.0/src/urllib3/util/ssl_.py",
+    "query_license": "MIT",
+    "matched": "websockets@17.2:websockets-17.2/src/websockets/sync/client.py",
+    "matched_license": "BSD-3-Clause",
+    "risk": "S0",
+    "confidence": 0.7133,
+    "coverage": 0.0896,
+    "verbatim_tokens": 13
+   },
+   {
+    "query": "mercurial-7.2.4/contrib/perf.py",
+    "query_license": "GPL-2.0-or-later",
+    "matched": "urllib3@2.8.0:urllib3-2.8.0/docs/conf.py",
+    "matched_license": "MIT",
+    "risk": "S0",
+    "confidence": 0.6469,
+    "coverage": 0.001,
+    "verbatim_tokens": 3
+   },
+   {
+    "query": "pyyaml-6.0.3/lib/yaml/__init__.py",
+    "query_license": "MIT",
+    "matched": "websockets@17.2:websockets-17.2/src/websockets/legacy/server.py",
+    "matched_license": "BSD-3-Clause",
+    "risk": "S0",
+    "confidence": 0.5867,
+    "coverage": 0.0164,
+    "verbatim_tokens": 1
+   },
+   {
+    "query": "defusedxml-0.7.1/defusedxml/cElementTree.py",
+    "query_license": "PSF-2.0",
+    "matched": "mpmath@1.4.1:mpmath-1.4.1/mpmath/ctx_iv.py",
+    "matched_license": "BSD-3-Clause",
+    "risk": "S0",
+    "confidence": 0.57,
+    "coverage": 0.2,
+    "verbatim_tokens": 2
+   },
+   {
+    "query": "mercurial-7.2.4/contrib/automation/hgautomation/cli.py",
+    "query_license": "GPL-2.0-or-later",
+    "matched": "glances@4.5.7:glances-4.5.7/glances/main.py",
+    "matched_license": "LGPL-3.0-only",
+    "risk": "S2",
+    "confidence": 0.5631,
+    "coverage": 0.0116,
+    "verbatim_tokens": 9
+   },
+   {
+    "query": "click-8.5.0/src/click/core.py",
+    "query_license": "BSD-3-Clause",
+    "matched": "urllib3@2.8.0:urllib3-2.8.0/src/urllib3/connectionpool.py",
+    "matched_license": "MIT",
+    "risk": "S0",
+    "confidence": 0.5601,
+    "coverage": 0.0018,
+    "verbatim_tokens": 7
+   },
+   {
+    "query": "glances-4.5.7/glances/outputs/glances_sparklines.py",
+    "query_license": "LGPL-3.0-only",
+    "matched": "paramiko@5.0.0:paramiko-5.0.0/paramiko/sftp_handle.py",
+    "matched_license": "LGPL-2.1",
+    "risk": "S2",
+    "confidence": 0.544,
+    "coverage": 0.0667,
+    "verbatim_tokens": 7
+   },
+   {
+    "query": "glances-4.5.7/glances/outputs/glances_restful_api.py",
+    "query_license": "LGPL-3.0-only",
+    "matched": "mercurial@7.2.4:mercurial-7.2.4/hgext/bugzilla.py",
+    "matched_license": "GPL-2.0-or-later",
+    "risk": "S2",
+    "confidence": 0.514,
+    "coverage": 0.0077,
+    "verbatim_tokens": 6
+   }
+  ],
+  "top_vendored": [
+   {
+    "query": "packaging-26.3/docs/conf.py",
+    "query_license": "BSD-2-Clause",
+    "matched": "urllib3@2.8.0:urllib3-2.8.0/docs/conf.py",
+    "matched_license": "MIT",
+    "risk": "S0",
+    "confidence": 0.6507,
+    "coverage": 0.0909,
+    "verbatim_tokens": 5
+   },
+   {
+    "query": "fava-1.30.16/docs/conf.py",
+    "query_license": "MIT",
+    "matched": "packaging@26.3:packaging-26.3/docs/conf.py",
+    "matched_license": "BSD-2-Clause",
+    "risk": "S0",
+    "confidence": 0.5338,
+    "coverage": 0.125,
+    "verbatim_tokens": 5
+   }
+  ]
+ }
+}

@@ -1,0 +1,55 @@
+#!/bin/sh
+# CodeGuard pre-commit hook: 只检查本次新增的代码行，命中阻断级许可证污染即拒绝提交。
+#
+# 安装：
+#     cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# 前置条件（缺任何一项都会明确报错，而不是静默放行）：
+#     codeguard corpus && codeguard index
+
+set -eu
+
+if ! command -v codeguard >/dev/null 2>&1; then
+    echo "codeguard: 未安装 CLI（pip install -e . 或 pip install codeguard-compliance）" >&2
+    exit 1
+fi
+
+if [ ! -f .codeguard/index.bin ]; then
+    echo "codeguard: 缺少 .codeguard/index.bin，请先运行 codeguard corpus && codeguard index" >&2
+    exit 1
+fi
+
+# 只取新增行（-U0 不带上下文），并保留文件头供门禁识别语言
+diff_text=$(git diff --cached --diff-filter=ACM -U0 -- '*.py')
+
+if [ -z "$diff_text" ]; then
+    echo "codeguard: 本次提交没有 Python 新增代码，跳过"
+    exit 0
+fi
+
+# 临时文件放在仓库外，避免被下一次 diff 看见
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+printf '%s\n' "$diff_text" > "$tmp"
+
+# $? 在 if 分支里已经被条件命令本身覆盖，必须显式取
+set +e
+codeguard gate --diff "$tmp" --name "pre-commit" --usage distribution
+code=$?
+set -e
+
+if [ "$code" -eq 0 ]; then
+    echo "codeguard: 合规门禁通过"
+    exit 0
+fi
+
+if [ "$code" -eq 2 ]; then
+    echo "codeguard: 环境或用法错误（退出码 2），请检查索引与参数" >&2
+    exit "$code"
+fi
+
+echo "" >&2
+echo "codeguard: 提交被拒绝。请三选一：" >&2
+echo "  1) 用自研实现替换被污染的片段；" >&2
+echo "  2) 把项目许可证改为与之兼容（例如 copyleft 源码 → GPL 项目）；" >&2
+echo "  3) 若确为内部使用且不分发，用 --usage internal_use 重新评估并记录理由。" >&2
+exit "$code"
