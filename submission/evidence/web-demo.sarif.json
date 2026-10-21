@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "CodeGuard",
+          "version": "0.2.1",
+          "informationUri": "https://www.aicomp.cn/tracks/tracks-5/4924.html",
+          "rules": [
+            {
+              "id": "CG001",
+              "name": "BlockingLicenseConflict",
+              "shortDescription": {
+                "text": "阻断级许可证冲突（S4）"
+              },
+              "fullDescription": {
+                "text": "来源代码使用方式与目标项目许可证不兼容，且证据达到阻断门槛。"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "license",
+                  "compliance",
+                  "open-source"
+                ]
+              }
+            },
+            {
+              "id": "CG002",
+              "name": "ConditionalLicenseConflict",
+              "shortDescription": {
+                "text": "需履行条件的许可证冲突（S3）"
+              },
+              "fullDescription": {
+                "text": "来源许可证要求附加义务或升级目标许可证，需人工复核后放行。"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "tags": [
+                  "license",
+                  "compliance",
+                  "open-source"
+                ]
+              }
+            },
+            {
+              "id": "CG003",
+              "name": "LicenseReviewRequired",
+              "shortDescription": {
+                "text": "许可证复核项（S2）"
+              },
+              "fullDescription": {
+                "text": "存在相似来源或义务冲突，但证据未达到阻断门槛，应人工复核。"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "tags": [
+                  "license",
+                  "review",
+                  "open-source"
+                ]
+              }
+            },
+            {
+              "id": "CG004",
+              "name": "ProvenanceObservation",
+              "shortDescription": {
+                "text": "来源观察（S0/S1）"
+              },
+              "fullDescription": {
+                "text": "检出来源候选，但当前使用方式不构成阻断级义务冲突。"
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "tags": [
+                  "license",
+                  "provenance",
+                  "open-source"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "columnKind": "utf16CodeUnits",
+      "results": [
+        {
+          "ruleId": "CG001",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "S4 严重：分发/网络服务与许可证条款直接冲突：mercurial@7.2.4:mercurial-7.2.4/hgext/amend.py（GPL-2.0-or-later），置信度 1.00，覆盖率 1.00，判定 incompatible。来源候选需人工复核，不构成法律意见。"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "C:/Users/35533/AppData/Local/Temp/tmpt5ip2sfb/feature_flags.py"
+                },
+                "region": {
+                  "startLine": 7,
+                  "endLine": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "codeguard/v1": "edb9e41bff9b113e",
+            "primaryLocationLineHash": "edb9e41bff9b113e"
+          },
+          "properties": {
+            "risk": "S4",
+            "riskLabel": "严重：分发/网络服务与许可证条款直接冲突",
+            "license": "GPL-2.0-or-later",
+            "package": "mercurial",
+            "version": "7.2.4",
+            "sourcePath": "mercurial-7.2.4/hgext/amend.py",
+            "confidence": 0.9995,
+            "coverage": 1.0,
+            "verbatimTokenRun": 48,
+            "verdict": "incompatible",
+            "corroborated": true
+          },
+          "relatedLocations": [
+            {
+              "id": 1,
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "mercurial-7.2.4/hgext/amend.py"
+                },
+                "region": {
+                  "startLine": 7,
+                  "endLine": 42
+                }
+              },
+              "message": {
+                "text": "命中的上游来源文件"
+              }
+            }
+          ]
+        }
+      ],
+      "properties": {
+        "target": "C:/Users/35533/AppData/Local/Temp/tmpt5ip2sfb/feature_flags.py",
+        "targetLicense": "MIT",
+        "usage": "distribution",
+        "indexFingerprint": "b2a8ae368a2c3295713b833b3a0699ea",
+        "disclaimer": "工程性风险提示，不构成法律意见。"
+      }
+    }
+  ]
+}

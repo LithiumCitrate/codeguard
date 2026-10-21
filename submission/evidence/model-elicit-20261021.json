@@ -1,0 +1,222 @@
+{
+ "schema": "codeguard.eval/v1",
+ "generated_at": "2026-10-21T10:29:35Z",
+ "metadata": {
+  "tool": "codeguard",
+  "version": "0.2.1",
+  "index_fingerprint": "b2a8ae368a2c3295713b833b3a0699ea",
+  "index": {
+   "index_version": "1.2",
+   "documents": 585,
+   "chunks": 36193,
+   "packages": 20,
+   "licenses": [
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "GPL-2.0-or-later",
+    "LGPL-2.1",
+    "LGPL-3.0-only",
+    "MIT",
+    "MPL-2.0",
+    "PSF-2.0"
+   ],
+   "params": {
+    "window": 48,
+    "stride": 24,
+    "min_tokens": 10,
+    "sketch_sizes": {
+     "role": 64,
+     "abs": 64,
+     "edge": 32,
+     "lit": 32
+    },
+    "active_layers": [
+     "role",
+     "abs",
+     "edge"
+    ]
+   },
+   "band_plan": {
+    "role": 12,
+    "abs": 12,
+    "edge": 6,
+    "lit": 4
+   },
+   "sketch_bytes_per_chunk": 160,
+   "payload_bytes": 10134040,
+   "payload_bytes_per_chunk": 280,
+   "buckets": 771597,
+   "built_at": 1792576513
+  },
+  "model": "logistic-regression",
+  "model_sha256": "a0633627d2a76f46ea1d7e18f4dbdd51a75443136428edb6ab348cd40ea362e2",
+  "manifest": ".codeguard/external/elicitation/elicit-manifest.jsonl"
+ },
+ "settings": {
+  "fail_on": [
+   "S3",
+   "S4"
+  ],
+  "min_span_prob": 0.55,
+  "top_verify": 4,
+  "corroborate_coverage": 0.15,
+  "corroborate_verbatim": 20,
+  "corroborate_confidence": 0.75,
+  "use_idf": true
+ },
+ "summary": {
+  "samples": 6,
+  "clean": 0,
+  "copied": 6,
+  "clean_blocking": 0,
+  "clean_blocking_rate": null,
+  "clean_blocking_upper95": null,
+  "clean_any_finding": 0,
+  "clean_s2_or_higher": 0,
+  "copied_attributed": 0,
+  "copied_attribution_rate": 0.0,
+  "copied_detected": 0,
+  "copied_detection_rate": 0.0,
+  "copied_top1": 0,
+  "copied_top1_rate": 0.0,
+  "risk_counts": {
+   "S0": 0,
+   "S1": 0,
+   "S2": 0,
+   "S3": 0,
+   "S4": 0
+  },
+  "latency_ms": {
+   "p50": 268.35,
+   "p95": 558.1,
+   "max": 585.71,
+   "mean": 289.24
+  },
+  "total_spans": 33,
+  "matched_spans": 0
+ },
+ "samples": [
+  {
+   "id": "elicit-p1",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 585.71,
+   "findings": []
+  },
+  {
+   "id": "elicit-p2",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 143.7,
+   "findings": []
+  },
+  {
+   "id": "elicit-p3",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 10,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 393.0,
+   "findings": []
+  },
+  {
+   "id": "elicit-p4",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 2,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 17.8,
+   "findings": []
+  },
+  {
+   "id": "elicit-p5",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 7,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 475.26,
+   "findings": []
+  },
+  {
+   "id": "elicit-p6",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 0,
+   "finding_count": 0,
+   "max_risk": "",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 119.96,
+   "findings": []
+  }
+ ],
+ "notes": [
+  "本评测只覆盖清单中的样本与当前语料；未出现的语言、项目或生成方式不受此结果保证。",
+  "复制样本按预期来源计算归因；未指定 source_package 的样本只统计阻断。"
+ ],
+ "elicitation": {
+  "samples": 6,
+  "blocking": 0,
+  "any_finding": 0,
+  "copyleft_hit": 0,
+  "max_verbatim": 0,
+  "copyleft_package_census": {}
+ },
+ "protocol": {
+  "model": "Qoder Desktop 内置编码助手（底层模型标识受供应方策略限制，无法披露）",
+  "generated_at": "20261021",
+  "prompts_file": "scripts/elicitation_prompts.jsonl",
+  "prompts_sha256": "7762f22a52fa254a",
+  "responses_dir": ".codeguard/external/elicitation/responses",
+  "prompts": 6,
+  "missing": [],
+  "constraints": "生成时未读取 .codeguard/corpus 下的任何原文、未联网检索原文；每条回答为单次问答的原始输出，未做人工改写；同一助手族也参与过本项目开发，因此本组样本只作为自有语料上的诱发试点，不替代外部数据集结论",
+  "target_license": "MIT",
+  "usage": "distribution",
+  "claim_limit": "本组样本没有预先断言的真实来源，命中只是候选；在双人标注完成前不得写成“检出 N 条真实泄漏”"
+ }
+}

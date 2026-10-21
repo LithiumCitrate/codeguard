@@ -1,0 +1,4414 @@
+{
+ "schema": "codeguard.eval/v1",
+ "generated_at": "2026-10-21T10:15:42Z",
+ "metadata": {
+  "tool": "codeguard",
+  "index_fingerprint": "f372f00281437744615a5e96f9200f94",
+  "index": {
+   "index_version": "1.2",
+   "documents": 4187,
+   "chunks": 67041,
+   "packages": 753,
+   "licenses": [
+    "AGPL-3.0-only",
+    "AGPL-3.0-or-later",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSD-4-Clause",
+    "EPL-2.0",
+    "GPL-2.0-only",
+    "GPL-2.0-or-later",
+    "GPL-3.0-only",
+    "GPL-3.0-or-later",
+    "ISC",
+    "LGPL-2.1",
+    "LGPL-3.0",
+    "MIT",
+    "MPL-2.0",
+    "UNKNOWN",
+    "Unlicense",
+    "WTFPL",
+    "Zlib"
+   ],
+   "params": {
+    "window": 48,
+    "stride": 24,
+    "min_tokens": 10,
+    "sketch_sizes": {
+     "role": 64,
+     "abs": 64,
+     "edge": 32,
+     "lit": 32
+    },
+    "active_layers": [
+     "role",
+     "abs",
+     "edge"
+    ]
+   },
+   "band_plan": {
+    "role": 12,
+    "abs": 12,
+    "edge": 6,
+    "lit": 4
+   },
+   "sketch_bytes_per_chunk": 160,
+   "payload_bytes": 18771480,
+   "payload_bytes_per_chunk": 280,
+   "buckets": 1366766,
+   "built_at": 1792560097
+  },
+  "model": "logistic-regression",
+  "corpus": "LiCoEval reference originals (local evaluation index)"
+ },
+ "settings": {
+  "fail_on": [
+   "S3",
+   "S4"
+  ],
+  "min_span_prob": 0.55,
+  "top_verify": 4,
+  "corroborate_coverage": 0.15,
+  "corroborate_verbatim": 20,
+  "corroborate_confidence": 0.75,
+  "use_idf": true
+ },
+ "summary": {
+  "samples": 47,
+  "clean": 0,
+  "copied": 47,
+  "clean_blocking": 0,
+  "clean_blocking_rate": null,
+  "clean_blocking_upper95": null,
+  "clean_any_finding": 0,
+  "clean_s2_or_higher": 0,
+  "copied_attributed": 36,
+  "copied_attribution_rate": 0.766,
+  "copied_detected": 6,
+  "copied_detection_rate": 0.1277,
+  "copied_top1": 21,
+  "copied_top1_rate": 0.4468,
+  "risk_counts": {
+   "S0": 43,
+   "S1": 63,
+   "S2": 1,
+   "S3": 2,
+   "S4": 5
+  },
+  "latency_ms": {
+   "p50": 97.43,
+   "p95": 363.84,
+   "max": 1149.57,
+   "mean": 158.19
+  },
+  "total_spans": 456,
+  "matched_spans": 348
+ },
+ "samples": [
+  {
+   "id": "leak-005165af96df953b",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 3,
+   "matched_spans": 1,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 79.22,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-005165af",
+     "path": "scikit-learn_scikit-learn/005165af96df953b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8495,
+     "coverage": 0.3333,
+     "matched_spans": 1,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-0205340e71baf62c",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 42,
+   "matched_spans": 38,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 722.19,
+   "findings": [
+    {
+     "package": "Ao-Lee_FacialVarification",
+     "version": "gpt-4o-bab406a8",
+     "path": "Ao-Lee_FacialVarification/bab406a8cf2c7c26.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9945,
+     "coverage": 0.5,
+     "matched_spans": 21,
+     "verbatim_run": 39,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "Ao-Lee_FacialVarification",
+     "version": "gpt-4o-0205340e",
+     "path": "Ao-Lee_FacialVarification/0205340e71baf62c.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9398,
+     "coverage": 0.3095,
+     "matched_spans": 13,
+     "verbatim_run": 34,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_models",
+     "version": "gpt-4o-2f690e8d",
+     "path": "tensorflow_models/2f690e8d2f70ecde.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6835,
+     "coverage": 0.0714,
+     "matched_spans": 3,
+     "verbatim_run": 43,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_models",
+     "version": "gpt-4o-3017768a",
+     "path": "tensorflow_models/3017768ad3d1c313.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5509,
+     "coverage": 0.0238,
+     "matched_spans": 1,
+     "verbatim_run": 11,
+     "verdict": "compatible",
+     "corroborated": false
+    }
+   ]
+  },
+  {
+   "id": "leak-063c525d98cd91bb",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 15,
+   "matched_spans": 13,
+   "finding_count": 5,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 313.36,
+   "findings": [
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-94c4b0db",
+     "path": "gitlab.com_armbiant_pytorch-nlp/94c4b0db9a13d589.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9875,
+     "coverage": 0.3333,
+     "matched_spans": 5,
+     "verbatim_run": 37,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-9936e720",
+     "path": "gitlab.com_armbiant_pytorch-nlp/9936e72030496a35.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8598,
+     "coverage": 0.2,
+     "matched_spans": 3,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-b9b68371",
+     "path": "gitlab.com_armbiant_pytorch-nlp/b9b6837193dce194.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8488,
+     "coverage": 0.2,
+     "matched_spans": 3,
+     "verbatim_run": 45,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-f956462d",
+     "path": "gitlab.com_armbiant_pytorch-nlp/f956462ddbfff09d.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7151,
+     "coverage": 0.0667,
+     "matched_spans": 1,
+     "verbatim_run": 37,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-063c525d",
+     "path": "gitlab.com_armbiant_pytorch-nlp/063c525d98cd91bb.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6894,
+     "coverage": 0.0667,
+     "matched_spans": 1,
+     "verbatim_run": 44,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-0a82a92bd4ea80c3",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 2,
+   "matched_spans": 2,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 36.07,
+   "findings": [
+    {
+     "package": "shenweichen_DeepCTR",
+     "version": "gpt-4o-b3554993",
+     "path": "shenweichen_DeepCTR/b3554993063ad297.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9988,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "princewen_tensorflow_practice",
+     "version": "gpt-4o-0a82a92b",
+     "path": "princewen_tensorflow_practice/0a82a92bd4ea80c3.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9978,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-0b83cf315f51ed82",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 4,
+   "finding_count": 2,
+   "max_risk": "S3",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 81.1,
+   "findings": [
+    {
+     "package": "mozilla_gecko-dev",
+     "version": "gpt-4o-0b83cf31",
+     "path": "mozilla_gecko-dev/0b83cf315f51ed82.py",
+     "license": "MPL-2.0",
+     "risk": "S3",
+     "risk_label": "高风险：需按 copyleft 条款开源或替换",
+     "confidence": 0.9984,
+     "coverage": 0.75,
+     "matched_spans": 3,
+     "verbatim_run": 48,
+     "verdict": "conditional",
+     "corroborated": true
+    },
+    {
+     "package": "mozilla_gecko-dev",
+     "version": "gpt-4o-1e4f4783",
+     "path": "mozilla_gecko-dev/1e4f4783b0325734.py",
+     "license": "MPL-2.0",
+     "risk": "S3",
+     "risk_label": "高风险：需按 copyleft 条款开源或替换",
+     "confidence": 0.9026,
+     "coverage": 0.25,
+     "matched_spans": 1,
+     "verbatim_run": 42,
+     "verdict": "conditional",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-0da0144172703b6b",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 184.06,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-95da2ea1",
+     "path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.997,
+     "coverage": 0.4444,
+     "matched_spans": 4,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-933c9d02",
+     "path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8272,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-3b91de32",
+     "path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7442,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-0da01441",
+     "path": "scikit-learn_scikit-learn/0da0144172703b6b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7061,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 25,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-13d07a9a7e71afae",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 8,
+   "matched_spans": 7,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 124.25,
+   "findings": [
+    {
+     "package": "hoppaq_masktextspotter.caffe2",
+     "version": "gpt-4o-d972ba3e",
+     "path": "hoppaq_masktextspotter.caffe2/d972ba3e3a98cd05.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 0.5,
+     "matched_spans": 4,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ruotianluo_pytorch-faster-rcnn",
+     "version": "gpt-4o-35c00596",
+     "path": "ruotianluo_pytorch-faster-rcnn/35c00596f96319b6.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7809,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "apache_incubator-mxnet",
+     "version": "gpt-4o-0ba7f7ea",
+     "path": "apache_incubator-mxnet/0ba7f7eaf843b4a7.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6932,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 32,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "pjreddie_darknet",
+     "version": "gpt-4o-13d07a9a",
+     "path": "pjreddie_darknet/13d07a9a7e71afae.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6787,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 34,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-1e7d53acf8e9b8e0",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 15,
+   "matched_spans": 9,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 366.08,
+   "findings": [
+    {
+     "package": "googlesamples_assistant-sdk-python",
+     "version": "gpt-4o-1e7d53ac",
+     "path": "googlesamples_assistant-sdk-python/1e7d53acf8e9b8e0.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9561,
+     "coverage": 0.6,
+     "matched_spans": 9,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-259c8f1c13ee3c4e",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 6,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 127.11,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-58e2dfbe",
+     "path": "scikit-learn_scikit-learn/58e2dfbefccb5b25.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.996,
+     "coverage": 0.8333,
+     "matched_spans": 5,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-5cb44df0",
+     "path": "scikit-learn_scikit-learn/5cb44df0f70fc987.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7524,
+     "coverage": 0.1667,
+     "matched_spans": 1,
+     "verbatim_run": 22,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-265538ed37984464",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 5,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 242.87,
+   "findings": [
+    {
+     "package": "ascentai_rgan",
+     "version": "gpt-4o-265538ed",
+     "path": "ascentai_rgan/265538ed37984464.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9817,
+     "coverage": 0.3333,
+     "matched_spans": 3,
+     "verbatim_run": 45,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-88f3fb42",
+     "path": "tensorflow_tensorflow/88f3fb428f896afd.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8473,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 40,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-35c00596f96319b6",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 8,
+   "matched_spans": 7,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 63.74,
+   "findings": [
+    {
+     "package": "hoppaq_masktextspotter.caffe2",
+     "version": "gpt-4o-d972ba3e",
+     "path": "hoppaq_masktextspotter.caffe2/d972ba3e3a98cd05.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 0.5,
+     "matched_spans": 4,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ruotianluo_pytorch-faster-rcnn",
+     "version": "gpt-4o-35c00596",
+     "path": "ruotianluo_pytorch-faster-rcnn/35c00596f96319b6.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7809,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "apache_incubator-mxnet",
+     "version": "gpt-4o-0ba7f7ea",
+     "path": "apache_incubator-mxnet/0ba7f7eaf843b4a7.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6932,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 32,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "pjreddie_darknet",
+     "version": "gpt-4o-13d07a9a",
+     "path": "pjreddie_darknet/13d07a9a7e71afae.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6787,
+     "coverage": 0.125,
+     "matched_spans": 1,
+     "verbatim_run": 34,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-3b91de32b1c9f3c8",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 8,
+   "finding_count": 5,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 79.85,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-798ae8c0",
+     "path": "scikit-learn_scikit-learn/798ae8c02d0df4d5.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9956,
+     "coverage": 0.4444,
+     "matched_spans": 4,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-3b91de32",
+     "path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7442,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-0da01441",
+     "path": "scikit-learn_scikit-learn/0da0144172703b6b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7061,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 25,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-95da2ea1",
+     "path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7052,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 25,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-933c9d02",
+     "path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7051,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-523a3e34b2733f7e",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 2,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 121.85,
+   "findings": [
+    {
+     "package": "jwyang_faster-rcnn.pytorch",
+     "version": "gpt-4o-523a3e34",
+     "path": "jwyang_faster-rcnn.pytorch/523a3e34b2733f7e.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9883,
+     "coverage": 0.5,
+     "matched_spans": 2,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-58e2dfbefccb5b25",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 6,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 65.43,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-58e2dfbe",
+     "path": "scikit-learn_scikit-learn/58e2dfbefccb5b25.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.996,
+     "coverage": 0.8333,
+     "matched_spans": 5,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-5cb44df0",
+     "path": "scikit-learn_scikit-learn/5cb44df0f70fc987.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7524,
+     "coverage": 0.1667,
+     "matched_spans": 1,
+     "verbatim_run": 22,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-5a3a5cc225bc605d",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 2,
+   "matched_spans": 2,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 18.61,
+   "findings": [
+    {
+     "package": "shenweichen_DeepCTR",
+     "version": "gpt-4o-b3554993",
+     "path": "shenweichen_DeepCTR/b3554993063ad297.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9988,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "princewen_tensorflow_practice",
+     "version": "gpt-4o-0a82a92b",
+     "path": "princewen_tensorflow_practice/0a82a92bd4ea80c3.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9978,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-5cb44df0f70fc987",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 6,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 57.93,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-58e2dfbe",
+     "path": "scikit-learn_scikit-learn/58e2dfbefccb5b25.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.993,
+     "coverage": 0.8333,
+     "matched_spans": 5,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-5cb44df0",
+     "path": "scikit-learn_scikit-learn/5cb44df0f70fc987.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6784,
+     "coverage": 0.1667,
+     "matched_spans": 1,
+     "verbatim_run": 18,
+     "verdict": "compatible",
+     "corroborated": false
+    }
+   ]
+  },
+  {
+   "id": "leak-707625aaa76a12ca",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 13,
+   "matched_spans": 13,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 121.11,
+   "findings": [
+    {
+     "package": "balancap_SSD-Tensorflow",
+     "version": "gpt-4o-3a17a7f5",
+     "path": "balancap_SSD-Tensorflow/3a17a7f50771322b.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 0.9231,
+     "matched_spans": 12,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensor2tensor",
+     "version": "gpt-4o-660d3c94",
+     "path": "tensorflow_tensor2tensor/660d3c943c9e0206.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7107,
+     "coverage": 0.0769,
+     "matched_spans": 1,
+     "verbatim_run": 38,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-798ae8c02d0df4d5",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 10,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 106.64,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-95da2ea1",
+     "path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9617,
+     "coverage": 0.3,
+     "matched_spans": 3,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-798ae8c0",
+     "path": "scikit-learn_scikit-learn/798ae8c02d0df4d5.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8502,
+     "coverage": 0.2,
+     "matched_spans": 2,
+     "verbatim_run": 43,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-933c9d02",
+     "path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7984,
+     "coverage": 0.2,
+     "matched_spans": 2,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-3b91de32",
+     "path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7359,
+     "coverage": 0.1,
+     "matched_spans": 1,
+     "verbatim_run": 37,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-7afc0b3ab029ddc3",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 17,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S2",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 272.89,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-29707ac9",
+     "path": "scikit-learn_scikit-learn/29707ac94cf70174.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8802,
+     "coverage": 0.2353,
+     "matched_spans": 4,
+     "verbatim_run": 42,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-7afc0b3a",
+     "path": "scikit-learn_scikit-learn/7afc0b3ab029ddc3.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6946,
+     "coverage": 0.0588,
+     "matched_spans": 1,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-954a0075",
+     "path": "scikit-learn_scikit-learn/954a0075dd660b9c.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6739,
+     "coverage": 0.0588,
+     "matched_spans": 1,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "mjg_PyX-svn",
+     "version": "gpt-4o-03d5f74e",
+     "path": "mjg_PyX-svn/03d5f74ee1a1cbbe.py",
+     "license": "GPL-2.0-or-later",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.54,
+     "coverage": 0.1176,
+     "matched_spans": 2,
+     "verbatim_run": 2,
+     "verdict": "incompatible",
+     "corroborated": false
+    }
+   ]
+  },
+  {
+   "id": "leak-88f3fb428f896afd",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 198.85,
+   "findings": [
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-88f3fb42",
+     "path": "tensorflow_tensorflow/88f3fb428f896afd.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9975,
+     "coverage": 0.3333,
+     "matched_spans": 3,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-aa521eab",
+     "path": "tensorflow_tensorflow/aa521eabb1fc2fea.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8712,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 46,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ascentai_rgan",
+     "version": "gpt-4o-265538ed",
+     "path": "ascentai_rgan/265538ed37984464.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8553,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 38,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_models",
+     "version": "gpt-4o-0301b969",
+     "path": "tensorflow_models/0301b969716fe473.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4885,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 4,
+     "verdict": "compatible",
+     "corroborated": false
+    }
+   ]
+  },
+  {
+   "id": "leak-8c63b19f3703fead",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 13,
+   "matched_spans": 13,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 97.43,
+   "findings": [
+    {
+     "package": "balancap_SSD-Tensorflow",
+     "version": "gpt-4o-3a17a7f5",
+     "path": "balancap_SSD-Tensorflow/3a17a7f50771322b.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9999,
+     "coverage": 0.9231,
+     "matched_spans": 12,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensor2tensor",
+     "version": "gpt-4o-660d3c94",
+     "path": "tensorflow_tensor2tensor/660d3c943c9e0206.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7107,
+     "coverage": 0.0769,
+     "matched_spans": 1,
+     "verbatim_run": 38,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-933c9d021919d92e",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 70.82,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-95da2ea1",
+     "path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.997,
+     "coverage": 0.4444,
+     "matched_spans": 4,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-933c9d02",
+     "path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8272,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-3b91de32",
+     "path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7442,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-0da01441",
+     "path": "scikit-learn_scikit-learn/0da0144172703b6b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7061,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 25,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-94c4b0db9a13d589",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 17,
+   "matched_spans": 15,
+   "finding_count": 3,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 256.73,
+   "findings": [
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-b9b68371",
+     "path": "gitlab.com_armbiant_pytorch-nlp/b9b6837193dce194.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9932,
+     "coverage": 0.5294,
+     "matched_spans": 9,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-94c4b0db",
+     "path": "gitlab.com_armbiant_pytorch-nlp/94c4b0db9a13d589.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.953,
+     "coverage": 0.2941,
+     "matched_spans": 5,
+     "verbatim_run": 42,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-9936e720",
+     "path": "gitlab.com_armbiant_pytorch-nlp/9936e72030496a35.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7116,
+     "coverage": 0.0588,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-95da2ea129401c6a",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 8,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 73.38,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-95da2ea1",
+     "path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.997,
+     "coverage": 0.4444,
+     "matched_spans": 4,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-933c9d02",
+     "path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8272,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 30,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-3b91de32",
+     "path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7442,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-0da01441",
+     "path": "scikit-learn_scikit-learn/0da0144172703b6b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7061,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 25,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-96303f3984c418ce",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 8,
+   "matched_spans": 7,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 179.9,
+   "findings": [
+    {
+     "package": "matveevi_temp",
+     "version": "gpt-4o-96303f39",
+     "path": "matveevi_temp/96303f3984c418ce.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9985,
+     "coverage": 0.375,
+     "matched_spans": 3,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_models",
+     "version": "gpt-4o-018e2f26",
+     "path": "tensorflow_models/018e2f26ea57ab40.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9919,
+     "coverage": 0.5,
+     "matched_spans": 4,
+     "verbatim_run": 47,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-9d8debef7cbc172b",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 7,
+   "matched_spans": 7,
+   "finding_count": 1,
+   "max_risk": "S4",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 130.52,
+   "findings": [
+    {
+     "package": "jsculsp_data-structures-and-algorithms-in-python",
+     "version": "gpt-4o-9d8debef",
+     "path": "jsculsp_data-structures-and-algorithms-in-python/9d8debef7cbc172b.py",
+     "license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+     "confidence": 0.9938,
+     "coverage": 1.0,
+     "matched_spans": 7,
+     "verbatim_run": 44,
+     "verdict": "incompatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-a2e4b2e0fa396143",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 7,
+   "matched_spans": 6,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 146.02,
+   "findings": [
+    {
+     "package": "vlnguyen92_tfhybrid",
+     "version": "gpt-4o-8b01ac7f",
+     "path": "vlnguyen92_tfhybrid/8b01ac7fd498bfbc.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9938,
+     "coverage": 0.8571,
+     "matched_spans": 6,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-a57913f7c63c9ad5",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 9,
+   "matched_spans": 7,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 244.26,
+   "findings": [
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-80699509",
+     "path": "tensorflow_tensorflow/8069950925d41d64.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9829,
+     "coverage": 0.3333,
+     "matched_spans": 3,
+     "verbatim_run": 41,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-e9f1def4",
+     "path": "tensorflow_tensorflow/e9f1def48c462dcd.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8193,
+     "coverage": 0.2222,
+     "matched_spans": 2,
+     "verbatim_run": 22,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_models",
+     "version": "gpt-4o-71e13240",
+     "path": "tensorflow_models/71e13240a364a39d.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7582,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 43,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ogvalt_min-tfs-client",
+     "version": "gpt-4o-38e3e17a",
+     "path": "ogvalt_min-tfs-client/38e3e17a88424735.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7541,
+     "coverage": 0.1111,
+     "matched_spans": 1,
+     "verbatim_run": 37,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-aa521eabb1fc2fea",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 8,
+   "matched_spans": 4,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 130.84,
+   "findings": [
+    {
+     "package": "ascentai_rgan",
+     "version": "gpt-4o-265538ed",
+     "path": "ascentai_rgan/265538ed37984464.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8918,
+     "coverage": 0.25,
+     "matched_spans": 2,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-aa521eab",
+     "path": "tensorflow_tensorflow/aa521eabb1fc2fea.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.885,
+     "coverage": 0.25,
+     "matched_spans": 2,
+     "verbatim_run": 40,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-adda1f5e564fdcf6",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 2,
+   "matched_spans": 2,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 14.34,
+   "findings": [
+    {
+     "package": "shenweichen_DeepCTR",
+     "version": "gpt-4o-b3554993",
+     "path": "shenweichen_DeepCTR/b3554993063ad297.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9988,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "princewen_tensorflow_practice",
+     "version": "gpt-4o-0a82a92b",
+     "path": "princewen_tensorflow_practice/0a82a92bd4ea80c3.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9978,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-b174956e6041db91",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 2,
+   "matched_spans": 2,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 14.48,
+   "findings": [
+    {
+     "package": "shenweichen_DeepCTR",
+     "version": "gpt-4o-b3554993",
+     "path": "shenweichen_DeepCTR/b3554993063ad297.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9988,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "princewen_tensorflow_practice",
+     "version": "gpt-4o-0a82a92b",
+     "path": "princewen_tensorflow_practice/0a82a92bd4ea80c3.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9978,
+     "coverage": 0.5,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-b3bdb65a5b5efe06",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 3,
+   "matched_spans": 2,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 40.15,
+   "findings": [
+    {
+     "package": "gitlab.com_quicla_platform_cts",
+     "version": "gpt-4o-b3bdb65a",
+     "path": "gitlab.com_quicla_platform_cts/b3bdb65a5b5efe06.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9547,
+     "coverage": 0.6667,
+     "matched_spans": 2,
+     "verbatim_run": 22,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-b990893eda84e69e",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 2,
+   "finding_count": 1,
+   "max_risk": "S4",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 86.97,
+   "findings": [
+    {
+     "package": "calamares_calamares",
+     "version": "gpt-4o-b990893e",
+     "path": "calamares_calamares/b990893eda84e69e.py",
+     "license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+     "confidence": 0.8756,
+     "coverage": 0.5,
+     "matched_spans": 2,
+     "verbatim_run": 19,
+     "verdict": "incompatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-b9b6837193dce194",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 17,
+   "matched_spans": 14,
+   "finding_count": 3,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 150.81,
+   "findings": [
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-b9b68371",
+     "path": "gitlab.com_armbiant_pytorch-nlp/b9b6837193dce194.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9932,
+     "coverage": 0.4118,
+     "matched_spans": 7,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-94c4b0db",
+     "path": "gitlab.com_armbiant_pytorch-nlp/94c4b0db9a13d589.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.953,
+     "coverage": 0.2941,
+     "matched_spans": 5,
+     "verbatim_run": 42,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_armbiant_pytorch-nlp",
+     "version": "gpt-4o-9936e720",
+     "path": "gitlab.com_armbiant_pytorch-nlp/9936e72030496a35.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7733,
+     "coverage": 0.1176,
+     "matched_spans": 2,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-ba67517b765e2190",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 19,
+   "matched_spans": 11,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 358.6,
+   "findings": [
+    {
+     "package": "hoppaq_masktextspotter.caffe2",
+     "version": "gpt-4o-ba67517b",
+     "path": "hoppaq_masktextspotter.caffe2/ba67517b765e2190.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9961,
+     "coverage": 0.5789,
+     "matched_spans": 11,
+     "verbatim_run": 46,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-cbe2f672e4f4ad03",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 3,
+   "finding_count": 2,
+   "max_risk": "S4",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 38.15,
+   "findings": [
+    {
+     "package": "GeoNode_geonode",
+     "version": "gpt-4o-cbe2f672",
+     "path": "GeoNode_geonode/cbe2f672e4f4ad03.py",
+     "license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+     "confidence": 0.8813,
+     "coverage": 0.5,
+     "matched_spans": 2,
+     "verbatim_run": 24,
+     "verdict": "incompatible",
+     "corroborated": true
+    },
+    {
+     "package": "chromium.googlesource.com_chromium_src",
+     "version": "gpt-4o-ba5283b2",
+     "path": "chromium.googlesource.com_chromium_src/ba5283b20aeec7cb.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8183,
+     "coverage": 0.25,
+     "matched_spans": 1,
+     "verbatim_run": 17,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-d972ba3e3a98cd05",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 7,
+   "matched_spans": 6,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 60.15,
+   "findings": [
+    {
+     "package": "hoppaq_masktextspotter.caffe2",
+     "version": "gpt-4o-d972ba3e",
+     "path": "hoppaq_masktextspotter.caffe2/d972ba3e3a98cd05.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.993,
+     "coverage": 0.4286,
+     "matched_spans": 3,
+     "verbatim_run": 46,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ruotianluo_pytorch-faster-rcnn",
+     "version": "gpt-4o-35c00596",
+     "path": "ruotianluo_pytorch-faster-rcnn/35c00596f96319b6.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7996,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "apache_incubator-mxnet",
+     "version": "gpt-4o-0ba7f7ea",
+     "path": "apache_incubator-mxnet/0ba7f7eaf843b4a7.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7369,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "pjreddie_darknet",
+     "version": "gpt-4o-13d07a9a",
+     "path": "pjreddie_darknet/13d07a9a7e71afae.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6851,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-dc6235b4da79859c",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 7,
+   "matched_spans": 6,
+   "finding_count": 4,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 56.91,
+   "findings": [
+    {
+     "package": "hoppaq_masktextspotter.caffe2",
+     "version": "gpt-4o-d972ba3e",
+     "path": "hoppaq_masktextspotter.caffe2/d972ba3e3a98cd05.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.993,
+     "coverage": 0.4286,
+     "matched_spans": 3,
+     "verbatim_run": 46,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "ruotianluo_pytorch-faster-rcnn",
+     "version": "gpt-4o-35c00596",
+     "path": "ruotianluo_pytorch-faster-rcnn/35c00596f96319b6.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7996,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "gitlab.com_inverseai_Microsoft_CNTK",
+     "version": "gpt-4o-dc6235b4",
+     "path": "gitlab.com_inverseai_Microsoft_CNTK/dc6235b4da79859c.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7543,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 33,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "pjreddie_darknet",
+     "version": "gpt-4o-13d07a9a",
+     "path": "pjreddie_darknet/13d07a9a7e71afae.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6008,
+     "coverage": 0.1429,
+     "matched_spans": 1,
+     "verbatim_run": 17,
+     "verdict": "compatible",
+     "corroborated": false
+    }
+   ]
+  },
+  {
+   "id": "leak-e0d296846255ddca",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 3,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 93.62,
+   "findings": [
+    {
+     "package": "vlnguyen92_tfhybrid",
+     "version": "gpt-4o-8b01ac7f",
+     "path": "vlnguyen92_tfhybrid/8b01ac7fd498bfbc.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9927,
+     "coverage": 0.5,
+     "matched_spans": 3,
+     "verbatim_run": 38,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-e68c171d9c7e33d7",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 12,
+   "matched_spans": 8,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 245.12,
+   "findings": [
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-a5deec87",
+     "path": "tensorflow_tensorflow/a5deec87af7729c2.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9892,
+     "coverage": 0.5,
+     "matched_spans": 6,
+     "verbatim_run": 46,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-e68c171d",
+     "path": "tensorflow_tensorflow/e68c171d9c7e33d7.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8214,
+     "coverage": 0.1667,
+     "matched_spans": 2,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-e9eef7741875108f",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 2,
+   "finding_count": 1,
+   "max_risk": "S4",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 116.97,
+   "findings": [
+    {
+     "package": "jsculsp_data-structures-and-algorithms-in-python",
+     "version": "gpt-4o-e9eef774",
+     "path": "jsculsp_data-structures-and-algorithms-in-python/e9eef7741875108f.py",
+     "license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+     "confidence": 0.9984,
+     "coverage": 0.3333,
+     "matched_spans": 2,
+     "verbatim_run": 48,
+     "verdict": "incompatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-ebfaacb8a2c969c4",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 57,
+   "matched_spans": 26,
+   "finding_count": 3,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 1149.57,
+   "findings": [
+    {
+     "package": "tensorflow_tensorflow",
+     "version": "gpt-4o-ebfaacb8",
+     "path": "tensorflow_tensorflow/ebfaacb8a2c969c4.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.981,
+     "coverage": 0.4035,
+     "matched_spans": 23,
+     "verbatim_run": 45,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "hzy46_Deep-Learning-21-Examples",
+     "version": "gpt-4o-3ce59c7e",
+     "path": "hzy46_Deep-Learning-21-Examples/3ce59c7ea45207ab.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6722,
+     "coverage": 0.0351,
+     "matched_spans": 2,
+     "verbatim_run": 39,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "horovod_horovod",
+     "version": "gpt-4o-c76340c9",
+     "path": "horovod_horovod/c76340c9da995507.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6548,
+     "coverage": 0.0175,
+     "matched_spans": 1,
+     "verbatim_run": 36,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-eef13de1982b7e07",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 4,
+   "matched_spans": 3,
+   "finding_count": 1,
+   "max_risk": "S4",
+   "blocking": true,
+   "attributed": true,
+   "detected": true,
+   "top1": true,
+   "elapsed_ms": 67.11,
+   "findings": [
+    {
+     "package": "thakrah_Learning.Python",
+     "version": "gpt-4o-eef13de1",
+     "path": "thakrah_Learning.Python/eef13de1982b7e07.py",
+     "license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "risk_label": "严重：分发/网络服务与许可证条款直接冲突",
+     "confidence": 0.9993,
+     "coverage": 0.75,
+     "matched_spans": 3,
+     "verbatim_run": 48,
+     "verdict": "incompatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-f42eb9d83798c452",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 6,
+   "matched_spans": 6,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 51.47,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-58e2dfbe",
+     "path": "scikit-learn_scikit-learn/58e2dfbefccb5b25.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.996,
+     "coverage": 0.8333,
+     "matched_spans": 5,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-5cb44df0",
+     "path": "scikit-learn_scikit-learn/5cb44df0f70fc987.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7524,
+     "coverage": 0.1667,
+     "matched_spans": 1,
+     "verbatim_run": 22,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-f4a177c8771051a9",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 5,
+   "matched_spans": 5,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 71.45,
+   "findings": [
+    {
+     "package": "tensorflow_tfjs-examples",
+     "version": "gpt-4o-f4a177c8",
+     "path": "tensorflow_tfjs-examples/f4a177c8771051a9.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9981,
+     "coverage": 1.0,
+     "matched_spans": 5,
+     "verbatim_run": 40,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-f831a1326179a9e8",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 3,
+   "matched_spans": 3,
+   "finding_count": 2,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": true,
+   "detected": false,
+   "top1": true,
+   "elapsed_ms": 38.33,
+   "findings": [
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-f831a132",
+     "path": "scikit-learn_scikit-learn/f831a1326179a9e8.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9983,
+     "coverage": 0.6667,
+     "matched_spans": 2,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    },
+    {
+     "package": "scikit-learn_scikit-learn",
+     "version": "gpt-4o-005165af",
+     "path": "scikit-learn_scikit-learn/005165af96df953b.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8986,
+     "coverage": 0.3333,
+     "matched_spans": 1,
+     "verbatim_run": 37,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  },
+  {
+   "id": "leak-fab6c443cf3d2e97",
+   "label": "copied",
+   "language": "python",
+   "usage": "distribution",
+   "total_spans": 8,
+   "matched_spans": 8,
+   "finding_count": 1,
+   "max_risk": "S1",
+   "blocking": false,
+   "attributed": false,
+   "detected": false,
+   "top1": false,
+   "elapsed_ms": 67.44,
+   "findings": [
+    {
+     "package": "vlnguyen92_tfhybrid",
+     "version": "gpt-4o-8b01ac7f",
+     "path": "vlnguyen92_tfhybrid/8b01ac7fd498bfbc.py",
+     "license": "Apache-2.0",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9963,
+     "coverage": 1.0,
+     "matched_spans": 8,
+     "verbatim_run": 48,
+     "verdict": "compatible",
+     "corroborated": true
+    }
+   ]
+  }
+ ],
+ "notes": [
+  "本评测只覆盖清单中的样本与当前语料；未出现的语言、项目或生成方式不受此结果保证。",
+  "复制样本按预期来源计算归因；未指定 source_package 的样本只统计阻断。",
+  "本清单 47 条正例里只有 6 条原文是 copyleft（5 条 GPL-3.0-or-later、1 条 MPL-2.0），其余 41 条原文为 Apache-2.0/BSD-3-Clause/MIT，按 MIT 目标分发不构成许可证冲突；因此“达到阻断阈值 6/47”只对这 6 条子集有意义，子集阻断为 6/6。",
+  "通用渲染器的“未通过样本”按 copied 且未阻断定义，对宽松许可正例而言未阻断是预期结果，不是失败；请按“出现任意命中 47/47”与“归因到预期项目 39/47”读这张表。"
+ ],
+ "dataset": {
+  "name": "LiCoEval real regurgitation cases (gpt-4o)",
+  "paper": "LiCoEval: Evaluating LLMs on License Compliance in Code Generation, Xu/Gao/He/Zhou, ICSE 2025, arXiv:2408.02487",
+  "repo": "https://github.com/osslab-pku/LiCoEval",
+  "commit": "cfa26b4e5f108cccb49209f08c36f65d0b3bb658",
+  "url": "https://github.com/osslab-pku/LiCoEval",
+  "sha256": "f3561838ff8c9d8224d026edbffbe6de47cbab90327f44585a16ef2e120c96e0",
+  "license": "AGPL-3.0-or-later",
+  "files": {
+   "LICENSE": {
+    "url": "https://raw.githubusercontent.com/osslab-pku/LiCoEval/main/LICENSE",
+    "sha256": "6f1e622c82a380075843bb084a7ec3b1f1d12a4a02526d75e78b0924a860aa75"
+   },
+   "benchmark.json": {
+    "url": "https://raw.githubusercontent.com/osslab-pku/LiCoEval/main/benchmark.json",
+    "sha256": "40c7d32f93d47d702fd4c786603e2407631b0c196f7940075cfed53c887f559b"
+   },
+   "gpt-4o_striking_sim.json": {
+    "url": "https://raw.githubusercontent.com/osslab-pku/LiCoEval/main/res/gpt-4o_striking_sim.json",
+    "sha256": "f3561838ff8c9d8224d026edbffbe6de47cbab90327f44585a16ef2e120c96e0"
+   }
+  },
+  "reference_originals": 4187,
+  "striking_cases_published": 47,
+  "cases_evaluated": 47,
+  "model": "gpt-4o",
+  "usage": "本地评测；数据集原文与模型输出不随作品分发，报告只记录摘要与指标"
+ },
+ "protocol": {
+  "index": "参考语料全部入索引；每条正例的真实原文只是其中一个文档，其余为干扰项",
+  "target_license": "MIT",
+  "usage": "distribution",
+  "corpus_document": "数据集 init_header+header+body 代码窗口拼接，不是完整原文件",
+  "attribution": "命中预期项目/路径记为归因；命中同摘要文本的其它项目记为等效来源",
+  "limits": [
+   "正例由论文按自身相似度阈值筛出（gpt-4o 的 47 条 striking-similarity），不是模型全部输出；",
+   "被评模型与提示词由第三方论文固定，我们无法审计该模型的训练数据；",
+   "语料成员条件是构造性的：真实原文必然在索引内，所以这里测的是检出与归因能力，不是覆盖率上限；",
+   "宽松许可原文按 MIT 目标分发不构成许可证冲突，因此只计入溯源而不计入阻断。"
+  ]
+ },
+ "leak": {
+  "cases": 47,
+  "licence_census": {
+   "BSD-3-Clause": 12,
+   "Apache-2.0": 26,
+   "MPL-2.0": 1,
+   "MIT": 3,
+   "GPL-3.0-or-later": 5
+  },
+  "family_census": {
+   "permissive": 41,
+   "weak": 1,
+   "strong": 5
+  },
+  "all_attributed": {
+   "hits": 36,
+   "n": 47,
+   "rate": 0.766,
+   "lower95": 0.6425
+  },
+  "all_project_hit": {
+   "hits": 39,
+   "n": 47,
+   "rate": 0.8298,
+   "lower95": 0.7138
+  },
+  "level_census": {
+   "expected_doc": 36,
+   "same_project": 3,
+   "other_project": 8
+  },
+  "all_same_text": {
+   "hits": 36,
+   "n": 47,
+   "rate": 0.766,
+   "lower95": 0.6425
+  },
+  "all_equivalent_source": {
+   "hits": 36,
+   "n": 47,
+   "rate": 0.766,
+   "lower95": 0.6425
+  },
+  "all_top1": {
+   "hits": 21,
+   "n": 47,
+   "rate": 0.4468,
+   "lower95": 0.3223
+  },
+  "all_any_finding": {
+   "hits": 47,
+   "n": 47,
+   "rate": 1.0,
+   "lower95": 1.0
+  },
+  "copyleft_subset": {
+   "n": 6,
+   "blocking": {
+    "hits": 6,
+    "n": 6,
+    "rate": 1.0,
+    "lower95": 1.0
+   },
+   "attributed": {
+    "hits": 6,
+    "n": 6,
+    "rate": 1.0,
+    "lower95": 1.0
+   }
+  },
+  "permissive_subset": {
+   "n": 41,
+   "attributed": {
+    "hits": 30,
+    "n": 41,
+    "rate": 0.7317,
+    "lower95": 0.5952
+   }
+  },
+  "verbatim_run": {
+   "median": 48.0,
+   "max": 48,
+   "ge20": 46
+  },
+  "rank": {
+   "top1": 21,
+   "top3": 33,
+   "unranked": 11
+  },
+  "rows": [
+   {
+    "key": "005165af96df953b1aa0b1e6db62b2074c6c51ec",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7126,
+     "jaccard": 0.4531,
+     "max_sim": 0.7126
+    },
+    "answer_sha256": "6c235e7080a12337db7e9b4ae3ae24b219dc2709764b3f88a30f149edd61b5ec",
+    "doc_sha256": "8a8c0daaebc18b7b29803a0cb176e3916d2149d7e8ef1ef2e2fd5cd9d67810bc",
+    "doc_path": "scikit-learn_scikit-learn/005165af96df953b.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.8495,
+    "coverage": 0.3333,
+    "verbatim_run": 33,
+    "elapsed_ms": 79.22
+   },
+   {
+    "key": "0205340e71baf62cad4f2e281a9bfa1b328e3e1c",
+    "project": "Ao-Lee_FacialVarification",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7587,
+     "jaccard": 0.5742,
+     "max_sim": 0.77
+    },
+    "answer_sha256": "f8b910f7ddb60590e2840ef55d9bea26e6c53ea9165ef862d4919c94ff72c74d",
+    "doc_sha256": "389012e506e3ef05f53f24dd32709e05897b4ac134ca112d18786832a96a4415",
+    "doc_path": "Ao-Lee_FacialVarification/0205340e71baf62c.py",
+    "same_text_projects": [
+     "Ao-Lee_FacialVarification"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "Ao-Lee_FacialVarification",
+     "tensorflow_models"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 4,
+    "confidence": 0.9945,
+    "coverage": 0.5,
+    "verbatim_run": 43,
+    "elapsed_ms": 722.19
+   },
+   {
+    "key": "063c525d98cd91bbd5364dba809436f8aeed8233",
+    "project": "gitlab.com_armbiant_pytorch-nlp",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7836,
+     "jaccard": 0.6172,
+     "max_sim": 0.7836
+    },
+    "answer_sha256": "d777fee23b38966fb773a9b2fe8d41dff1a090979b05de956cbcbd41134b217e",
+    "doc_sha256": "ca27d78563d21eea0cc93bb5c5af7f1f88151397219696ae650dfd8da3b51fe3",
+    "doc_path": "gitlab.com_armbiant_pytorch-nlp/063c525d98cd91bb.py",
+    "same_text_projects": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 5,
+    "finding_count": 5,
+    "confidence": 0.9875,
+    "coverage": 0.3333,
+    "verbatim_run": 48,
+    "elapsed_ms": 313.36
+   },
+   {
+    "key": "0a82a92bd4ea80c34a5d60f0895ee711cd849453",
+    "project": "princewen_tensorflow_practice",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 1.0,
+     "jaccard": 1.0,
+     "max_sim": 1.0
+    },
+    "answer_sha256": "6354778e5a947aad1d2eeeb01b7b5ade7d314ad8f3995b95c1e174621254e005",
+    "doc_sha256": "8a28e865c28719a87e5024ce29ef0e4cd47a1cd26dd6142d2a547367f0737a8c",
+    "doc_path": "princewen_tensorflow_practice/0a82a92bd4ea80c3.py",
+    "same_text_projects": [
+     "princewen_tensorflow_practice"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "princewen_tensorflow_practice",
+     "shenweichen_DeepCTR"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 2,
+    "confidence": 0.9988,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 36.07
+   },
+   {
+    "key": "0b83cf315f51ed8290623fa1d6e0c86c46c84bc6",
+    "project": "mozilla_gecko-dev",
+    "license": "MPL-2.0",
+    "license_field": "mpl-2.0",
+    "license_family": "weak",
+    "paper": {
+     "bleu": 0.976,
+     "jaccard": 0.8633,
+     "max_sim": 0.976
+    },
+    "answer_sha256": "16b1dcffd2c278336304c9c01e82afb3b7dc6aae5a522b395199f5adcef34d2e",
+    "doc_sha256": "1862851707f76e76fa6e5856b27d7243ae55a0683266e8e687f967ab22473a48",
+    "doc_path": "mozilla_gecko-dev/0b83cf315f51ed82.py",
+    "same_text_projects": [
+     "mozilla_gecko-dev"
+    ],
+    "max_risk": "S3",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "mozilla_gecko-dev"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.9984,
+    "coverage": 0.75,
+    "verbatim_run": 48,
+    "elapsed_ms": 81.1
+   },
+   {
+    "key": "0da0144172703b6ba05ce9902ba7aff33a5144a9",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6578,
+     "jaccard": 0.6719,
+     "max_sim": 0.752
+    },
+    "answer_sha256": "80d8445465fe6213aba1606890fb45538e729ddd3b2fa853efec2066281b9ded",
+    "doc_sha256": "228372c65a16fa5f26d353e13ed3042a134dd9c4f35fb9251346f83ba54cb905",
+    "doc_path": "scikit-learn_scikit-learn/0da0144172703b6b.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 4,
+    "finding_count": 4,
+    "confidence": 0.997,
+    "coverage": 0.4444,
+    "verbatim_run": 48,
+    "elapsed_ms": 184.06
+   },
+   {
+    "key": "13d07a9a7e71afaea8d54c92915b62852a4c2c8b",
+    "project": "pjreddie_darknet",
+    "license": "MIT",
+    "license_field": "mit",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 1.0,
+     "jaccard": 1.0,
+     "max_sim": 1.0
+    },
+    "answer_sha256": "70c2bfed34e081249baadf72bfc5b62bb222971afe812d13930c238cd4637199",
+    "doc_sha256": "0e7e7f45165459d92618dd4f6eba55a1fc6799f694f30a6dd9a4a5b3df723c5f",
+    "doc_path": "pjreddie_darknet/13d07a9a7e71afae.py",
+    "same_text_projects": [
+     "pjreddie_darknet"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "apache_incubator-mxnet",
+     "hoppaq_masktextspotter.caffe2",
+     "pjreddie_darknet"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 4,
+    "finding_count": 4,
+    "confidence": 0.9981,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 124.25
+   },
+   {
+    "key": "1e7d53acf8e9b8e0df690efccc444e69c8972813",
+    "project": "googlesamples_assistant-sdk-python",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6658,
+     "jaccard": 0.3516,
+     "max_sim": 0.6658
+    },
+    "answer_sha256": "f1b046de580629395b0fc3ae2c61ad8475fa632670f5a2b2e5f8ac12f43dd1e5",
+    "doc_sha256": "fd2e6c1f11a47432aafd2affd191391f77da616c3a5f3fe06f8ca46189dc7281",
+    "doc_path": "googlesamples_assistant-sdk-python/1e7d53acf8e9b8e0.py",
+    "same_text_projects": [
+     "googlesamples_assistant-sdk-python"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "googlesamples_assistant-sdk-python"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9561,
+    "coverage": 0.6,
+    "verbatim_run": 33,
+    "elapsed_ms": 366.08
+   },
+   {
+    "key": "259c8f1c13ee3c4ef85c8c57adf935289544c088",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6584,
+     "jaccard": 0.6602,
+     "max_sim": 0.7289
+    },
+    "answer_sha256": "a00963bcd0b0ebbd0eeb62c2b8e22e8d464106af6be9e04e34c5f977174a545b",
+    "doc_sha256": "aa2ded5805430d50892508ed0f94c489f13061e15c8e15486ef497e7ec5a9423",
+    "doc_path": "scikit-learn_scikit-learn/259c8f1c13ee3c4e.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": true,
+    "same_text": false,
+    "level": "same_project",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.996,
+    "coverage": 0.8333,
+    "verbatim_run": 48,
+    "elapsed_ms": 127.11
+   },
+   {
+    "key": "265538ed37984464f47d5b4e20e34528f7382b7e",
+    "project": "ascentai_rgan",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.883,
+     "jaccard": 0.7695,
+     "max_sim": 0.883
+    },
+    "answer_sha256": "64db65c074c0a10037d9bcf7299acc68462ebb55d11b8213dd74ea8b09b2e6f5",
+    "doc_sha256": "ead290f8cc2ebbfb61ad3caf3f3e21660e81a5f6fb89edbaaaf67e02b0d43bdd",
+    "doc_path": "ascentai_rgan/265538ed37984464.py",
+    "same_text_projects": [
+     "ascentai_rgan"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "ascentai_rgan",
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.9817,
+    "coverage": 0.3333,
+    "verbatim_run": 45,
+    "elapsed_ms": 242.87
+   },
+   {
+    "key": "35c00596f96319b666fa1d2a4f3dc08e6af237a7",
+    "project": "ruotianluo_pytorch-faster-rcnn",
+    "license": "MIT",
+    "license_field": "mit",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 1.0,
+     "jaccard": 1.0,
+     "max_sim": 1.0
+    },
+    "answer_sha256": "533b7933bc0185428a1e8c34267d45a5ee8bc3090811bb9c546e32e89e32c6ac",
+    "doc_sha256": "7ea839dad866c326dcbff2e114b515a477dd6fea8b59019157d18f8f0355948c",
+    "doc_path": "ruotianluo_pytorch-faster-rcnn/35c00596f96319b6.py",
+    "same_text_projects": [
+     "ruotianluo_pytorch-faster-rcnn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "apache_incubator-mxnet",
+     "hoppaq_masktextspotter.caffe2",
+     "pjreddie_darknet"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 4,
+    "confidence": 0.9981,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 63.74
+   },
+   {
+    "key": "3b91de32b1c9f3c8f0fe9c12cace79c02f2051a6",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6372,
+     "jaccard": 0.5703,
+     "max_sim": 0.7238
+    },
+    "answer_sha256": "b19b17e0c8c3e3284c536925e0cb5dd63d62ceb981d515822c98802a6ca2407a",
+    "doc_sha256": "41940465120de3a1fd0f912fdf530b8973cde2c758ed4aed21f2feb708bef4fe",
+    "doc_path": "scikit-learn_scikit-learn/3b91de32b1c9f3c8.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 5,
+    "confidence": 0.9956,
+    "coverage": 0.4444,
+    "verbatim_run": 47,
+    "elapsed_ms": 79.85
+   },
+   {
+    "key": "523a3e34b2733f7eff9a63ada931f73e45ab5eb7",
+    "project": "jwyang_faster-rcnn.pytorch",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7664,
+     "jaccard": 0.5312,
+     "max_sim": 0.7664
+    },
+    "answer_sha256": "a33ceee7615a8aa00d455a3fa368a231af2b1fbe06d63ae0a715e9e4871b7bac",
+    "doc_sha256": "50d29535f6f85362391c6c63758ffd6fae28ca09330b7bee2f47edca40a3ddf5",
+    "doc_path": "jwyang_faster-rcnn.pytorch/523a3e34b2733f7e.py",
+    "same_text_projects": [
+     "jwyang_faster-rcnn.pytorch"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "jwyang_faster-rcnn.pytorch"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9883,
+    "coverage": 0.5,
+    "verbatim_run": 47,
+    "elapsed_ms": 121.85
+   },
+   {
+    "key": "58e2dfbefccb5b258ab63949f30a82631588f4ad",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6584,
+     "jaccard": 0.6602,
+     "max_sim": 0.7289
+    },
+    "answer_sha256": "a00963bcd0b0ebbd0eeb62c2b8e22e8d464106af6be9e04e34c5f977174a545b",
+    "doc_sha256": "2e264ea059f52c6c145e02bd2c57ebb1fd56bd8d400c85c16923a6716d733dcc",
+    "doc_path": "scikit-learn_scikit-learn/58e2dfbefccb5b25.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.996,
+    "coverage": 0.8333,
+    "verbatim_run": 48,
+    "elapsed_ms": 65.43
+   },
+   {
+    "key": "5a3a5cc225bc605dbeb09a2f7791decf0545fedd",
+    "project": "devsangwoo_tensor",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 1.0,
+     "jaccard": 1.0,
+     "max_sim": 1.0
+    },
+    "answer_sha256": "db33d73ece8bde2173ce8ef99b2b2d88bf005e74652b38953be4657400374884",
+    "doc_sha256": "c4e598755d4e0ce5b985ee21e015928944b5614ffe295e8d3cce74e13b5e8ed5",
+    "doc_path": "devsangwoo_tensor/5a3a5cc225bc605d.py",
+    "same_text_projects": [
+     "devsangwoo_tensor"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "princewen_tensorflow_practice",
+     "shenweichen_DeepCTR"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.9988,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 18.61
+   },
+   {
+    "key": "5cb44df0f70fc98759b71441e9c492cb64f7e018",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.5811,
+     "jaccard": 0.5352,
+     "max_sim": 0.6342
+    },
+    "answer_sha256": "daad957471c12d578d37da9a0529f93c341732839279973e1254a77c258282b2",
+    "doc_sha256": "32a673ac357c30340f5d4b67a95c556e15d90faa55bf3bdeccb08c8bb506caee",
+    "doc_path": "scikit-learn_scikit-learn/5cb44df0f70fc987.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 2,
+    "confidence": 0.993,
+    "coverage": 0.8333,
+    "verbatim_run": 48,
+    "elapsed_ms": 57.93
+   },
+   {
+    "key": "707625aaa76a12ca4c65edac7c921044b8a1bf90",
+    "project": "tensorflow_models",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7858,
+     "jaccard": 0.8867,
+     "max_sim": 0.8867
+    },
+    "answer_sha256": "614b7a6828f739e8b1122cb384ead58acec444fe416be62921c9197abe2449ac",
+    "doc_sha256": "9a5cdcb84ddb0b972636e637bb670c8bc13808f419f83a5e9eb78c4641b4c8a7",
+    "doc_path": "tensorflow_models/707625aaa76a12ca.py",
+    "same_text_projects": [
+     "tensorflow_models"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "balancap_SSD-Tensorflow",
+     "tensorflow_tensor2tensor"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.9999,
+    "coverage": 0.9231,
+    "verbatim_run": 48,
+    "elapsed_ms": 121.11
+   },
+   {
+    "key": "798ae8c02d0df4d592a4302568c93e650ef5df48",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6713,
+     "jaccard": 0.5117,
+     "max_sim": 0.6713
+    },
+    "answer_sha256": "54ba897161d939008fe7dab74a8eba7d48ebf88b9c4849d2a0dd9f25a7db1b91",
+    "doc_sha256": "f736698be8edd91144e91eb91b525ddb0b6c3f3fb06da9bc24e9fd3ad91bd434",
+    "doc_path": "scikit-learn_scikit-learn/798ae8c02d0df4d5.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 4,
+    "confidence": 0.9617,
+    "coverage": 0.3,
+    "verbatim_run": 47,
+    "elapsed_ms": 106.64
+   },
+   {
+    "key": "7afc0b3ab029ddc3ceba806b0108b023fc320f5d",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6992,
+     "jaccard": 0.3203,
+     "max_sim": 0.6992
+    },
+    "answer_sha256": "53c5325b2aaa41a082eb02a8eb3bfde4d264d515bc9e0a3a988643a0b3ac2b65",
+    "doc_sha256": "cc5c8a151e824655b1589cee840e7ee2af8a13b2424f7a165bd3a316b28ea271",
+    "doc_path": "scikit-learn_scikit-learn/7afc0b3ab029ddc3.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S2",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "mjg_PyX-svn",
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 4,
+    "confidence": 0.8802,
+    "coverage": 0.2353,
+    "verbatim_run": 42,
+    "elapsed_ms": 272.89
+   },
+   {
+    "key": "88f3fb428f896afd6cc32238c6470c3acf43f612",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7382,
+     "jaccard": 0.5352,
+     "max_sim": 0.7951
+    },
+    "answer_sha256": "205505b6fb2cfb4f283f1846db8e8faf942601b5e19d2445271aec2ac5468e28",
+    "doc_sha256": "93192863d4f8791ce556f0842fbbf1021903c369fc01e2f6489d190c2bbceafe",
+    "doc_path": "tensorflow_tensorflow/88f3fb428f896afd.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "ascentai_rgan",
+     "tensorflow_models",
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 4,
+    "confidence": 0.9975,
+    "coverage": 0.3333,
+    "verbatim_run": 48,
+    "elapsed_ms": 198.85
+   },
+   {
+    "key": "8c63b19f3703fead7ed046b942de1f82594f58fa",
+    "project": "tensorflow_models",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7858,
+     "jaccard": 0.8867,
+     "max_sim": 0.8867
+    },
+    "answer_sha256": "614b7a6828f739e8b1122cb384ead58acec444fe416be62921c9197abe2449ac",
+    "doc_sha256": "537a52d89de3c31c72146040b924ed8e2aad39a2b1c983874a6a289faea7f317",
+    "doc_path": "tensorflow_models/8c63b19f3703fead.py",
+    "same_text_projects": [
+     "tensorflow_models"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "balancap_SSD-Tensorflow",
+     "tensorflow_tensor2tensor"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.9999,
+    "coverage": 0.9231,
+    "verbatim_run": 48,
+    "elapsed_ms": 97.43
+   },
+   {
+    "key": "933c9d021919d92ed46a48a8acf5331f439e04f2",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.5917,
+     "jaccard": 0.6328,
+     "max_sim": 0.7
+    },
+    "answer_sha256": "80d8445465fe6213aba1606890fb45538e729ddd3b2fa853efec2066281b9ded",
+    "doc_sha256": "25f73b82dcb202b58b955720062f91cb13bcc8e659103d48de289837ec118f9e",
+    "doc_path": "scikit-learn_scikit-learn/933c9d021919d92e.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 4,
+    "confidence": 0.997,
+    "coverage": 0.4444,
+    "verbatim_run": 48,
+    "elapsed_ms": 70.82
+   },
+   {
+    "key": "94c4b0db9a13d5891049637c3fd62fd0b8bfaafb",
+    "project": "gitlab.com_armbiant_pytorch-nlp",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.9395,
+     "jaccard": 0.9062,
+     "max_sim": 0.9395
+    },
+    "answer_sha256": "02c867aa111213eaacafe792e7a0e6869bd5177da1947136c3299d912324da3a",
+    "doc_sha256": "b99d413862f2f7f98319e4ac79eb82b3ae5af710ce85b86d44935157fad72482",
+    "doc_path": "gitlab.com_armbiant_pytorch-nlp/94c4b0db9a13d589.py",
+    "same_text_projects": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 3,
+    "confidence": 0.9932,
+    "coverage": 0.5294,
+    "verbatim_run": 48,
+    "elapsed_ms": 256.73
+   },
+   {
+    "key": "95da2ea129401c6a5d4906d047f914994fda1176",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6578,
+     "jaccard": 0.6719,
+     "max_sim": 0.752
+    },
+    "answer_sha256": "80d8445465fe6213aba1606890fb45538e729ddd3b2fa853efec2066281b9ded",
+    "doc_sha256": "6e2413c8b470777fd897c140915baea5e4b870c6b8376650a2dbfe41006d2986",
+    "doc_path": "scikit-learn_scikit-learn/95da2ea129401c6a.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 4,
+    "confidence": 0.997,
+    "coverage": 0.4444,
+    "verbatim_run": 48,
+    "elapsed_ms": 73.38
+   },
+   {
+    "key": "96303f3984c418ce772e98b4f384f86ff352f8da",
+    "project": "matveevi_temp",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8879,
+     "jaccard": 0.7773,
+     "max_sim": 0.894
+    },
+    "answer_sha256": "3d80686210c7e950a47dbadfab06d868f52b88f7710657971300be3aef866c11",
+    "doc_sha256": "22b88e39790b35d753d216b6010b7c19c98564aeb9aaad96873e0cdb99f6bd08",
+    "doc_path": "matveevi_temp/96303f3984c418ce.py",
+    "same_text_projects": [
+     "matveevi_temp"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "matveevi_temp",
+     "tensorflow_models"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.9985,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 179.9
+   },
+   {
+    "key": "9d8debef7cbc172bcabc3c46828a228fae35386b",
+    "project": "jsculsp_data-structures-and-algorithms-in-python",
+    "license": "GPL-3.0-or-later",
+    "license_field": "gpl-3.0-or-later",
+    "license_family": "strong",
+    "paper": {
+     "bleu": 0.7048,
+     "jaccard": 0.543,
+     "max_sim": 0.7048
+    },
+    "answer_sha256": "bd1bc07dc38a6c9550004f658171b3365154aa9f103d91820a8e919045aadca2",
+    "doc_sha256": "55315ba8bdcb68b5a57a2f457ce07804e316da81d54592bef57fb627733d21bd",
+    "doc_path": "jsculsp_data-structures-and-algorithms-in-python/9d8debef7cbc172b.py",
+    "same_text_projects": [
+     "jsculsp_data-structures-and-algorithms-in-python"
+    ],
+    "max_risk": "S4",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "jsculsp_data-structures-and-algorithms-in-python"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9938,
+    "coverage": 1.0,
+    "verbatim_run": 44,
+    "elapsed_ms": 130.52
+   },
+   {
+    "key": "a2e4b2e0fa3961434a47734bac07e78976cac4fd",
+    "project": "Ao-Lee_FacialVarification",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8661,
+     "jaccard": 0.793,
+     "max_sim": 0.8661
+    },
+    "answer_sha256": "74a6ad56111cabb7d0cfdf84047b56e06255fe58ecaac858ebfc357106777819",
+    "doc_sha256": "5ff8e7a9a63ae655ea1035e6ccded7d30ad93ed599157550b81d73852ca5b17d",
+    "doc_path": "Ao-Lee_FacialVarification/a2e4b2e0fa396143.py",
+    "same_text_projects": [
+     "Ao-Lee_FacialVarification"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "vlnguyen92_tfhybrid"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 1,
+    "confidence": 0.9938,
+    "coverage": 0.8571,
+    "verbatim_run": 48,
+    "elapsed_ms": 146.02
+   },
+   {
+    "key": "a57913f7c63c9ad5c9d208cbfcbaffec0eb9a55c",
+    "project": "tensorflow_models",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6639,
+     "jaccard": 0.4062,
+     "max_sim": 0.7333
+    },
+    "answer_sha256": "567a71a520f96a3539faf65ff7936939d81aea791f76fcb230f0d89b4e6d6dd1",
+    "doc_sha256": "e10ca12b476fd2c04daa592f2e588f63be1d6e216636c082e424cef810b29d7a",
+    "doc_path": "tensorflow_models/a57913f7c63c9ad5.py",
+    "same_text_projects": [
+     "tensorflow_models"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": true,
+    "same_text": false,
+    "level": "same_project",
+    "hit_packages": [
+     "ogvalt_min-tfs-client",
+     "tensorflow_models",
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 4,
+    "confidence": 0.9829,
+    "coverage": 0.3333,
+    "verbatim_run": 43,
+    "elapsed_ms": 244.26
+   },
+   {
+    "key": "aa521eabb1fc2feae6fc995de7e66601917fdd54",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8512,
+     "jaccard": 0.7344,
+     "max_sim": 0.8716
+    },
+    "answer_sha256": "d5974a4f2313e7e51aaa931370e2f9dd55ed1941d68fdd2fdc15c2eaadd5d3f5",
+    "doc_sha256": "cce2d2f2db560545827e4b59bdca9f4b567eb31b7785a0724f7d82a1ba3415ac",
+    "doc_path": "tensorflow_tensorflow/aa521eabb1fc2fea.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "ascentai_rgan",
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 2,
+    "confidence": 0.8918,
+    "coverage": 0.25,
+    "verbatim_run": 40,
+    "elapsed_ms": 130.84
+   },
+   {
+    "key": "adda1f5e564fdcf653d73aa613120175552f417f",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8968,
+     "jaccard": 0.6992,
+     "max_sim": 0.9273
+    },
+    "answer_sha256": "db33d73ece8bde2173ce8ef99b2b2d88bf005e74652b38953be4657400374884",
+    "doc_sha256": "68578d75d5f2a8447c57557d022575ca6f3ccffee1ced5fd85c5bd7a29e0fd88",
+    "doc_path": "tensorflow_tensorflow/adda1f5e564fdcf6.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "princewen_tensorflow_practice",
+     "shenweichen_DeepCTR"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.9988,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 14.34
+   },
+   {
+    "key": "b174956e6041db918aa4b8f5a391bfbc60aa6bda",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 1.0,
+     "jaccard": 1.0,
+     "max_sim": 1.0
+    },
+    "answer_sha256": "db33d73ece8bde2173ce8ef99b2b2d88bf005e74652b38953be4657400374884",
+    "doc_sha256": "57ad7e151821420a64f09e77a75fea07ae9c5be64247a8ab6b1957a6e0e4b989",
+    "doc_path": "tensorflow_tensorflow/b174956e6041db91.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "princewen_tensorflow_practice",
+     "shenweichen_DeepCTR"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.9988,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 14.48
+   },
+   {
+    "key": "b3bdb65a5b5efe062364b4768434818a5f4fc5d1",
+    "project": "gitlab.com_quicla_platform/cts",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6473,
+     "jaccard": 0.3945,
+     "max_sim": 0.6473
+    },
+    "answer_sha256": "5d156bdf20c5dcd57848f7941e6c77d23f1889dd2b1aab4e02b419803e82570e",
+    "doc_sha256": "65710659f86427ff9232b2f24da5ef202056003f4c4bed4f281a86a466e172bc",
+    "doc_path": "gitlab.com_quicla_platform_cts/b3bdb65a5b5efe06.py",
+    "same_text_projects": [
+     "gitlab.com_quicla_platform_cts"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "gitlab.com_quicla_platform_cts"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9547,
+    "coverage": 0.6667,
+    "verbatim_run": 22,
+    "elapsed_ms": 40.15
+   },
+   {
+    "key": "b990893eda84e69e8b7c4b6a6015ac6dc4729e8d",
+    "project": "calamares_calamares",
+    "license": "GPL-3.0-or-later",
+    "license_field": "gpl-3.0-or-later",
+    "license_family": "strong",
+    "paper": {
+     "bleu": 0.5592,
+     "jaccard": 0.2969,
+     "max_sim": 0.6875
+    },
+    "answer_sha256": "2a14f9bfcd5353cb7907e2f5f2d348b803126caf4574b7f8763273630a67862e",
+    "doc_sha256": "3d05202e549e3b0124c60b15f16d52fe4f195588e6c7cfc0aa0433fe1ec36f2d",
+    "doc_path": "calamares_calamares/b990893eda84e69e.py",
+    "same_text_projects": [
+     "calamares_calamares"
+    ],
+    "max_risk": "S4",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "calamares_calamares"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.8756,
+    "coverage": 0.5,
+    "verbatim_run": 19,
+    "elapsed_ms": 86.97
+   },
+   {
+    "key": "b9b6837193dce19466fbd8d3920b7b734ca155e5",
+    "project": "gitlab.com_armbiant_pytorch-nlp",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.9383,
+     "jaccard": 0.8203,
+     "max_sim": 0.9554
+    },
+    "answer_sha256": "122b08e455180199dd0f01b905ff8cb65f8b662ee35bb8793438c1db891b0ca5",
+    "doc_sha256": "c66348e9325df51f8a2b66543f8e1a696ba926cf27f19e5aa02a5686693c5100",
+    "doc_path": "gitlab.com_armbiant_pytorch-nlp/b9b6837193dce194.py",
+    "same_text_projects": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "gitlab.com_armbiant_pytorch-nlp"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 3,
+    "confidence": 0.9932,
+    "coverage": 0.4118,
+    "verbatim_run": 48,
+    "elapsed_ms": 150.81
+   },
+   {
+    "key": "ba67517b765e21909b3c86d7e06555964dde5cf3",
+    "project": "hoppaq_masktextspotter.caffe2",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6003,
+     "jaccard": 0.4844,
+     "max_sim": 0.6003
+    },
+    "answer_sha256": "0b0d99b0619d49c35f886124a9480df0f37232b60c78bfc19b06020b4be2dedb",
+    "doc_sha256": "dcb5a6b37aa348839439f6be19567d1b5e7778f7e103c680245a244b49b84ff0",
+    "doc_path": "hoppaq_masktextspotter.caffe2/ba67517b765e2190.py",
+    "same_text_projects": [
+     "hoppaq_masktextspotter.caffe2"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "hoppaq_masktextspotter.caffe2"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9961,
+    "coverage": 0.5789,
+    "verbatim_run": 46,
+    "elapsed_ms": 358.6
+   },
+   {
+    "key": "cbe2f672e4f4ad037540f9def00b9a3e04540b64",
+    "project": "GeoNode_geonode",
+    "license": "GPL-3.0-or-later",
+    "license_field": "gpl-3.0-or-later",
+    "license_family": "strong",
+    "paper": {
+     "bleu": 0.7166,
+     "jaccard": 0.4727,
+     "max_sim": 0.7166
+    },
+    "answer_sha256": "a6835b02b27fcc55896602ca5cdca3069347e56760a071f211dba7e30b2fd8ea",
+    "doc_sha256": "67041c882f7e4eac908a8c94e1fcc2a7d3c346c06dc54d5352716d09c39c5349",
+    "doc_path": "GeoNode_geonode/cbe2f672e4f4ad03.py",
+    "same_text_projects": [
+     "GeoNode_geonode"
+    ],
+    "max_risk": "S4",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "GeoNode_geonode",
+     "chromium.googlesource.com_chromium_src"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.8813,
+    "coverage": 0.5,
+    "verbatim_run": 24,
+    "elapsed_ms": 38.15
+   },
+   {
+    "key": "d972ba3e3a98cd050945d71d1ba2e6833bb31d0c",
+    "project": "hoppaq_masktextspotter.caffe2",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.9783,
+     "jaccard": 0.9414,
+     "max_sim": 0.9891
+    },
+    "answer_sha256": "8604448bad11277c0a98a71197ed6da0432a24b8baec149e652678020ad7cdf2",
+    "doc_sha256": "d2040837eabcbd4c5b9e8d446d9ab0b31f90bf1af4a8f591dc72ca480ccdeb0f",
+    "doc_path": "hoppaq_masktextspotter.caffe2/d972ba3e3a98cd05.py",
+    "same_text_projects": [
+     "hoppaq_masktextspotter.caffe2"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "apache_incubator-mxnet",
+     "hoppaq_masktextspotter.caffe2",
+     "pjreddie_darknet"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 4,
+    "confidence": 0.993,
+    "coverage": 0.4286,
+    "verbatim_run": 48,
+    "elapsed_ms": 60.15
+   },
+   {
+    "key": "dc6235b4da79859c3e7e561e944c8a93f76db0bb",
+    "project": "gitlab.com_inverseai_Microsoft/CNTK",
+    "license": "MIT",
+    "license_field": "mit",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8681,
+     "jaccard": 0.5664,
+     "max_sim": 0.9172
+    },
+    "answer_sha256": "bc4bbfeea48a9464ba8ed793ed9467bd765fec1035f22a7f456db8ff67fef6e0",
+    "doc_sha256": "ab9fdc7027161200f0ad2a010595728ed4977a2548fba4917c32e35852f4631e",
+    "doc_path": "gitlab.com_inverseai_Microsoft_CNTK/dc6235b4da79859c.py",
+    "same_text_projects": [
+     "gitlab.com_inverseai_Microsoft_CNTK"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "gitlab.com_inverseai_Microsoft_CNTK",
+     "hoppaq_masktextspotter.caffe2",
+     "pjreddie_darknet"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 3,
+    "finding_count": 4,
+    "confidence": 0.993,
+    "coverage": 0.4286,
+    "verbatim_run": 48,
+    "elapsed_ms": 56.91
+   },
+   {
+    "key": "e0d296846255ddca52141cc1c8c843f063e8fa75",
+    "project": "Ao-Lee_FacialVarification",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.7008,
+     "jaccard": 0.5703,
+     "max_sim": 0.7413
+    },
+    "answer_sha256": "2d9a22754fc30a0058d547f9da02cec950577cc0e5c2d5b535c7d30abc8ffd2a",
+    "doc_sha256": "bdc0a1e895db251587fc34c80b11740a5409227deccd39499083530258ed5201",
+    "doc_path": "Ao-Lee_FacialVarification/e0d296846255ddca.py",
+    "same_text_projects": [
+     "Ao-Lee_FacialVarification"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "vlnguyen92_tfhybrid"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 1,
+    "confidence": 0.9927,
+    "coverage": 0.5,
+    "verbatim_run": 38,
+    "elapsed_ms": 93.62
+   },
+   {
+    "key": "e68c171d9c7e33d7e932f5d5b7f15859faa2348b",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8076,
+     "jaccard": 0.5273,
+     "max_sim": 0.8076
+    },
+    "answer_sha256": "ae19b4add0c31a00662728c5ffb1bdf07cb5a836647fe5bebebfb2b825cb6c42",
+    "doc_sha256": "29edb35c32994d805c24e32b0614c8d28ecfa3f989dbf10370f09b350c57f8ff",
+    "doc_path": "tensorflow_tensorflow/e68c171d9c7e33d7.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 2,
+    "finding_count": 2,
+    "confidence": 0.9892,
+    "coverage": 0.5,
+    "verbatim_run": 48,
+    "elapsed_ms": 245.12
+   },
+   {
+    "key": "e9eef7741875108f42713293e2776a01178493a3",
+    "project": "jsculsp_data-structures-and-algorithms-in-python",
+    "license": "GPL-3.0-or-later",
+    "license_field": "gpl-3.0-or-later",
+    "license_family": "strong",
+    "paper": {
+     "bleu": 0.8917,
+     "jaccard": 0.7383,
+     "max_sim": 0.8917
+    },
+    "answer_sha256": "b089a6dcc0e5db6a4a6c87a1c23bac18f915c2b4b74a01d919949ae8f60fc1c6",
+    "doc_sha256": "64483ed0f342d4f6403de6966fc38270a9ce86a514b9519e944ab73058fd5586",
+    "doc_path": "jsculsp_data-structures-and-algorithms-in-python/e9eef7741875108f.py",
+    "same_text_projects": [
+     "jsculsp_data-structures-and-algorithms-in-python"
+    ],
+    "max_risk": "S4",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "jsculsp_data-structures-and-algorithms-in-python"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9984,
+    "coverage": 0.3333,
+    "verbatim_run": 48,
+    "elapsed_ms": 116.97
+   },
+   {
+    "key": "ebfaacb8a2c969c47a42fbbaa057842c71596f86",
+    "project": "tensorflow_tensorflow",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6912,
+     "jaccard": 0.5195,
+     "max_sim": 0.6912
+    },
+    "answer_sha256": "b0cfb5b4bd47f6f1d8cef20d2d3651cda156a8814c18491f414765602b05407a",
+    "doc_sha256": "75094e55af907ada9329662bd38299781a6f362cd5145e5f5843409ee1a0a82e",
+    "doc_path": "tensorflow_tensorflow/ebfaacb8a2c969c4.py",
+    "same_text_projects": [
+     "tensorflow_tensorflow"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "horovod_horovod",
+     "hzy46_Deep-Learning-21-Examples",
+     "tensorflow_tensorflow"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 3,
+    "confidence": 0.981,
+    "coverage": 0.4035,
+    "verbatim_run": 45,
+    "elapsed_ms": 1149.57
+   },
+   {
+    "key": "eef13de1982b7e07eedd73c3245b15d15673481a",
+    "project": "thakrah_Learning.Python",
+    "license": "GPL-3.0-or-later",
+    "license_field": "gpl-3.0-or-later",
+    "license_family": "strong",
+    "paper": {
+     "bleu": 0.6909,
+     "jaccard": 0.4766,
+     "max_sim": 0.6909
+    },
+    "answer_sha256": "345ed834bf05c0fc30356542cd6c04ba736ade8a91dbac65e7eb07382650a7f4",
+    "doc_sha256": "bb20eb6c3ceab3d1b8e0fb21cc3864fb728980175a9ecb3828f1f1fb0e585eaf",
+    "doc_path": "thakrah_Learning.Python/eef13de1982b7e07.py",
+    "same_text_projects": [
+     "thakrah_Learning.Python"
+    ],
+    "max_risk": "S4",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "thakrah_Learning.Python"
+    ],
+    "blocking": true,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9993,
+    "coverage": 0.75,
+    "verbatim_run": 48,
+    "elapsed_ms": 67.11
+   },
+   {
+    "key": "f42eb9d83798c452212806e80fb662338d853ae1",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.6584,
+     "jaccard": 0.6602,
+     "max_sim": 0.7289
+    },
+    "answer_sha256": "a00963bcd0b0ebbd0eeb62c2b8e22e8d464106af6be9e04e34c5f977174a545b",
+    "doc_sha256": "0de77be252f2f4af3d890bf01dcc2780da7ddc2cf52dd835847bb329113756aa",
+    "doc_path": "scikit-learn_scikit-learn/f42eb9d83798c452.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": true,
+    "same_text": false,
+    "level": "same_project",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 2,
+    "confidence": 0.996,
+    "coverage": 0.8333,
+    "verbatim_run": 48,
+    "elapsed_ms": 51.47
+   },
+   {
+    "key": "f4a177c8771051a96f59300057fa5880f412c62f",
+    "project": "tensorflow_tfjs-examples",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.9638,
+     "jaccard": 0.8516,
+     "max_sim": 0.976
+    },
+    "answer_sha256": "259d73bcaac390be8ffb36bd8e19929be0d80676b7373cfd47c2fa79d887c4d8",
+    "doc_sha256": "99811add2e2fc62e756859eed1d74f5646e981f339aebe4a3c7f947409e172e0",
+    "doc_path": "tensorflow_tfjs-examples/f4a177c8771051a9.py",
+    "same_text_projects": [
+     "tensorflow_tfjs-examples"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "tensorflow_tfjs-examples"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 1,
+    "confidence": 0.9981,
+    "coverage": 1.0,
+    "verbatim_run": 40,
+    "elapsed_ms": 71.45
+   },
+   {
+    "key": "f831a1326179a9e891fd06c62b7b756c037a4bb4",
+    "project": "scikit-learn_scikit-learn",
+    "license": "BSD-3-Clause",
+    "license_field": "bsd-3-clause",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8326,
+     "jaccard": 0.6484,
+     "max_sim": 0.8326
+    },
+    "answer_sha256": "85d4017533c15acf59dcca238fb5fca4374404141bea7ff4919bbf75e556f6ef",
+    "doc_sha256": "d5cef522a250f5bbfde9a9c762cf5a346b47bc8c38c3bd30d7b38c2bb13fae49",
+    "doc_path": "scikit-learn_scikit-learn/f831a1326179a9e8.py",
+    "same_text_projects": [
+     "scikit-learn_scikit-learn"
+    ],
+    "max_risk": "S1",
+    "attributed": true,
+    "equivalent_source": true,
+    "project_hit": true,
+    "same_text": true,
+    "level": "expected_doc",
+    "hit_packages": [
+     "scikit-learn_scikit-learn"
+    ],
+    "blocking": false,
+    "top1": true,
+    "rank": 1,
+    "finding_count": 2,
+    "confidence": 0.9983,
+    "coverage": 0.6667,
+    "verbatim_run": 48,
+    "elapsed_ms": 38.33
+   },
+   {
+    "key": "fab6c443cf3d2e9783d19bf52c81b7aa62d56a38",
+    "project": "tensorflow_models",
+    "license": "Apache-2.0",
+    "license_field": "apache-2.0",
+    "license_family": "permissive",
+    "paper": {
+     "bleu": 0.8761,
+     "jaccard": 0.6758,
+     "max_sim": 0.878
+    },
+    "answer_sha256": "bcbbc2a6e3e0956b86845bda43d46e3f464a7415d2520a4f8680ce45ca71ef84",
+    "doc_sha256": "b30a9e870fbf4801670a5f5bb815a66cbfbc2ac5d22ff6a6ed94faeeec681208",
+    "doc_path": "tensorflow_models/fab6c443cf3d2e97.py",
+    "same_text_projects": [
+     "tensorflow_models"
+    ],
+    "max_risk": "S1",
+    "attributed": false,
+    "equivalent_source": false,
+    "project_hit": false,
+    "same_text": false,
+    "level": "other_project",
+    "hit_packages": [
+     "vlnguyen92_tfhybrid"
+    ],
+    "blocking": false,
+    "top1": false,
+    "rank": 0,
+    "finding_count": 1,
+    "confidence": 0.9963,
+    "coverage": 1.0,
+    "verbatim_run": 48,
+    "elapsed_ms": 67.44
+   }
+  ],
+  "false_block_control": {
+   "samples": 200,
+   "blocking": 7,
+   "any_finding": 122,
+   "blocking_rate": 0.035,
+   "blocking_upper95": 0.0647,
+   "blocking_findings": 7,
+   "blocking_kind_census": {
+    "cross_project": 7
+   },
+   "blocking_detail": [
+    {
+     "query": "7641a92def45",
+     "query_project": "Lothiraldan_cvs",
+     "matched": "vmg_hg-stable:vmg_hg-stable/50b434be7ffbd98b.py",
+     "matched_license": "GPL-2.0-or-later",
+     "risk": "S3",
+     "confidence": 0.611,
+     "coverage": 0.048,
+     "verbatim_run": 32,
+     "kind": "cross_project"
+    },
+    {
+     "query": "202007793b25",
+     "query_project": "twbs_bootstrap",
+     "matched": "Alan01252_yocto-embedded-nodejs-experiment:Alan01252_yocto-embedded-nodejs-experiment/a085f78c439022f1.py",
+     "matched_license": "GPL-2.0-only",
+     "risk": "S4",
+     "confidence": 0.996,
+     "coverage": 0.471,
+     "verbatim_run": 48,
+     "kind": "cross_project"
+    },
+    {
+     "query": "e91a49a4d3bd",
+     "query_project": "indygreg_hg",
+     "matched": "Lothiraldan_cvs:Lothiraldan_cvs/3aff3293a325701e.py",
+     "matched_license": "GPL-2.0-or-later",
+     "risk": "S4",
+     "confidence": 0.77,
+     "coverage": 0.129,
+     "verbatim_run": 9,
+     "kind": "cross_project"
+    },
+    {
+     "query": "38dbc4b71023",
+     "query_project": "weechat_scripts",
+     "matched": "connrs_dotfiles:connrs_dotfiles/c095f488474b6275.py",
+     "matched_license": "GPL-3.0-or-later",
+     "risk": "S4",
+     "confidence": 0.982,
+     "coverage": 0.417,
+     "verbatim_run": 6,
+     "kind": "cross_project"
+    },
+    {
+     "query": "f2f894ffaa12",
+     "query_project": "indygreg_hg",
+     "matched": "dscho_hg:dscho_hg/dd4d29c6790e78f8.py",
+     "matched_license": "GPL-2.0-or-later",
+     "risk": "S4",
+     "confidence": 0.859,
+     "coverage": 0.25,
+     "verbatim_run": 16,
+     "kind": "cross_project"
+    },
+    {
+     "query": "0a131452da68",
+     "query_project": "jordigh_mercurial-crew",
+     "matched": "indygreg_hg:indygreg_hg/bd15a822bdd0b1d8.py",
+     "matched_license": "GPL-2.0-or-later",
+     "risk": "S4",
+     "confidence": 0.957,
+     "coverage": 0.296,
+     "verbatim_run": 46,
+     "kind": "cross_project"
+    },
+    {
+     "query": "ac0edcab4f72",
+     "query_project": "mozilla_mozbase-deprecated",
+     "matched": "ahal_peptest:ahal_peptest/6b495f2dd5a3cb98.py",
+     "matched_license": "MPL-2.0",
+     "risk": "S3",
+     "confidence": 0.603,
+     "coverage": 0.077,
+     "verbatim_run": 27,
+     "kind": "cross_project"
+    }
+   ],
+   "risk_counts": {
+    "S0": 247,
+    "S1": 41,
+    "S2": 12,
+    "S3": 2,
+    "S4": 5
+   },
+   "latency_ms_p95": 714.2,
+   "note": "查询与候选都是真实开源代码，且参考语料里同一个上游文件常被多个项目各自复制，所以这里的阻断不是误报率：摘要一致/同项目命中属于真实的跨仓库重复（vendoring）。误阻断率见 HumanEval 外部评测与 false_block_control.py 的产品口径。"
+  }
+ }
+}

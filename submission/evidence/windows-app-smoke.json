@@ -47,7 +47,7 @@
       "payload_bytes": 10134040,
       "payload_bytes_per_chunk": 280,
       "buckets": 771597,
-      "built_at": 1791129633
+      "built_at": 1792576513
     },
     "corpus": {
       "total": 585,
@@ -78,6 +78,5 @@
       "input_sha256": "c4348223fe03ea08ad3f3555064d8c8c8e2bd3aa3221a14e9d5f68b89af49004"
     }
   ],
-  "status": "passed",
-  "artifact_sha256": "cffcf4695678972319a8fc94a91fddecd68fa2b23c003ffd852c78e098d6bb81"
+  "status": "passed"
 }
