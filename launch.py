@@ -20,6 +20,6 @@ if __name__ == '__main__':
     except Exception as exc:
         print('CodeGuard 启动失败：%s' % exc)
         print('请确认 .codeguard/index.bin 和 corpus 文件夹与程序在同一目录。')
-        if '--no-browser' not in sys.argv:
+        if '--no-browser' not in sys.argv and sys.stdin.isatty():
             input('按 Enter 退出…')
         raise SystemExit(2)

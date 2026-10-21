@@ -101,9 +101,38 @@ PROFILES = {x.spdx: x for x in [
     P("LGPL-3.0", "GNU Lesser General Public License 3.0", "weak", LIBRARY,
       notice=True, source_offer=True, relink=True, weaker_ok=True,
       clauses=("§4 combined work: convey under LGPL-3.0 terms with relinking permitted")),
+    # SPDX writes the version suffix explicitly (`LGPL-3.0-only`), and that is
+    # what PEP 639 metadata and our corpus manifest store.  Without these four
+    # profiles the suffix forms fell through to UNKNOWN, which grades a real
+    # copyleft conflict as "needs review" (S2) instead of blocking it - every
+    # glances file in the shipped corpus is LGPL-3.0-only.
+    P("LGPL-2.1-only", "GNU Lesser General Public License 2.1 only", "weak", LIBRARY,
+      notice=True, source_offer=True, relink=True, same_license="LGPL-2.1-only",
+      no_relicense=True,
+      clauses=("§6 combined work: permit relinking/replacement of the library",
+               "§4/§6 library source and licence copy must accompany distribution")),
+    P("LGPL-2.1-or-later", "GNU Lesser General Public License 2.1 or later", "weak",
+      LIBRARY, notice=True, source_offer=True, relink=True, weaker_ok=True,
+      clauses=("§6 combined work: permit relinking/replacement of the library",
+               "§14 the recipient may apply any later LGPL version")),
+    P("LGPL-3.0-only", "GNU Lesser General Public License 3.0 only", "weak", LIBRARY,
+      notice=True, source_offer=True, relink=True, same_license="LGPL-3.0-only",
+      no_relicense=True,
+      clauses=("§4 combined work: convey under LGPL-3.0 terms with relinking permitted")),
+    P("LGPL-3.0-or-later", "GNU Lesser General Public License 3.0 or later", "weak",
+      LIBRARY, notice=True, source_offer=True, relink=True, weaker_ok=True,
+      clauses=("§4 combined work: convey under LGPL-3.0 terms with relinking permitted",
+               "§14 the recipient may apply any later LGPL version")),
     P("EPL-2.0", "Eclipse Public License 2.0", "weak", MODULE, notice=True,
       source_offer=True, no_relicense=True,
       clauses=("§2 secondary licences may not add restrictions; contributions stay EPL")),
+    P("EPL-1.0", "Eclipse Public License 1.0", "weak", MODULE, notice=True,
+      source_offer=True, no_relicense=True, patent_grant=True,
+      clauses=("§2(b) contributors grant a patent licence that terminates on patent litigation",
+               "§3 source form of the Program must be made available under EPL-1.0")),
+    P("BSL-1.0", "Boost Software License 1.0", "permissive", NONE, notice=True,
+      clauses=("§1 the copyright notice and this permission notice shall be included in all "
+               "copies or substantial portions of the Software")),
     P("GPL-2.0-only", "GNU General Public License v2.0 only", "strong", PROGRAM,
       notice=True, source_offer=True, same_license="GPL-2.0-only", no_relicense=True,
       clauses=("§2 derivative work must be licensed as a whole to recipients under GPL-2.0",
@@ -163,6 +192,18 @@ CONFLICTS = {
     ("LGPL-3.0", "GPL-2.0-only"): (
         "incompatible",
         "LGPL-3.0 指向 GPL-3.0 条款，无法与仅 GPL-2.0 的组合作品合并。"),
+    ("LGPL-3.0-only", "GPL-2.0-only"): (
+        "incompatible",
+        "LGPL-3.0-only 指向 GPL-3.0 条款且不允许改用其它版本，无法与仅 GPL-2.0 的组合作品合并。"),
+    ("LGPL-3.0-or-later", "GPL-2.0-only"): (
+        "incompatible",
+        "即使上游声明 -or-later，可升级到的也是 GPL-3.0 系列，与仅 GPL-2.0 的组合作品不兼容；"
+        "目标是 GPL-2.0-or-later 时才可按 §14 升级后合并。"),
+    ("EPL-1.0", "GPL-2.0-only"): (
+        "incompatible",
+        "EPL-1.0 的商业分发限制与专利终止条款构成 GPLv2 §6 禁止的额外限制，"
+        "FSF 与 Eclipse 基金会均判定 EPL-1.0 与 GPL-2.0-only 不兼容（EPL-2.0 才引入 "
+        "secondary licence 机制）。"),
 }
 
 _ALIAS = [
@@ -215,7 +256,7 @@ _TROVE_MAP = {
     "GNU Affero General Public License v3": "AGPL-3.0-only",
     "Python Software Foundation License": "PSF-2.0",
     "Intel BSD License": "BSD-3-Clause",
-    "Eclipse Public License 1.0 (EPL-1.0)": "EPL-2.0",
+    "Eclipse Public License 1.0 (EPL-1.0)": "EPL-1.0",
     "Zope 2 License": "ZPL-2.1",
 }
 
@@ -238,6 +279,22 @@ _CANON = {"GPL-2.0": "GPL-2.0-only", "GPL-3.0": "GPL-3.0-only",
           "AGPL-3.0": "AGPL-3.0-only"}
 
 
+def _fold_key(text: str) -> str:
+    return re.sub(r"[\s_]+", "-", str(text).strip().lower())
+
+
+# Only ids we actually hold a profile for: folding an SPDX id we cannot grade
+# (LGPL-2.1-or-later) would return an unprofiled id and lose the alias table's
+# answer, so the fold stays deliberately narrower than the SPDX list.
+_FOLD = {}
+for _spdx in PROFILES:
+    if _spdx != "UNKNOWN":
+        _FOLD.setdefault(_fold_key(_spdx), _spdx)
+for _alias, _target in (("GPL-2.0+", "GPL-2.0-or-later"), ("GPL-3.0+", "GPL-3.0-or-later")):
+    _FOLD.setdefault(_fold_key(_alias), _target)
+del _alias, _spdx, _target
+
+
 def resolve_spdx(candidates, spdx_index: dict | None = None) -> tuple:
     """Run the resolution chain over ``[(value, origin), ...]``.
 
@@ -257,6 +314,9 @@ def resolve_spdx(candidates, spdx_index: dict | None = None) -> tuple:
             return text, origin
         if index and text in index:
             return _CANON.get(text, text), origin
+        folded = _FOLD.get(_fold_key(text))
+        if folded:
+            return folded, origin + ":case-fold"
         low = text.lower().replace("(c)", "").strip()
         for pattern, spdx in _ALIAS:
             if re.search(pattern, low):
@@ -378,11 +438,26 @@ def compare(req: str, tgt: LicenseProfile) -> tuple:
     return "fail", "目标许可证 %s 无法满足 %s 的整体授权要求" % (tgt.spdx, req)
 
 
+def graded_id(spdx: str) -> str:
+    """The id we actually hold a profile for.
+
+    Callers pass whatever the corpus manifest or an SBOM recorded, which can be
+    a spelling we have no profile for (`LGPL-3.0-only`, `lgpl-2.1`).  Grading
+    that as UNKNOWN turns a real copyleft conflict into a review item, so the
+    resolution chain gets one more chance before we give up.
+    """
+    if spdx in PROFILES:
+        return spdx
+    resolved, _origin = resolve_spdx([(spdx, "profile-fallback")])
+    return resolved if resolved in PROFILES else spdx
+
+
 def analyze(source_spdx: str, target_spdx: str, usage: str = "inline_copy",
             modified: bool = True) -> Verdict:
-    src = profile_for(source_spdx)
-    tgt = profile_for(target_spdx)
-    v = Verdict(source_spdx, target_spdx, usage, "compatible")
+    source_id, target_id = graded_id(source_spdx), graded_id(target_spdx)
+    src = profile_for(source_id)
+    tgt = profile_for(target_id)
+    v = Verdict(source_id, target_id, usage, "compatible")
 
     if src.family == "unknown" or tgt.family == "unknown":
         v.status = "unknown"
@@ -396,7 +471,7 @@ def analyze(source_spdx: str, target_spdx: str, usage: str = "inline_copy",
 
     # Clause-interaction cases are decided explicitly: they do not follow from a
     # missing obligation but from two clauses that cannot both be satisfied.
-    pair = CONFLICTS.get((source_spdx, target_spdx))
+    pair = CONFLICTS.get((source_id, target_id))
     if pair:
         status, reason = pair
         if status == "incompatible":
@@ -409,7 +484,7 @@ def analyze(source_spdx: str, target_spdx: str, usage: str = "inline_copy",
         req = required_license(src)
         outcome, detail = compare(req, tgt)
         if outcome == "fail":
-            v.conflicts.append(detail + "；来源代码许可证 %s 的传染性范围为整件作品。" % source_spdx)
+            v.conflicts.append(detail + "；来源代码许可证 %s 的传染性范围为整件作品。" % source_id)
             v.status = "incompatible"
         elif outcome == "upgrade":
             v.notes.append(detail)
@@ -418,7 +493,7 @@ def analyze(source_spdx: str, target_spdx: str, usage: str = "inline_copy",
         elif src.network_trigger and usage == "network_service" \
                 and not tgt.network_trigger:
             v.conflicts.append("AGPL §13 对远程网络服务生效：即便不分发，也必须向用户提供"
-                               "与服务交互版本的对应源码，目标许可证 %s 不含该条款。" % target_spdx)
+                               "与服务交互版本的对应源码，目标许可证 %s 不含该条款。" % target_id)
             v.status = "incompatible"
     elif src.scope == LIBRARY:
         v.status = "conditional"

@@ -21,6 +21,7 @@ from __future__ import annotations
 import builtins
 import io
 import keyword
+import math
 import re
 import tokenize
 from dataclasses import dataclass
@@ -178,7 +179,11 @@ def _number_bucket(text: str) -> str:
         if plain.lower().startswith(("0x", "0b", "0o")):
             return _bucket(len(plain), _NUM_BUCKETS)
         value = float(plain)
-    except ValueError:
+    except (ValueError, OverflowError):
+        # int literals longer than float range raise instead of parsing
+        return _bucket(len(plain), _NUM_BUCKETS)
+    if not math.isfinite(value):
+        # 1e999 / nan are valid Python but have no magnitude to bucket
         return _bucket(len(plain), _NUM_BUCKETS)
     return _bucket(int(abs(value)), _NUM_BUCKETS)
 

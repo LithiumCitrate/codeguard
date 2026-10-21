@@ -21,31 +21,54 @@ from codeguard.mutations import _top_level_blocks, apply_mutation  # noqa: E402
 
 
 def pick_snippet(corpus_root: str, package: str, min_lines: int) -> tuple:
-    """First whole top-level blocks of a corpus file that reach ``min_lines``."""
+    """Deterministic strongest snippet: whole top-level blocks of one corpus file.
+
+    ``os.walk`` order is filesystem order, so "first file that is big enough"
+    used to pick a different file on each machine - and a 65-line stub produces
+    too little evidence to block, which silently turned the documented
+    ``exit code 1`` demo into a pass.  Every candidate is now scored and the
+    one with the most selected lines wins.
+    """
+    best = None
     for folder in sorted(os.listdir(corpus_root)):
         if not folder.startswith(package + "-"):
             continue
-        for dirpath, _, filenames in os.walk(os.path.join(corpus_root, folder)):
-            for name in sorted(filenames):
-                if not name.endswith(".py"):
-                    continue
-                path = os.path.join(dirpath, name)
-                text = open(path, encoding="utf-8", errors="replace").read()
-                head, blocks = _top_level_blocks(text)
-                if not blocks:
-                    continue
-                chosen, count = [], 0
-                for block in blocks:
-                    if block.startswith("def ") or block.startswith("class "):
-                        chosen.append(block)
-                        count += block.count("\n")
-                    if count >= min_lines:
-                        break
+        paths = []
+        for dirpath, dirnames, filenames in os.walk(os.path.join(corpus_root, folder)):
+            dirnames.sort()
+            paths.extend(os.path.join(dirpath, n) for n in sorted(filenames)
+                         if n.endswith(".py"))
+        for path in sorted(paths):
+            text = open(path, encoding="utf-8", errors="replace").read()
+            head, blocks = _top_level_blocks(text)
+            if not blocks:
+                continue
+            chosen, count = [], 0
+            for block in blocks:
+                if block.startswith("def ") or block.startswith("class "):
+                    chosen.append(block)
+                    count += block.count("\n")
                 if count >= min_lines:
-                    imports = [l for l in head.splitlines(True)
-                               if l.startswith(("import ", "from "))][:6]
-                    return "".join(imports) + "".join(chosen), os.path.join(folder, name)
-    raise SystemExit("demo: 语料里没有 %s 的可切片文件，先运行 codeguard corpus" % package)
+                    break
+            if count < min_lines:
+                continue
+            # the snippet is cut at min_lines for every candidate, so score the
+            # file by how much top-level code it holds in total: a rich module
+            # gives the gate enough spans to corroborate, a stub does not
+            richness = sum(b.count("\n") for b in blocks
+                           if b.startswith(("def ", "class ")))
+            imports = [l for l in head.splitlines(True)
+                       if l.startswith(("import ", "from "))][:6]
+            if best is None or richness > best[2]:
+                best = ("".join(imports) + "".join(chosen),
+                        os.path.join(folder, os.path.relpath(path, os.path.join(corpus_root, folder))),
+                        richness)
+    if best is None:
+        raise SystemExit(
+            "demo: %s 的语料文件里没有连续 %d 行以上的顶层定义可切（该包收录的多是文档示例，"
+            "例如 pylint 最长只有 31 行）。换一个包（paramiko / mercurial / glances）"
+            "或调低 --min-lines。" % (package, min_lines))
+    return best[0], best[1].replace(os.sep, "/")
 
 
 def as_diff(code: str, path: str) -> str:

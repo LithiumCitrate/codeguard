@@ -2,8 +2,9 @@
 
 import unittest
 
-from codeguard.license_intel import (PROFILES, analyze, normalize_expression,
-                                     profile_for, resolve_spdx, risk_level)
+from codeguard.license_intel import (PROFILES, analyze, graded_id,
+                                     normalize_expression, profile_for,
+                                     resolve_spdx, risk_level)
 
 # (source, target, usage, expected status)
 VERDICTS = [
@@ -105,6 +106,43 @@ class ResolutionTests(unittest.TestCase):
         self.assertEqual(resolve_spdx([("Public Domain", "arg")])[0], "UNKNOWN")
         self.assertEqual(resolve_spdx([("", "arg")])[0], "UNKNOWN")
 
+    def test_lowercase_spdx_spellings_fold_to_their_profile(self):
+        # third-party licence inventories (The Stack, SBOMs) spell ids in lower
+        # case; leaving them UNKNOWN turns a copyleft file into a review item
+        for text, expected in [("mpl-2.0", "MPL-2.0"),
+                               ("gpl-2.0-only", "GPL-2.0-only"),
+                               ("gpl-3.0-or-later", "GPL-3.0-or-later"),
+                               ("agpl-3.0-or-later", "AGPL-3.0-or-later"),
+                               ("bsd_3_clause", "BSD-3-Clause"),
+                               ("apache-2.0", "Apache-2.0")]:
+            spdx, origin = resolve_spdx([(text, "arg")])
+            self.assertEqual(spdx, expected, text)
+            self.assertNotEqual(profile_for(spdx).family, "unknown", text)
+            self.assertIn("case-fold", origin, text)
+        # ids without an exact profile are still graded through the alias table
+        self.assertEqual(resolve_spdx([("lgpl-2.1-or-later", "arg")])[0], "LGPL-2.1-or-later")
+        self.assertEqual(profile_for(resolve_spdx([("mpl-2.0", "arg")])[0]).family, "weak")
+
+    def test_version_suffixed_lgpl_blocks_instead_of_reviewing(self):
+        # the corpus manifest stores exactly what PEP 639 metadata says, so
+        # LGPL-3.0-only (every glances file) reached analyze() unprofiled and was
+        # graded UNKNOWN -> S2 review: a real copyleft conflict never blocked
+        for spdx in ("LGPL-2.1-only", "LGPL-2.1-or-later", "LGPL-3.0-only",
+                     "LGPL-3.0-or-later"):
+            self.assertEqual(profile_for(spdx).family, "weak", spdx)
+            self.assertEqual(profile_for(spdx).scope, "library", spdx)
+            for target in ("MIT", "LicenseRef-Proprietary"):
+                verdict = analyze(spdx, target, "distribution")
+                self.assertEqual(verdict.status, "conditional", (spdx, target))
+                self.assertEqual(risk_level(verdict.status, 0.9, "distribution"), "S3",
+                                 (spdx, target))
+        self.assertEqual(analyze("LGPL-3.0-only", "GPL-2.0-only", "distribution").status,
+                         "incompatible")
+        # LGPL-2.1 may be converted to GPL-2.0 (§3), so this stays conditional
+        self.assertEqual(analyze("LGPL-2.1-only", "GPL-2.0-only", "distribution").status,
+                         "conditional")
+        self.assertEqual(graded_id("lgpl-3.0-only"), "LGPL-3.0-only")
+
     def test_first_resolvable_candidate_wins(self):
         spdx, origin = resolve_spdx([("UNKNOWN", "pep639-expression"),
                                      ("MIT", "license-field")])
@@ -117,6 +155,22 @@ class ResolutionTests(unittest.TestCase):
                      "LicenseRef-Proprietary", "UNKNOWN"):
             self.assertIn(spdx, PROFILES)
             self.assertNotEqual(profile_for(spdx).family, "missing")
+
+    def test_epl_and_boost_are_graded_not_left_unknown(self):
+        # third-party inventories use both spellings; before the profiles existed
+        # EPL-1.0 files fell to UNKNOWN (S2 review) and the trove classifier
+        # silently upgraded EPL-1.0 to EPL-2.0
+        self.assertEqual(profile_for("EPL-1.0").family, "weak")
+        self.assertEqual(profile_for("BSL-1.0").family, "permissive")
+        self.assertEqual(resolve_spdx([("epl-1.0", "arg")])[0], "EPL-1.0")
+        self.assertEqual(resolve_spdx([("bsl-1.0", "arg")])[0], "BSL-1.0")
+        self.assertEqual(resolve_spdx(
+            [("License :: OSI Approved :: Eclipse Public License 1.0 (EPL-1.0)", "trove")])[0],
+            "EPL-1.0")
+        self.assertEqual(analyze("EPL-1.0", "GPL-2.0-only", "distribution").status,
+                         "incompatible")
+        self.assertEqual(risk_level("incompatible", 0.9, "distribution"), "S4")
+        self.assertEqual(analyze("BSL-1.0", "MIT", "distribution").status, "compatible")
 
 
 if __name__ == "__main__":

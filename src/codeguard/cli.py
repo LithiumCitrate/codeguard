@@ -16,7 +16,7 @@ import time
 
 from . import __version__
 from .adjudicate import Scanner, iter_sources
-from .corpus import build_package, read_manifest, write_manifest
+from .corpus import build_package, load_pins, read_manifest, write_manifest
 from .evaluate import load_manifest, run_eval, write_eval
 from .index import DocRecord, FingerprintIndex, Params
 from .license_intel import RISK_LABELS, analyze, normalize_expression, resolve_spdx
@@ -29,8 +29,8 @@ from .score import LogisticRegression
 DEFAULT_PACKAGES = [
     "six", "iniconfig", "pyyaml", "tqdm", "requests", "urllib3", "click",
     "python-dotenv", "argparse", "snowballstemmer", "packaging", "pylint",
-    "paramiko", "glances", "fava", "mpmath", "defusedxml", "legacy-cgi",
-    "websockets",
+    "paramiko", "glances", "fava", "mercurial", "mpmath", "defusedxml",
+    "legacy-cgi", "websockets",
 ]
 WORKSPACE = ".codeguard"
 
@@ -121,12 +121,20 @@ def cmd_corpus(args):
             names = [l.strip() for l in fh if l.strip() and not l.startswith("#")]
     from codeguard.license_intel import load_spdx
     spdx = load_spdx()
+    pins = {} if getattr(args, "latest", False) else load_pins()
+    policy = "latest" if not pins else "pinned"
+    unpinned = [n for n in names if policy == "pinned" and n not in pins]
+    if unpinned:
+        print("未锁定版本的包（将取 PyPI 最新）：%s" % ", ".join(unpinned), flush=True)
+    print("版本策略：%s（%d/%d 个包已锁定，见 data/corpus_pins.json）"
+          % (policy, len([n for n in names if n in pins]), len(names)), flush=True)
     entries = []
     import concurrent.futures
 
     def work(name):
         try:
-            return build_package(name, "", croot, spdx, max_files=args.max_files,
+            return build_package(name, pins.get(name, ""), croot, spdx,
+                                 max_files=args.max_files,
                                  log=lambda m: print(m, flush=True))
         except Exception as exc:
             print("FAIL %-16s %s: %s" % (name, type(exc).__name__, exc), flush=True)
@@ -137,7 +145,9 @@ def cmd_corpus(args):
             entries.extend(result)
     manifest = os.path.join(croot, "corpus.json")
     write_manifest(entries, manifest, {"packages": names,
-                                       "max_files_per_package": args.max_files})
+                                       "max_files_per_package": args.max_files,
+                                       "version_policy": policy,
+                                       "pins": {n: pins[n] for n in names if n in pins}})
     counts = {}
     for e in entries:
         counts[e.license_spdx] = counts.get(e.license_spdx, 0) + 1
@@ -451,6 +461,8 @@ def build_parser():
     p.add_argument("--packages", default="")
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--max-files", type=int, default=70)
+    p.add_argument("--latest", action="store_true",
+                   help="忽略 data/corpus_pins.json，按 PyPI 最新版本下载（语料会与发布证据不一致）")
     p.set_defaults(func=cmd_corpus)
 
     p = sub.add_parser("index", help="构建指纹索引（仅存哈希与定位信息）")

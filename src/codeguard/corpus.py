@@ -21,6 +21,7 @@ from .license_intel import load_spdx, normalize_expression, profile_for
 from .normalize import tokenize_source
 
 PYPI_JSON = "https://pypi.org/pypi/%s/json"
+PINS_FILE = os.path.join(os.path.dirname(__file__), "data", "corpus_pins.json")
 SOURCE_FILENAME_RE = re.compile(r"(licen[cs]e|copying|notice|ead(er)?\.txt)", re.I)
 _HEADER_RE = re.compile(
     r"(SPDX-License-Identifier|Licensed under the|This software is licensed under|"
@@ -106,6 +107,21 @@ def _iter_archive_files(blob: bytes, is_zip: bool):
             yield member.name, handle.read()
 
 
+def load_pins(path: str = PINS_FILE) -> dict:
+    """Version pins for the shipped corpus.
+
+    ``build_package(name, "")`` resolves to whatever PyPI calls latest today, so
+    an unpinned corpus silently drifts and every published measurement
+    (file counts, benchmark AUC, licence mix) stops reproducing.  The pins are
+    the versions the released evidence was built from.
+    """
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+    return {str(k): str(v) for k, v in data.items() if v}
+
+
 def build_package(name: str, version: str, dest_root: str, spdx_index: dict,
                   max_files: int = MAX_FILES_PER_PACKAGE, log=None) -> list:
     """Download one sdist, write source files out and return corpus entries."""
@@ -118,8 +134,12 @@ def build_package(name: str, version: str, dest_root: str, spdx_index: dict,
     records = [u for u in meta.get("releases", {}).get(chosen, [])
                if u.get("packagetype") == "sdist"]
     if not records:
+        latest = meta["info"]["version"]
+        if version and latest != version:
+            say("PIN MISS %s：指定版本 %s 没有 sdist，退到 %s；语料不再与发布证据一致，"
+                "确认要这样就加 --latest" % (name, version, latest))
         records = [u for u in meta.get("urls", []) if u.get("packagetype") == "sdist"]
-        chosen = meta["info"]["version"]
+        chosen = latest
     if not records:
         records = [u for u in meta.get("urls", []) if u.get("packagetype") == "bdist_wheel"]
     if not records:

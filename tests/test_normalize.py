@@ -80,6 +80,19 @@ class InvarianceTests(unittest.TestCase):
             self.assertGreaterEqual(len(span.literal), 10)
             self.assertEqual(span.tok_end - span.tok_start, len(span.literal))
 
+    def test_non_finite_and_oversized_literals_stay_bucketable(self):
+        # third-party sources hold 1e999, nan and 400-digit integers; int() of
+        # those raised, which aborted the whole index build
+        src = ("def weird(a, b, c):\n"
+               "    x = 1e999\n"
+               "    y = 1e-3\n"
+               "    z = " + "9" * 400 + "\n"
+               "    return a + b + c + x + y + z\n")
+        roles = role_stream(tokenize_source(src))
+        self.assertIn("L", roles)
+        self.assertTrue(any(token.startswith("z") for token in roles))
+        self.assertTrue(build_spans(src, "python", 48, 24))
+
 
 if __name__ == "__main__":
     unittest.main()

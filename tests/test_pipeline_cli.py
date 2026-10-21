@@ -351,5 +351,37 @@ class CliTests(PipelineTestBase):
         self.assertEqual(self.run_cli(["doctor"]), 0)
 
 
+class CorpusReproducibilityTests(unittest.TestCase):
+    """`codeguard corpus` must rebuild the corpus the published evidence used."""
+
+    ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MANIFEST = os.path.join(ROOT, "submission", "evidence", "corpus-manifest.json")
+
+    def test_default_packages_match_the_shipped_corpus(self):
+        from codeguard.cli import DEFAULT_PACKAGES
+        self.assertEqual(len(DEFAULT_PACKAGES), len(set(DEFAULT_PACKAGES)))
+        if not os.path.exists(self.MANIFEST):
+            self.skipTest("corpus manifest is not present in this checkout")
+        with open(self.MANIFEST, encoding="utf-8") as fh:
+            manifest = json.load(fh)
+        shipped = {e["package"] for e in manifest["entries"]}
+        # mercurial (GPL-2.0-or-later) is the source of the flagship provenance
+        # evidence; it was missing from the default list, so a fresh corpus
+        # could not reproduce it
+        self.assertEqual(set(DEFAULT_PACKAGES), shipped)
+
+    def test_every_default_package_is_version_pinned(self):
+        from codeguard.cli import DEFAULT_PACKAGES
+        from codeguard.corpus import load_pins
+        pins = load_pins()
+        self.assertEqual(sorted(pins), sorted(DEFAULT_PACKAGES))
+        if not os.path.exists(self.MANIFEST):
+            self.skipTest("corpus manifest is not present in this checkout")
+        with open(self.MANIFEST, encoding="utf-8") as fh:
+            manifest = json.load(fh)
+        shipped = {e["package"]: e["version"] for e in manifest["entries"]}
+        self.assertEqual(pins, shipped)
+
+
 if __name__ == "__main__":
     unittest.main()
