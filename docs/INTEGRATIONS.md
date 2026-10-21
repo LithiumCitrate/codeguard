@@ -40,6 +40,8 @@ jobs:
 要点：
 
 - `security-events: write` 是 GitHub Code Scanning 上传 SARIF 的权限；
+- **私有仓库没有 Advanced Security 授权时上传会报 `Resource not accessible by integration`**，
+  用 `if: always() && github.event.repository.private == false` 跳过即可，仓库转公开后自动生效；
 - `if: always()` 保证门禁失败时也能上传证据；
 - `gate` 的退出码是契约：`0` 通过，`1` 有阻断级发现，`2` 环境/用法错误；
 - PR diff 的扫描目标是新增行，行号用于定位，完整上下文需看出处证书；
@@ -47,13 +49,19 @@ jobs:
 
 ## 2. 全仓扫描并上传 Code Scanning
 
+`scan` 接受多个路径，按**每个源文件**写一份报告（`<文件名词干>.{provenance.json,cdx.json,report.html,sarif}`），
+所以全仓扫描要单独指定 `--out`，再把整个目录交给上传步骤：
+
 ```yaml
       - run: codeguard scan src/ --license Apache-2.0 --usage distribution \
-               --format json,cdx,html,sarif
+               --format json,cdx,html,sarif --out .codeguard/reports/scan
       - uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with: { sarif_file: .codeguard/reports/src.sarif }
+        if: always() && github.event.repository.private == false
+        with: { sarif_file: .codeguard/reports/scan }
 ```
+
+SARIF 里的 `artifactLocation.uri` 是相对仓库根的路径（如 `src/codeguard/cli.py`），
+GitHub 直接按此定位告警行；单文件扫描时 `scan <file>` 只产出一份 `<file词干>.sarif`。
 
 `scan` 的 SARIF 和人类可读 HTML、CycloneDX SBOM 同源，但用途不同：
 

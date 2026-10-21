@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   security-events: write
 
 concurrency:
@@ -31,18 +32,19 @@ jobs:
           codeguard corpus --workers 4 --max-files 12
           codeguard index
           codeguard benchmark --files 8 --chars 3000 --no-train
+          # scan writes one report per source file, so keep them in their own dir
           codeguard scan src/ --license Apache-2.0 --usage distribution \
-            --format json,cdx,html,sarif
+            --format json,cdx,html,sarif --out .codeguard/reports/scan
       - name: Upload reports
         uses: actions/upload-artifact@v4
         with:
           name: codeguard-reports
           path: .codeguard/reports/
       - name: Upload SARIF to GitHub Code Scanning
-        if: always()
+        if: always() && github.event.repository.private == false
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: .codeguard/reports/src.sarif
+          sarif_file: .codeguard/reports/scan
           category: codeguard-self-scan
 
   license-gate:
@@ -77,7 +79,7 @@ jobs:
           name: codeguard-gate-report
           path: .codeguard/reports/
       - name: Upload diff SARIF to GitHub Code Scanning
-        if: always()
+        if: always() && github.event.repository.private == false
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: .codeguard/reports/pr.sarif
