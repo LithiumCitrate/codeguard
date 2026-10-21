@@ -57,7 +57,8 @@ with zipfile.ZipFile(source_zip,'w',compression=zipfile.ZIP_DEFLATED,compresslev
     for filename in selected_files:
         archive.write(root/filename,str(Path('CodeGuard-Source')/filename))
 checksums = []
-for filename in ['CodeGuard-Windows-x64.zip','CodeGuard-Source.zip']:
+handover = sorted(p.name for p in release.glob('CodeGuard-队友材料包-*.zip'))
+for filename in ['CodeGuard-Windows-x64.zip','CodeGuard-Source.zip'] + handover:
     path = release/filename
     checksums.append(hashlib.sha256(path.read_bytes()).hexdigest()+'  '+filename)
     print('%s: %.2f MB' % (filename,path.stat().st_size/1024**2))
