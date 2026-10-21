@@ -24,7 +24,8 @@ PYTHONPATH=src python -m codeguard doctor
 ## 1. 建立知识底座：`codeguard corpus`
 
 ```bash
-codeguard corpus                  # 默认 19 个许可证多样的包，每包最多 70 个文件
+codeguard corpus                  # 默认 20 个许可证多样的包，每包最多 70 个文件
+                                  # 版本锁定在 src/codeguard/data/corpus_pins.json；--latest 改取 PyPI 最新
 ```
 
 - 逐个包解析 `METADATA` / `PKG-INFO` → PEP 639 `license_expression` → `license` 字段
@@ -48,7 +49,7 @@ codeguard doctor
 ```
 
 ```
-codeguard 0.2.0 · Python 3.14.3
+codeguard 0.2.1 · Python 3.14.3
 工作目录：D:/code/lanying/codeguard/.codeguard
 索引：documents=585 chunks=36193 packages=20 buckets=771597
 许可证：Apache-2.0, BSD-2-Clause, BSD-3-Clause, GPL-2.0-or-later, LGPL-2.1, LGPL-3.0-only, MIT, MPL-2.0, PSF-2.0

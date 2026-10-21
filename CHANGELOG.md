@@ -4,6 +4,79 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.2.1] - 2026-10-21
+
+### Added
+
+- **Real-leakage evaluation** (`scripts/eval_model_leak.py`): scores the gate on
+  47 genuine GPT-4o regurgitation cases published with LiCoEval (ICSE 2025,
+  arXiv:2408.02487, AGPL-3.0-or-later).  All 4,187 licence-tagged reference
+  originals are indexed as distractors, so attribution is earned rather than
+  given.  Evidence: `submission/evidence/model-leak-20261021.*` plus a
+  two-person annotation worksheet.  The dataset is fetched by URL + SHA-256 and
+  never redistributed.
+- **Elicitation harness** (`scripts/eval_model_elicitation.py`,
+  `scripts/elicitation_prompts.jsonl`): turns raw assistant answers into a
+  labelled manifest for the product index.  The first pilot (6 answers) matched
+  nothing in our own copyleft corpus and is reported as a negative pilot.
+
+### Fixed
+
+- `license_intel.resolve_spdx` ignored case and underscores, so lower-case SPDX
+  ids from third-party inventories (`mpl-2.0`, `gpl-2.0-only`, `zlib`, `isc`)
+  fell through to UNKNOWN and downgraded real copyleft files to review items.
+  Resolution now folds spellings onto profiled ids and records the step as
+  `case-fold` in the licence origin.  Measured on the 4,187-file LiCoEval
+  reference pool: unresolved licences dropped from 309 to 2 (`cc-by-sa-4.0`,
+  `cecill-2.1`).
+- **`LGPL-3.0-only` (and the other version-suffixed LGPL ids) never blocked.**
+  `analyze()` graded whatever SPDX id the corpus manifest recorded, and
+  `PROFILES` only held `LGPL-2.1`/`LGPL-3.0`, so every glances file
+  (`LGPL-3.0-only`, 70 files in the shipped corpus) resolved to family
+  `unknown` -> status `unknown` -> **S2 review instead of S3/S4 blocking**.
+  Added profiles for `LGPL-2.1-only`, `LGPL-2.1-or-later`, `LGPL-3.0-only`,
+  `LGPL-3.0-or-later`, two `LGPL-3.0*` vs `GPL-2.0-only` conflict pairs, and a
+  `graded_id()` fallback that re-runs the resolution chain for any id we have no
+  profile for.  Measured: the mutation benchmark is unchanged (98.96% detect,
+  100% blocking recall, 0/9 negatives), and `scripts/demo_gate.py --package
+  glances` now exits 1 (S3) instead of 0.
+- `normalize._number_bucket` raised `OverflowError` on `1e999` and
+  `ValueError`-free non-finite/oversized literals, aborting an entire index
+  build.  Such literals now bucket by spelling length.
+
+### Changed
+
+- `scripts/demo_gate.py` picked the first corpus file `os.walk` happened to
+  return, so the documented "exit code 1" demo silently became a pass on
+  machines where a 65-line stub came first.  Candidates are now sorted and the
+  file with the most top-level code wins; paramiko/mercurial/glances all block.
+- `scripts/validate_sbom.py` now also validates SARIF 2.1.0 against the OASIS
+  schema, through the CLI path, and writes `submission/evidence/web-demo.sarif.json`.
+  Previously only the CycloneDX side was reproducible from the repository.
+- Version 0.2.1; Windows EXE and both release ZIPs rebuilt from this source
+  (`CodeGuard-Windows-x64.zip` 46.50 MB, `CodeGuard-Source.zip` 1.28 MB) and
+  re-verified with `scripts/smoke_app.py` in a relocated Unicode path.
+
+- **Corpus is now version pinned.** `codeguard corpus` fetched whatever PyPI
+  called latest, so a fresh checkout silently rebuilt a different corpus from
+  the one every published number was measured on.  Versions are pinned in
+  `src/codeguard/data/corpus_pins.json` (the 20 packages of the released
+  evidence), a pin that cannot be honoured logs `PIN MISS` instead of falling
+  back quietly, and `--latest` opts out explicitly.  The manifest records the
+  policy and the pins it used.
+- `DEFAULT_PACKAGES` was missing **mercurial** (19 of the 20 shipped packages),
+  which is the GPL-2.0-or-later source behind the flagship
+  `feature_flags.provenance.json` demo - a reviewer could not reproduce it from
+  a clean clone.
+- Two new licence profiles: `EPL-1.0` (weak/module copyleft, patent grant) and
+  `BSL-1.0` (permissive), plus an explicit `EPL-1.0` vs `GPL-2.0-only`
+  incompatibility.  The trove classifier used to map EPL-1.0 onto EPL-2.0,
+  changing the licence id; on the 4,187-file reference pool this took unresolved
+  licences from 309 to 2 (`cc-by-sa-4.0`, `cecill-2.1`).
+- Version 0.2.1.
+
+Offline tests: 107.
+
 ## [0.2.0] - 2026-10-20
 
 ### Added

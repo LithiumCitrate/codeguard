@@ -31,6 +31,7 @@
 pip install .                      # 运行期零第三方依赖（构建 wheel 需要 setuptools，pip 会自动取）
 
 codeguard corpus                   # 下载许可证多样的真实开源包作为知识底座
+                                   # 版本按 src/codeguard/data/corpus_pins.json 锁定，保证语料可复现
 codeguard index                    # 构建指纹索引（只存哈希与行号定位，不存源码）
 codeguard benchmark --files 24     # 复现变异基准 + 消融实验，并训练判定模型
 codeguard scan src/                # 扫描目录，输出 JSON / CycloneDX / 离线 HTML / SARIF
@@ -172,7 +173,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    false_block_control.py（误阻断对照组实验，佐证规则的证据）
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
-tests/             101 个用例，全部离线跑在 fixture 上
+tests/             107 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -182,7 +183,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 101 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 107 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

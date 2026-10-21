@@ -10,7 +10,7 @@
 - 10 个真实 GitHub 项目 / 447 个生产文件：0 阻断、50 条真实 vendoring；
   据此修复 argparse 样板误阻断与行号映射缺陷；
 - SARIF 2.1.0：`scan --format sarif` / `gate --sarif`，GitHub Code Scanning；
-- 101 个离线测试；技术报告、PPT、网页版、证据同步更新。
+- 107 个离线测试；技术报告、PPT、网页版、证据同步更新；真实模型泄漏正例已用外部公开数据集 LiCoEval 完成检出与归因评测。
 
 证据：`submission/evidence/humaneval-20261020.*`、
 `submission/evidence/realworld-github-20261020.*`、`docs/EVALUATION.md`、
