@@ -4,6 +4,24 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.4.1] - 2026-10-24
+
+### Changed
+
+- **Unified the workbench look against the real Arknights / Arknights: Endfield
+  official-site stylesheets** (studied from the shipped CSS, not from assets):
+  the accent is now the official Arknights cyan `#18D1FF`; status and risk tags
+  are square again — a cut corner means "pressable", so only buttons, chips and
+  fields keep theirs; filter chips share the same left-wipe hover mechanic as
+  buttons; every panel carries the Endfield "kanban" tab (96 px ink tab with
+  the inner corner cut) and a hairline under its title; About-page section
+  headings carry the `//` prefix like every other heading; the licence page's
+  two actions sit in one aligned button row; the setup dialog's "保存并启用"
+  became the primary button; buttons stop wrapping mid-label; disabled
+  controls show `not-allowed`; the follow-up question input matches field
+  styling. Dark theme keeps the official `#191919` paper.
+- Version 0.4.1.
+
 ## [0.4.0] - 2026-10-24
 
 ### Added

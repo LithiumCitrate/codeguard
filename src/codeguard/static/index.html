@@ -88,9 +88,9 @@
         <h2><span class="eyebrow">Export</span>导出<span class="tab-lip" aria-hidden="true"></span></h2>
         <div class="hatch-band" aria-hidden="true"></div>
         <div id="exports" class="export-list" hidden>
-          <button class="btn cut" data-export="receipt">出处证书<small>JSON</small></button>
-          <button class="btn cut" data-export="sbom">物料清单<small>CycloneDX</small></button>
-          <button class="btn cut" data-export="html">审查报告<small>HTML</small></button>
+          <button class="btn" data-export="receipt">出处证书<small>JSON</small></button>
+          <button class="btn" data-export="sbom">物料清单<small>CycloneDX</small></button>
+          <button class="btn" data-export="html">审查报告<small>HTML</small></button>
         </div>
         <p class="note" id="exportNote">审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。</p>
       </section>
@@ -166,8 +166,10 @@
           <select id="licenseUsage"><option value="distribution">对外分发</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="inline_copy">源码复制</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
         </label>
       </div>
-      <button id="reason" class="btn go" type="button">分析义务与冲突</button>
-      <button id="licenceExplain" class="btn small" type="button" disabled>AI 通俗解释</button>
+      <div class="btn-row">
+        <button id="reason" class="btn go" type="button">分析义务与冲突</button>
+        <button id="licenceExplain" class="btn" type="button" disabled>AI 通俗解释</button>
+      </div>
       <div id="licenseResult" class="licence-result" aria-live="polite"></div>
     </section>
     <p class="note">结论是工程风险提示，不构成法律意见；许可证标签与条款存在版本差异，发布前需人工核验原项目授权。</p>
@@ -217,7 +219,7 @@
         <select id="aiModel" disabled><option value="">先拉取模型列表</option></select></label>
       <div class="ai-actions">
         <button id="aiFetch" class="btn small" type="button">拉取模型列表</button>
-        <button id="aiSave" class="btn cut" type="button" disabled>保存并启用</button>
+        <button id="aiSave" class="btn go small" type="button" disabled>保存并启用</button>
       </div>
     </div>
     <p id="aiStatus" class="note" aria-live="polite">未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。</p>
