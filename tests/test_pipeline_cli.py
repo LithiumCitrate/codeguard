@@ -234,8 +234,8 @@ class EvidenceTests(PipelineTestBase):
 class CorroborationTests(unittest.TestCase):
     def test_each_evidence_kind_alone_qualifies(self):
         self.assertTrue(corroborates(4, 0.20, 12, 0.40))     # spread + verbatim
-        self.assertTrue(corroborates(1, 0.02, 25, 0.40))     # long verbatim run
-        self.assertTrue(corroborates(1, 0.02, 5, 0.80))      # confident judge
+        self.assertTrue(corroborates(1, 0.12, 25, 0.40))     # long verbatim over real coverage
+        self.assertTrue(corroborates(3, 0.02, 11, 0.80))     # confident judge + verbatim floor
 
     def test_single_weak_span_does_not(self):
         # the shape a false positive has: one span, no verbatim run, diluted score
@@ -247,6 +247,34 @@ class CorroborationTests(unittest.TestCase):
         # mercurial CLI on six argparse spans, 22% coverage, only five verbatim
         # tokens and confidence 0.671. That must remain an S2 review item.
         self.assertFalse(corroborates(6, 0.222, 5, 0.671))
+
+    def test_realworld_20261024_false_blocks_stay_reviews(self):
+        # Eleven false blocks from the 25-project sweep (v0.5.0 index); every
+        # one rode a corroboration channel without a 10-token verbatim floor.
+        # (spans, coverage, verbatim_run, confidence) - recorded per finding.
+        cases = [
+            (1, 0.25, 2, 0.873),    # pip/_vendor distro import list -> tqdm
+            (8, 0.296, 5, 0.845),   # wheel CLI argparse chain -> mercurial cli.py
+            (155, 0.502, 5, 0.989),  # sqlmap argparse chain -> glances main
+            (1, 0.5, 1, 0.760),     # WBXML hex constants -> paramiko _winapi stub
+            (2, 1.0, 2, 0.834),     # ansible facts subclass -> paramiko rsakey
+            (4, 0.444, 3, 0.829),   # localstack sync header -> paramiko pkey
+            (3, 0.3, 3, 0.872),     # localstack parargs -> paramiko pkey
+            (4, 0.21, 3, 0.754),    # localstack hash_func -> paramiko pkey
+            (1, 0.031, 26, 0.408),  # defaultdict mixin idiom -> glances curses
+            (1, 0.167, 3, 0.756),   # freqtrade import list -> paramiko ecdsakey
+            (3, 0.429, 1, 0.998),   # pandas api re-export -> zstandard backend
+        ]
+        for spans, coverage, verbatim, confidence in cases:
+            self.assertFalse(corroborates(spans, coverage, verbatim, confidence),
+                             f'({spans}, {coverage}, {verbatim}, {confidence}) must not block')
+
+    def test_real_copies_still_block(self):
+        # renamed/commented copies keep 40+ token verbatim runs; the partial
+        # case (the only sub-100% mutation class) still clears the floor.
+        self.assertTrue(corroborates(12, 0.5, 40, 0.2))
+        self.assertTrue(corroborates(2, 0.2, 10, 0.1))
+        self.assertTrue(corroborates(1, 0.15, 20, 0.3))
 
 
 class DiffTests(unittest.TestCase):

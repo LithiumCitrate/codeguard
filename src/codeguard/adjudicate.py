@@ -24,6 +24,7 @@ DEFAULT_CORROBORATE_COVERAGE = 0.15
 DEFAULT_CORROBORATE_VERBATIM = 20
 DEFAULT_CORROBORATE_CONFIDENCE = 0.75
 DEFAULT_CORROBORATE_SPAN_VERBATIM = 10
+DEFAULT_CORROBORATE_VERBATIM_COVERAGE = 0.10
 
 
 def corroborates(spans: int, coverage: float, verbatim_run: int, confidence: float,
@@ -34,20 +35,31 @@ def corroborates(spans: int, coverage: float, verbatim_run: int, confidence: flo
 
     A licence conflict proven by one isolated span is not a build break. Real
     reuse shows up either structurally (several spans over a sixth of the file
-    *and* a non-trivial verbatim run), through a long verbatim run, or
-    statistically (the judge is confident about the file as a whole).
+    *and* a non-trivial verbatim run) or through a long verbatim run over a
+    non-trivial part of the source.
 
-    The 10-token floor on the structural branch is not cosmetic: real-world
-    scans of setuptools' vendored wheel CLI produced six scattered argparse
-    spans, 22% coverage, a five-token verbatim run and confidence 0.671 - enough
-    to pass the old OR rule and falsely block a GPL match. Generic CLI
+    **Every blocking path requires a verbatim run of at least 10 tokens.**
+    The judge's confidence alone no longer qualifies: the v0.5.0 real-world
+    sweep over 25 high-star GitHub projects produced eleven false blocks, and
+    eight of them rode the confidence-only channel after a corpus-widening
+    retrain moved the model's scores - an import-list re-export at confidence
+    0.998 with a single verbatim token, a 65-line paramiko stub at 0.76 with
+    one, argparse chains at 0.85-0.99 with five. The 10-token floor on the
+    structural branch is the same lesson from 2026-10-20: generic CLI
     boilerplate should be reviewable, not build-breaking; renamed/commented/
     dead-code copies in the benchmark retain 40+ token runs and still qualify.
+
+    The long-verbatim channel also requires the run to cover at least a tenth
+    of the source document: a 26-token run over 3% of a source file was a
+    `class X(defaultdict)` mixin idiom, not copying.
     """
     structural = (spans >= 2 and coverage >= coverage_min
                   and verbatim_run >= DEFAULT_CORROBORATE_SPAN_VERBATIM)
-    return (structural or verbatim_run >= verbatim_min
-            or confidence >= confidence_min)
+    long_verbatim = (verbatim_run >= verbatim_min
+                     and coverage >= DEFAULT_CORROBORATE_VERBATIM_COVERAGE)
+    confident = (confidence >= confidence_min
+                 and verbatim_run >= DEFAULT_CORROBORATE_SPAN_VERBATIM)
+    return structural or long_verbatim or confident
 
 
 @dataclass

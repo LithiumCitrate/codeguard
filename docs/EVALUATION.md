@@ -86,100 +86,40 @@ proprietary 目标仍属兼容），没有阻断。这个案例说明：
 - 本评测不含真实模型泄漏正例；正例方向仍由受控变异基准覆盖。下一阶段应补充真实模型
   输出、人工双标注和跨项目留出。
 
-## 6. 真实 GitHub 项目扫描（2026-10-20）
+## 6. 真实 GitHub 项目扫描（2026-10-24，25 高星项目）
 
-HumanEval 是算法题解，仍不等于真实仓库。为了看“真实工程代码会不会被误阻断”，又选了
-10 个许可证多样的公开项目（requests、flask、fastapi、httpx、poetry、pip、setuptools、
-pytest、sqlmap、mitmproxy），加上 pip/setuptools 的 `_vendor` 目录，共 12 个扫描集合：
+HumanEval 是算法题解，仍不等于真实仓库。为了看"真实工程代码会不会被误阻断"，选了
+**25 个高星公开项目**（pip、setuptools、pytest、sqlmap、mitmproxy、ansible、yt-dlp、black、
+mypy、rich、scrapy、celery、sphinx、httpie、localstack、streamlit、salt、datasets、
+openai-python、freqtrade、airflow、keras、pandas、numpy、aiohttp），加上 pip/setuptools 的
+`_vendor` 目录，共 27 个扫描集合：
 
 | 指标 | 结果 |
 |---|---|
-| 采样/成功扫描 | 447 / 447 个生产文件 |
-| 候选发现 | 320（S0 259 / S1 43 / S2 18 / S3 0 / S4 0） |
-| 阻断级发现 | **0** |
-| 真实 vendoring 命中 | **50**（pip-vendor 26、setuptools-vendor 24） |
-| 单文件耗时 p50 / p95 / max | 182 / 1090 / 3717 ms |
+| 采样/成功扫描 | 1119 / 1119 个生产文件 |
+| 候选发现 | 2098（S0 1590 / S1 59 / S2 417 / S3 0 / S4 0，修复后复测） |
+| 阻断级发现 | **0**（修复后复测） |
+| 真实 vendoring 命中 | **56**（pip-vendor 30、setuptools-vendor 26） |
+| 单文件耗时 p50 / p95 | 约 40 / 1400 ms |
 
 方法：每个仓库按相对路径的 SHA-256 排序取前 N 个 900 B–90 KB 的 `.py` 文件，排除
 tests/docs/examples；目标许可证取仓库 LICENSE，使用方式 `distribution`；vendor 目录只在
 `*-vendor` 集合中显式扫描。仓库以浅克隆放在 `.codeguard/github/`（gitignored），
 不进入索引、不随作品分发；证据只保留 commit、路径、许可证与发现，不保存仓库源码。
+与 0.5.0 语料重复的仓库（requests/flask/fastapi/httpx/django/pydantic 等）从无关清单中排除。
 
-真实扫描暴露并修复了一个有效问题：setuptools 的 vendored wheel CLI 与 mercurial CLI
-共享 argparse 样板，旧规则得到 6 片段、22% 覆盖率、5 token 逐字命中、置信度 0.671，
-却触发了 GPL 误阻断。现在结构分支要求逐字 ≥10 token，置信度门槛提高到 0.75；
-该案例降为 S2 复核，变异基准仍为 99% 检出、阻断召回 100%。
+**两轮真实扫描各暴露并修复了一个真实缺陷**：
 
-**边界**：这是仓库采样，不是全仓审计或用户试用；vendoring 命中是“真实复制”而非违规结论；
+1. 2026-10-20（10 项目/447 文件）：setuptools 的 vendored wheel CLI 与 mercurial CLI 共享
+   argparse 样板（6 片段/22% 覆盖/5 token 逐字/置信度 0.671）误触 GPL 阻断 → 结构分支要求
+   逐字 ≥10 token。
+2. 2026-10-24（25 项目/1119 文件，v0.5.0 语料）：首次运行出现 **11 条假阻断**（import 名单、
+   argparse 链、0x 常量表、paramiko 小文件片段、re-export 名单、惯用 mixin），全部经由
+   "置信度 ≥0.75 即可阻断"通道——语料扩充重训后模型分数漂移，该通道失去防线 →
+   **任何阻断路径都要求 ≥10 个逐字 token**，长逐字通道另要求源覆盖率 ≥10%。
+   11 条 (spans, coverage, verbatim, confidence) 四元组固化为回归测试；修复后变异基准
+   8 类阻断召回保持 100%，真实扫描 0 阻断。
+
+**边界**：这是仓库采样，不是全仓审计或用户试用；vendoring 命中是"真实复制"而非违规结论；
 真实模型泄漏正例仍需单独收集。复现：`python scripts/eval_realworld.py`，原始结果见
-`submission/evidence/realworld-github-20261020.json`。
-
-## 7. 与变异基准的关系
-
-| 评测 | 回答的问题 | 数据来源 | 主要指标 |
-|---|---|---|---|
-| 变异基准 | 改写后的已知来源还能不能抓到 | 自研确定性变异器 | 检出率、AUC/F1、阻断召回 |
-| 外部干净负例 | 独立实现会不会被误阻断 | HumanEval（MIT） | 误阻断率 + 单侧上限 |
-| 真实模型泄漏正例 | 模型真的复现了别人的代码，能不能检出并归因 | LiCoEval（ICSE 2025，AGPL-3.0-or-later） | 命中率、归因层级、copyleft 子集阻断 |
-
-两者不能互相替代。对外材料应同时给出两侧结果，并明确数据来源、样本量和适用范围。
-
-## 四点五、自扫口径（本产品扫自己）
-
-`codeguard scan src/codeguard --license Apache-2.0` 退出码 **0**：28 个源文件、6 处命中
-（5×S0、1×S2、0 阻断）。唯一的 S2 是 `license_intel.py` 与 mercurial
-`contrib/packaging/hgpackaging/pyoxidizer.py`（GPL-2.0-or-later）在许可证表达式解析上的
-结构相似，置信度 0.4335，低于阻断门槛，按流程转人工复核。披露它是因为“自扫 0 阻断”
-容易被读成“自扫全绿”——本产品对自己的代码也会给出需要人看的提示。
-
-## 五、真实模型泄漏正例（LiCoEval, ICSE 2025）
-
-变异基准回答“改写过的来源还能不能抓到”，HumanEval 回答“独立实现会不会被误阻断”，
-两者都没有回答 **“真实模型输出里是不是有别人的代码”**。这一侧不能由我们自己伪造，
-所以改用第三方公开数据：LiCoEval（Xu/Gao/He/Zhou, ICSE 2025, arXiv:2408.02487）
-发布了 GPT-4o 的真实生成代码、与之 striking-similar 的开源原文、逐文件许可证与
-论文自身的相似度分数。仓库 `osslab-pku/LiCoEval` 为 AGPL-3.0-or-later，
-commit `cfa26b4e5f108cccb49209f08c36f65d0b3bb658`。
-
-```bash
-python scripts/eval_model_leak.py            # 按 URL+SHA-256 取数，本地评测，不随作品分发
-```
-
-方法要点：
-
-1. 把数据集自带的 **4,187 个带许可原文全部建成同一个评测索引**（753 个项目 / 67,041 片段），
-   正例的真实原文只是其中一个文档 —— 归因必须在几千个干扰项里命中它；
-2. 逐条扫描 **47 条 GPT-4o 真实输出**，目标许可证 MIT、使用方式 distribution
-   （即“开发者把这段代码贴进自己的 MIT 项目并发布”）；
-3. 归因分三层：文件级（预期项目+路径）、项目级（同项目不同窗口）、同摘要等效来源
-   （同一段代码被别的项目复制走）；
-4. 同索引对照：随机抽 200 个真实原文（排除其自身项目）扫描，看会不会阻断。
-
-结果（`submission/evidence/model-leak-20261021.*`）：
-
-| 指标 | 数值 |
-|---|---|
-| 出现任意命中 | 47 / 47 |
-| 文件级归因 | 36 / 47（95% 单侧下限 64.2%） |
-| 项目级归因 | 39 / 47（下限 71.4%） |
-| top-1 / 真源进 top-3 | 21 / 47 ｜ 33 / 47 |
-| copyleft 子集阻断 | 6 / 6（GPL-3.0-or-later→S4，MPL-2.0→S3） |
-| 逐字命中 ≥20 token | 46 / 47（48 token 为窗口上限） |
-| 单样本延迟 p50 / p95 / max | 97.4 / 363.8 / 1149.6 ms |
-| 同索引 200 真实文件对照 | 阻断 7 条，逐条为跨仓库真实复制，不作误报率 |
-
-必须这样引用，也只能这样引用：
-
-- 41 条原文是 Apache-2.0/BSD-3-Clause/MIT，对 MIT 目标不产生许可证冲突，
-  所以“阻断 6/47”只对这 6 条 copyleft 子集有意义，子集阻断是 6/6；
-- 被检原文一定在索引内（构造性条件），因此这组数字衡量**检出与归因**，不衡量覆盖率上限；
-- 8 条命中的是同一段上游代码的其它复制仓库（如 `tensorflow_models` 与
-  `balancap_SSD-Tensorflow`），是否认定更强来源要人工标注，不能先替检测器记功；
-- 被评模型与提示词由第三方论文固定，我们无法审计其训练数据；
-- 数据集只在本地按 URL+SHA-256 使用，原文与模型输出都不写入仓库、不进入产品索引、
-  不随作品分发；证据文件里只有摘要、指标与许可证。
-
-自有语料上的诱发试点（`scripts/eval_model_elicitation.py`，6 条凭记忆生成的回答）
-**没有任何片段命中**，如实记为阴性：既不能读成“模型不会泄漏”，也不能读成“检测器失效”。
-把它变成正例需要可披露型号的公开对话模型与更多提示，采集协议与提示词已入库
-（`scripts/elicitation_prompts.jsonl` + 标注表），由团队在提交前补齐。
+`submission/evidence/realworld-github-20261024-v051.*`（2026-10-20 口径保留作历史）。

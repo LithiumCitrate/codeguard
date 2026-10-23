@@ -123,25 +123,31 @@ HumanEval 是独立编写的算法实现，不是真实模型输出；真实模�
 方法与复现见 [docs/EVALUATION.md](docs/EVALUATION.md)，原始结果见
 `submission/evidence/humaneval-20261020.json`。
 
-### 4.2 真实 GitHub 项目扫描（2026-10-20）
+### 4.2 真实高星项目扫描（2026-10-24，25 项目 / 1119 文件）
 
-为验证“不注入变异的真实代码”，用 10 个许可证多样的公开项目（Apache-2.0 / MIT / BSD /
-GPL）共 12 个扫描集合、**447 个生产文件**跑产品原路径；pip 与 setuptools 额外扫 `_vendor`：
+与变异基准互补的第三只眼：**25 个高星 GitHub 项目**（pip、setuptools、pytest、sqlmap、mitmproxy、
+ansible、yt-dlp、black、mypy、rich、scrapy、celery、sphinx、httpie、localstack、streamlit、salt、
+datasets、openai-python、freqtrade、airflow、keras、pandas、numpy、aiohttp，共 27 个扫描集合）
+按各自真实许可证走产品原路径，确定性采样 **1119 个生产文件**：
 
 | 指标 | 结果 |
 |---|---|
-| 采样/成功扫描 | 447 / 447 |
-| 候选发现 | 320（S0 259 / S1 43 / S2 18） |
-| 阻断级发现（S3/S4） | **0** |
-| 真实 vendoring 命中 | **50**（pip-vendor 26 + setuptools-vendor 24） |
-| 单文件耗时 p50 / p95 / max | 182 / 1090 / 3717 ms |
+| 采样/成功扫描 | 1119 / 1119 |
+| 发现（S0–S2） | 2098（全部转人工复核提示） |
+| 阻断级发现（S3/S4） | **0**（修复后复测） |
+| 真实 vendoring 命中 | **56**（pip-vendor 30 + setuptools-vendor 26，含 1191 行 urllib3 匹配 conf 0.9954 正确评级 S1） |
+| 单文件耗时 p50 / p95 | 约 40 / 1400 ms |
 
-真实扫描发现并修正了一个**真实的误阻断**：setuptools 的 vendored wheel CLI 与 mercurial
-CLI 共享 argparse 样板，旧规则给出 6 片段、22% 覆盖率、5 token 逐字命中、置信度 0.671，
-却触发了 GPL 阻断。修正后结构分支要求逐字 ≥10 token、置信度门槛提高到 0.75，该案例降为
-S2 复核；该修正基于 20 包时代基准（当时 99% 检出），0.5.0 扩语料复测为 97% 检出、阻断召回 100%。
+**这轮扫描发现并修复了产品的一个真实缺陷**：首次运行产生 **11 条假阻断**（pip/_vendor 的
+import 名单、sqlmap 的 argparse 链、mitmproxy 的 0x 常量表、ansible/localstack/freqtrade 命中的
+paramiko 小文件片段、pandas 的 re-export 名单、localstack 的惯用 mixin）——全部经由佐证规则的
+"置信度≥0.75 即可阻断"通道：语料扩充后模型重训使分数漂移，该通道失去防线作用。修复
+（`corroborates()`）：**任何阻断路径都要求 ≥10 个逐字 token**，长逐字通道另要求源覆盖率 ≥10%。
+修复后变异基准 8 类阻断召回保持 100%，真实扫描 0 阻断；11 条误报的
+(spans, coverage, verbatim, confidence) 四元组全部固化为回归测试（`tests/test_pipeline_cli.py`）。
+2026-10-20 首轮 447 文件口径（10 项目、0 阻断、50 vendoring、argparse 样板误阻断修复）保留作历史对照。
 方法见 [docs/EVALUATION.md](docs/EVALUATION.md)，原始结果见
-`submission/evidence/realworld-github-20261020.json`。真实仓库只作本地评测，不随仓库分发。
+`submission/evidence/realworld-github-20261024-v051.*`。真实仓库只作本地评测，不随仓库分发。
 
 ## 5. 开源与复用
 

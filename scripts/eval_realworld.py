@@ -19,6 +19,7 @@ import json
 import math
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import time
@@ -30,6 +31,7 @@ if str(SRC) not in sys.path:
 
 from codeguard.adjudicate import Scanner  # noqa: E402
 from codeguard.cli import load_index, load_model, workspace  # noqa: E402
+from codeguard import __version__  # noqa: E402
 from codeguard.license_intel import RISK_LABELS  # noqa: E402
 from codeguard.report import index_fingerprint  # noqa: E402
 
@@ -38,17 +40,14 @@ RISK_ORDER = {"S0": 0, "S1": 1, "S2": 2, "S3": 3, "S4": 4}
 
 # Licences were checked against each repository's LICENSE file at the pinned
 # commit recorded in the evidence.  The corpus is not modified by this script.
+#
+# v0.5.0 note: the detection corpus now CONTAINS shallow clones of requests /
+# flask / fastapi / httpx / django / pydantic (added by
+# scripts/expand_corpus_github.py), so those repositories are excluded here —
+# scanning them would only re-find the corpus's own copies.  Everything below
+# is unrelated to the corpus; the two *-vendor entries expect hits because they
+# genuinely vendor corpus packages.
 REPOS = [
-    {"name": "requests", "repo": "psf/requests", "license": "Apache-2.0",
-     "roots": ["src/requests", "requests"], "expected": []},
-    {"name": "flask", "repo": "pallets/flask", "license": "BSD-3-Clause",
-     "roots": ["src/flask", "flask"], "expected": []},
-    {"name": "fastapi", "repo": "tiangolo/fastapi", "license": "MIT",
-     "roots": ["fastapi"], "expected": []},
-    {"name": "httpx", "repo": "encode/httpx", "license": "BSD-3-Clause",
-     "roots": ["httpx"], "expected": []},
-    {"name": "poetry", "repo": "python-poetry/poetry", "license": "MIT",
-     "roots": ["src/poetry"], "expected": []},
     {"name": "pip", "repo": "pypa/pip", "license": "MIT",
      "roots": ["src/pip"], "exclude_parts": ["_vendor"], "expected": []},
     {"name": "pip-vendor", "repo": "pypa/pip", "license": "MIT",
@@ -63,6 +62,46 @@ REPOS = [
      "roots": ["lib"], "expected": []},
     {"name": "mitmproxy", "repo": "mitmproxy/mitmproxy", "license": "MIT",
      "roots": ["mitmproxy"], "expected": []},
+    {"name": "ansible", "repo": "ansible/ansible", "license": "GPL-3.0-only",
+     "roots": [""], "expected": []},
+    {"name": "yt-dlp", "repo": "yt-dlp/yt-dlp", "license": "Unlicense",
+     "roots": [""], "expected": []},
+    {"name": "black", "repo": "psf/black", "license": "MIT",
+     "roots": ["src", ""], "expected": []},
+    {"name": "mypy", "repo": "python/mypy", "license": "MIT",
+     "roots": [""], "expected": []},
+    {"name": "rich", "repo": "Textualize/rich", "license": "MIT",
+     "roots": ["rich"], "expected": []},
+    {"name": "scrapy", "repo": "scrapy/scrapy", "license": "BSD-3-Clause",
+     "roots": ["scrapy"], "expected": []},
+    {"name": "celery", "repo": "celery/celery", "license": "BSD-3-Clause",
+     "roots": ["celery"], "expected": []},
+    {"name": "sphinx", "repo": "sphinx-doc/sphinx", "license": "BSD-2-Clause",
+     "roots": ["sphinx"], "expected": []},
+    {"name": "httpie", "repo": "httpie/cli", "license": "BSD-3-Clause",
+     "roots": ["httpie"], "expected": []},
+    {"name": "localstack", "repo": "localstack/localstack", "license": "Apache-2.0",
+     "roots": [""], "expected": []},
+    {"name": "streamlit", "repo": "streamlit/streamlit", "license": "Apache-2.0",
+     "roots": [""], "expected": []},
+    {"name": "salt", "repo": "saltstack/salt", "license": "Apache-2.0",
+     "roots": ["salt"], "expected": []},
+    {"name": "datasets", "repo": "huggingface/datasets", "license": "Apache-2.0",
+     "roots": ["src/datasets"], "expected": []},
+    {"name": "openai-python", "repo": "openai/openai-python", "license": "Apache-2.0",
+     "roots": ["src/openai"], "expected": []},
+    {"name": "freqtrade", "repo": "freqtrade/freqtrade", "license": "AGPL-3.0-only",
+     "roots": ["freqtrade"], "expected": []},
+    {"name": "airflow", "repo": "apache/airflow", "license": "Apache-2.0",
+     "roots": ["airflow-core/src/airflow", "airflow"], "expected": []},
+    {"name": "keras", "repo": "keras-team/keras", "license": "Apache-2.0",
+     "roots": ["keras"], "expected": []},
+    {"name": "pandas", "repo": "pandas-dev/pandas", "license": "BSD-3-Clause",
+     "roots": ["pandas"], "expected": []},
+    {"name": "numpy", "repo": "numpy/numpy", "license": "BSD-3-Clause",
+     "roots": ["numpy"], "expected": []},
+    {"name": "aiohttp", "repo": "aio-libs/aiohttp", "license": "Apache-2.0",
+     "roots": ["aiohttp"], "expected": []},
 ]
 
 EXCLUDE_PARTS = {"tests", "test", "testing", "docs", "doc", "examples", "example",
@@ -71,16 +110,52 @@ MIN_BYTES = 900
 MAX_BYTES = 90_000
 
 
-def clone(repo: str) -> Path:
+def _rmtree(path: Path) -> None:
+    """Windows-tolerant removal: locked files fail silently with ignore_errors."""
+    if not path.exists():
+        return
+    for _ in range(3):
+        try:
+            shutil.rmtree(path)
+            return
+        except OSError:
+            time.sleep(0.4)
+    # 最后兜底：把残留目录改名让路，git clone 用新目录
+    try:
+        path.rename(path.with_name(path.name + f".stale-{int(time.time())}"))
+    except OSError:
+        pass
+
+
+def clone(repo: str, log=print):
+    """Shallow-clone a repo; a single network failure must not kill the run."""
     GITHUB.mkdir(parents=True, exist_ok=True)
     name = repo.replace("/", "_")
     dest = GITHUB / name
-    if not (dest / ".git").exists():
-        print("clone %s" % repo, flush=True)
-        subprocess.run(["git", "clone", "--depth", "1",
-                        "https://github.com/%s.git" % repo, str(dest)],
-                       check=True)
-    return dest
+    def checkout_ok(path: Path) -> bool:
+        # 残缺克隆（有 .git 但工作树为空）不能当缓存复用
+        return (path / ".git").exists() and any(p.name != ".git" for p in path.iterdir())
+    if checkout_ok(dest):
+        return dest
+    _rmtree(dest)
+    print("clone %s" % repo, flush=True)
+    for attempt in (1, 2, 3):
+        target = dest if attempt == 1 else GITHUB / f"{name}.retry{attempt}"
+        result = subprocess.run(["git", "-c", "core.longpaths=true", "clone",
+                                 "--depth", "1",
+                                 "https://github.com/%s.git" % repo, str(target)],
+                                capture_output=True, text=True)
+        if result.returncode == 0 and checkout_ok(target):
+            if target != dest:
+                _rmtree(dest)
+                try:
+                    target.rename(dest)
+                except OSError:
+                    return target  # 改名失败也能用，路径无关扫描
+            return dest
+        _rmtree(target)
+        log("clone %s 第 %d 次失败：%s" % (repo, attempt, result.stderr.strip()[-160:]))
+    return None
 
 
 def commit_of(path: Path) -> str:
@@ -153,6 +228,19 @@ def run(args):
         if args.only and spec["name"] not in args.only:
             continue
         repo_dir = clone(spec["repo"])
+        if repo_dir is None:
+            all_results.append({"name": spec["name"], "repo": spec["repo"],
+                                "commit": "", "license": spec["license"],
+                                "roots": spec["roots"], "sampled_files": 0,
+                                "scanned_files": 0, "total_spans": 0,
+                                "errors": [{"file": "<clone>", "error": "clone failed after retries"}],
+                                "findings": 0, "risk_counts": {}, "blocking": [],
+                                "expected_packages": spec.get("expected", []),
+                                "expected_hits": [],
+                                "latency_ms": {"p50": 0, "p95": 0, "max": 0},
+                                "files": [], "top_findings": []})
+            print("%-18s CLONE FAILED（跳过，不终止评测）" % spec["name"], flush=True)
+            continue
         commit = commit_of(repo_dir)
         limit = args.vendor_limit if spec["name"].endswith("-vendor") else args.per_repo
         files = select_files(repo_dir, spec["roots"], spec.get("exclude_parts"),
@@ -220,7 +308,7 @@ def run(args):
             "not_redistributed": "repositories stay under .codeguard/github (gitignored); evidence contains findings only",
         },
         "metadata": {
-            "tool": "codeguard", "version": "0.2.0",
+            "tool": "codeguard", "version": __version__,
             "index_fingerprint": index_fingerprint(index),
             "model_sha256": hashlib.sha256((Path(root) / "model.json").read_bytes()).hexdigest()
             if (Path(root) / "model.json").exists() else None,
@@ -232,7 +320,7 @@ def run(args):
             "findings": total_findings, "blocking": total_blocking,
             "files_with_blocking": sum(1 for r in all_results for f in r["files"] if f["blocking"]),
             "risk_counts": {risk: sum(r["risk_counts"].get(risk, 0) for r in all_results)
-                            for risk in RISK_ORDER},
+                            for risk in RISK_ORDER},  # noqa: 占位记录的空计数按 0 处理
             "expected_hits": sum(len(r["expected_hits"]) for r in all_results),
             "latency_ms": {"p50": percentile(global_latencies, 0.5),
                            "p95": percentile(global_latencies, 0.95),
@@ -273,7 +361,8 @@ def to_markdown(payload):
         rc = r["risk_counts"]
         lines.append("| %s | `%s` | %s | %d | %d | %d/%d/%d/%d/%d | %d | %.0f |" % (
             r["name"], r["commit"][:12], r["license"], r["sampled_files"],
-            r["findings"], rc["S0"], rc["S1"], rc["S2"], rc["S3"], rc["S4"],
+            r["findings"], rc.get("S0", 0), rc.get("S1", 0), rc.get("S2", 0),
+            rc.get("S3", 0), rc.get("S4", 0),
             len(r["blocking"]), r["latency_ms"]["p95"]))
     lines.append("")
     lines.append("## 阻断级发现（需人工复核）")

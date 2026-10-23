@@ -4,6 +4,41 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.5.1] - 2026-10-24
+
+### Fixed
+
+- **Eleven false blocks found by a 25-project real-world sweep, all fixed**:
+  scanning pip, setuptools, pytest, sqlmap, mitmproxy, ansible, yt-dlp, black,
+  mypy, rich, scrapy, celery, sphinx, httpie, localstack, streamlit, salt,
+  datasets, openai-python, freqtrade, airflow, keras, pandas, numpy and
+  aiohttp (1119 production files, real licences, product code path) produced
+  11 S3/S4 findings on first run - every one a generic shape (argparse chains,
+  import re-export lists, hex-constant tables, paramiko small-file fragments,
+  a `defaultdict` mixin idiom) that reached blocking through the
+  confidence-only corroboration channel after the corpus-widening retrain
+  moved the model's scores (an import list at confidence 0.998 with one
+  verbatim token; a 65-line stub at 0.76 with one). `corroborates()` now
+  requires a >=10-token verbatim run on EVERY blocking path, and the
+  long-verbatim channel additionally requires >=10% source coverage. The
+  eleven (spans, coverage, verbatim, confidence) tuples are frozen as
+  regression tests; the mutation benchmark's block recall stays 100% across
+  all eight classes, and the re-run sweep reports **0 blocking** with the 56
+  genuine vendoring hits preserved (a 1191-line urllib3 match correctly graded
+  S1 under pip's MIT).
+
+### Changed
+
+- `scripts/eval_realworld.py` robustness: one failed clone no longer kills
+  the run (retries + skip-and-record), crashed runs leave recoverable
+  evidence, markdown rendering tolerates clone-failure placeholders, repos
+  whose package layout moved (airflow) resolve via new roots, incomplete
+  cached clones are re-cloned, and clones use `core.longpaths=true` (streamlit
+  has paths beyond the Windows MAX_PATH). Corpus-overlapping repositories
+  (requests/flask/fastapi/httpx/django/pydantic) are excluded from the
+  unrelated-project list now that they are detection targets.
+- Version 0.5.1.
+
 ## [0.5.0] - 2026-10-24
 
 ### Added
