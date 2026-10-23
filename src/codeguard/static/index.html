@@ -20,7 +20,7 @@
 <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <header class="cmdbar">
-  <a class="brand" href="#review" aria-label="CodeGuard 首页">
+  <a class="brand" href="#home" aria-label="CodeGuard 首页">
     <svg class="seal" viewBox="0 0 28 28" aria-hidden="true">
       <path class="badge" d="M3 3h22v14l-8 8H3z"/>
       <g class="mark">
@@ -32,7 +32,8 @@
     <span>CODEGUARD<small>代码溯源工作台</small></span>
   </a>
   <nav aria-label="分区">
-    <button class="here" data-tab="review" aria-current="page">审查<small>Review</small></button>
+    <button data-tab="home" aria-current="page">首页<small>Home</small></button>
+    <button data-tab="review" aria-current="page">审查<small>Review</small></button>
     <button data-tab="license">许可推演<small>Licences</small></button>
     <button data-tab="about">方法与边界<small>Method</small></button>
   </nav>
@@ -44,6 +45,49 @@
 </header>
 
 <main>
+  <section id="home" class="tab landing">
+    <div class="landing-hero">
+      <p class="eyebrow">// OPEN SOURCE ORIGIN TRACE</p>
+      <h1 class="wordmark" aria-label="CodeGuard">
+        <span class="solid"><i class="lc">C</i><i class="lm">O</i><i class="ln">D</i><i class="ly">E</i></span>
+        <span class="hollow" aria-hidden="true">GUARD</span>
+      </h1>
+      <p class="marker-line"><span class="marker">AI 生成代码的开源许可证污染溯源与合规门禁</span></p>
+      <p class="lede">让 AI 代码的每一段来源，都有可核验的证据。四层不变性指纹检索候选来源，回读原文验证，
+        SPDX 义务模型推导结论，CI 门禁在合并前阻断；可选大模型只做解读，不改判结论。</p>
+      <div class="btn-row">
+        <button class="btn go action" data-tab="review" type="button">开始使用<small>Start Review</small></button>
+        <button class="btn" data-tab="about" type="button">方法与边界</button>
+      </div>
+      <ul class="facts" aria-label="知识底座规模">
+        <li><small>语料文件</small><b class="fc" id="factDocs">—</b></li>
+        <li><small>指纹片段</small><b class="fm" id="factChunks">—</b></li>
+        <li><small>开源项目</small><b class="fn" id="factPkgs">—</b></li>
+        <li><small>许可证</small><b class="fy" id="factLic">—</b></li>
+      </ul>
+    </div>
+    <div class="feat-grid">
+      <article class="feat f-mint" data-tab="review" role="button" tabindex="0">
+        <div class="feat-num">01</div>
+        <h3>溯源检索</h3>
+        <p>字面、抽象、角色、结构边四层不变性指纹，配 MinHash 与分带 LSH——改名、重排、灌注释都骗不过角色层与结构边层。</p>
+        <p class="go-on">进入审查台 →</p>
+      </article>
+      <article class="feat f-cyan" data-tab="license" role="button" tabindex="0">
+        <div class="feat-num">02</div>
+        <h3>义务推演</h3>
+        <p>SPDX 义务模型按分发、网络服务、链接等使用方式推导义务与冲突；AGPL §13 这类网络条款被独立建模为触发器。</p>
+        <p class="go-on">查看许可推演 →</p>
+      </article>
+      <article class="feat f-yellow" data-tab="review" role="button" tabindex="0">
+        <div class="feat-num">03</div>
+        <h3>工程门禁</h3>
+        <p>CI 只看 diff 新增行，阻断级风险退出码 1；孤立弱匹配降级为 S2 提示并写明理由——"没检查"与"检查通过"绝不混同。</p>
+        <p class="go-on">导出 SBOM / SARIF →</p>
+      </article>
+    </div>
+  </section>
+
   <section id="review" class="tab">
     <div class="hero">
       <div class="hero-copy">

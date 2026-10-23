@@ -4,6 +4,27 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.4.3] - 2026-10-24
+
+### Added
+
+- **Showcase landing (`#home`, the new default)**: a giant CODEGUARD wordmark
+  in the official-site manner — the CODE line carries per-letter fills (cyan,
+  magenta, mint, and one letter knocked out ink-on-yellow) while GUARD is a
+  hollow outlined line; below it a yellow marker tagline, the primary yellow
+  "开始使用" action (cut corner, ink wipe), a colored facts strip fed live
+  from `/api/health` (585 / 36,193 / 20 / 9 种), and three feature cards with
+  hollow 01–03 numerals and mint/cyan/yellow tabs that deep-link into the
+  workbench. The console lives one click (or nav tab) away, as requested.
+- **Fixed four-colour family** declared as tokens (cyan current/clickable,
+  yellow action/attention, magenta top risk, mint pass/grow) and applied
+  beyond the landing: the risk dial's five sectors now carry per-risk colours
+  with the centre big letter taking the risk colour (96px, magenta S4 in the
+  demo), the four kanban panels get colour-coded tabs, AI cards are coloured
+  by task type, and hot read-out values take the yellow fill. Idle dial shows
+  a hollow CODEGUARD wordmark until the first scan.
+- Version 0.4.3.
+
 ## [0.4.2] - 2026-10-24
 
 ### Fixed

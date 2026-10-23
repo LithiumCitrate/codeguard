@@ -68,7 +68,7 @@ function svgNode(tag, attrs = {}, text) {
   return el;
 }
 
-const dialParts = { sectors: {}, eyebrow: null, big: null, sub: null, svg: null };
+const dialParts = { sectors: {}, eyebrow: null, big: null, sub: null, idle: null, svg: null };
 
 function buildDial() {
   const svg = $('dial');
@@ -77,7 +77,7 @@ function buildDial() {
   for (let i = 0; i < 5; i += 1) {
     const a0 = DIAL.start + i * (step + DIAL.gap) + DIAL.gap / 2;
     const a1 = a0 + step;
-    const path = svgNode('path', { class: 'sector', d: sectorPath(DIAL.r1, DIAL.r2, a0, a1) });
+    const path = svgNode('path', { class: `sector sec-${RISK_ORDER[i]}`, d: sectorPath(DIAL.r1, DIAL.r2, a0, a1) });
     const [lx, ly] = polar((DIAL.r1 + DIAL.r2) / 2, (a0 + a1) / 2);
     const code = svgNode('text', { class: 'sector-label', x: lx.toFixed(1), y: (ly + 4).toFixed(1), 'text-anchor': 'middle' }, RISK_ORDER[i]);
     const [sx, sy] = polar(DIAL.r2 + 18, (a0 + a1) / 2);
@@ -86,12 +86,16 @@ function buildDial() {
     svg.append(path, code, sub);
   }
   svg.append(svgNode('circle', { class: 'hub-disc', cx: DIAL.cx, cy: DIAL.cy, r: 178 }));
-  svg.append(svgNode('line', { class: 'core-tick', x1: 218, y1: 250, x2: 246, y2: 250 }),
-             svgNode('line', { class: 'core-tick', x1: 354, y1: 250, x2: 382, y2: 250 }));
-  dialParts.eyebrow = svgNode('text', { class: 'core-eyebrow', x: DIAL.cx, y: 254, 'text-anchor': 'middle' }, 'LAST SCAN');
-  dialParts.big = svgNode('text', { class: 'core-big', x: DIAL.cx, y: 336, 'text-anchor': 'middle' }, '—');
-  dialParts.sub = svgNode('text', { class: 'core-sub', x: DIAL.cx, y: 372, 'text-anchor': 'middle' }, '等待审查');
-  svg.append(dialParts.eyebrow, dialParts.big, dialParts.sub);
+  svg.append(svgNode('line', { class: 'core-tick', x1: 218, y1: 242, x2: 246, y2: 242 }),
+             svgNode('line', { class: 'core-tick', x1: 354, y1: 242, x2: 382, y2: 242 }));
+  dialParts.eyebrow = svgNode('text', { class: 'core-eyebrow', x: DIAL.cx, y: 246, 'text-anchor': 'middle' }, 'LAST SCAN');
+  dialParts.big = svgNode('text', { class: 'core-big', x: DIAL.cx, y: 348, 'text-anchor': 'middle' }, '');
+  dialParts.sub = svgNode('text', { class: 'core-sub', x: DIAL.cx, y: 384, 'text-anchor': 'middle' }, '');
+  const idleCode = svgNode('text', { class: 'core-idle', x: DIAL.cx, y: 292, 'text-anchor': 'middle' }, 'CODE');
+  const idleGuard = svgNode('text', { class: 'core-idle', x: DIAL.cx, y: 356, 'text-anchor': 'middle' }, 'GUARD');
+  dialParts.idle = svgNode('g', { class: 'core-idle-group' });
+  dialParts.idle.append(idleCode, idleGuard);
+  svg.append(dialParts.eyebrow, dialParts.big, dialParts.sub, dialParts.idle);
   dialParts.svg = svg;
 }
 
@@ -104,9 +108,12 @@ function setDial({ risk = '', confidence = null, spans = null, coverage = null, 
     part.code.classList.toggle('on', on);
     part.sub.classList.toggle('on', on);
   }
-  dialParts.big.textContent = risk || '—';
-  dialParts.sub.textContent = risk ? `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}` : label;
-  dialParts.svg.setAttribute('aria-label', risk ? `风险分级环：本次最高 ${risk}（${RISK_ZH[risk]}）` : '风险分级环：尚未审查');
+  const active = Boolean(risk);
+  dialParts.idle.setAttribute('display', active ? 'none' : 'inline');
+  dialParts.big.textContent = active ? risk : '';
+  dialParts.sub.textContent = active ? `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}` : label;
+  RISK_ORDER.forEach((code) => dialParts.big.classList.toggle(`r-${code}`, active && code === risk));
+  dialParts.svg.setAttribute('aria-label', active ? `风险分级环：本次最高 ${risk}（${RISK_ZH[risk]}）` : '风险分级环：尚未审查');
   const cells = { spans: $('statSpans'), coverage: $('statCoverage'), verbatim: $('statVerbatim') };
   cells.spans.textContent = spans === null ? '—' : `${spans.hit}/${spans.total}`;
   cells.coverage.textContent = coverage === null ? '—' : pct(coverage);
@@ -225,7 +232,7 @@ function setBusy(value) {
 
 /* ---------------------------------------------------------------------- wiring */
 function showTab(name, push = true) {
-  const target = document.getElementById(name) ? name : 'review';
+  const target = document.getElementById(name) ? name : 'home';
   document.querySelectorAll('.tab').forEach((el) => { el.hidden = el.id !== target; });
   document.querySelectorAll('.cmdbar nav button').forEach((el) => {
     const here = el.dataset.tab === target;
@@ -238,8 +245,8 @@ document.querySelectorAll('[data-tab]').forEach((button) => button.addEventListe
   showTab(button.dataset.tab);
   window.scrollTo({ top: 0 });
 }));
-window.addEventListener('popstate', () => showTab((location.hash || '#review').slice(1), false));
-showTab((location.hash || '#review').slice(1), false);
+window.addEventListener('popstate', () => showTab((location.hash || '#home').slice(1), false));
+showTab((location.hash || '#home').slice(1), false);
 
 $('themeToggle').addEventListener('click', () => {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -330,7 +337,7 @@ function aiCardTitle(kind) {
 function renderAiCard(kind, { model = '', text = '', offline = false, note = '' }) {
   const wrap = $('aiCards');
   wrap.hidden = false;
-  const card = node('article', undefined, 'ai-card');
+  const card = node('article', undefined, 'ai-card k-' + kind);
   const head = node('div', undefined, 'ai-head');
   head.append(node('b', aiCardTitle(kind)),
     node('span', offline ? '确定性输出 · 本机' : 'AI 生成 · ' + (model || '外部模型'), offline ? 'tag' : 'tag ai'));
@@ -530,6 +537,10 @@ api('/api/health').then((data) => {
   $('engineLayers').textContent = (stats.params.active_layers || []).join(' · ');
   $('engineIndex').textContent = 'v' + stats.index_version;
   $('engineLicences').textContent = (stats.licenses || []).length + ' 种';
+  $('factDocs').textContent = fmt(stats.documents);
+  $('factChunks').textContent = fmt(stats.chunks);
+  $('factPkgs').textContent = fmt(stats.packages);
+  $('factLic').textContent = ((stats.licenses || []).length) + ' 种';
   const ready = data.ready;
   $('connection').textContent = ready ? '● 本机引擎就绪' : '● 语料缺失';
   $('connection').style.color = ready ? 'var(--signal)' : 'var(--cmd-text)';

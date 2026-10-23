@@ -21,9 +21,14 @@
   --danger: #b3261e;
   --cmd: #161616;
   --cmd-text: #ededed;
-  --tri-a: #ff00f0;
+  --tri-a: #ff1aac;
   --tri-b: var(--signal);
   --tri-c: #00ffa2;
+  /* 展示页四色族：青=当前/可点击，品红=最高风险，薄荷=通过/生长，黄=行动/注意 */
+  --cyan: #18d1ff;
+  --magenta: #ff1aac;
+  --mint: #00ffa2;
+  --yellow: #fffa00;
   --cut: 4.2px;
   --cut-panel: 15.6px;
   --pad: 40px;
@@ -207,7 +212,7 @@ main { max-width: 1360px; margin: 0 auto; padding: 32px var(--pad) 56px; }
 .dial-stats > div + div { border-left: 1px solid var(--rule); }
 .dial-stats small { display: block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-stretch: 125%; color: var(--ink2); }
 .dial-stats b { display: inline-block; margin-top: 3px; padding: 0 6px; font-size: 15px; font-weight: 700; font-stretch: 112%; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.dial-stats b.hot { background: var(--signal); color: var(--on-signal); }
+.dial-stats b.hot { background: var(--yellow); color: #161616; }
 
 /* ----------------------------------------------------------------------- work */
 .work { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: start; padding-top: 20px; }
@@ -405,6 +410,7 @@ footer .eyebrow { font-size: 10px; }
   .p-export { grid-column: 2; grid-row: 3; }
   .work { grid-template-columns: minmax(0, 1fr); }
   .field-row.three { grid-template-columns: minmax(0, 1fr); }
+  .feat-grid { grid-template-columns: minmax(0, 1fr); }
   footer { flex-direction: column; align-items: flex-start; }
 }
 
@@ -464,3 +470,91 @@ footer .eyebrow { font-size: 10px; }
 .ai-foot { display: flex; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); }
 .btn.danger { color: var(--danger); border-color: var(--danger); }
 #aiStatus { min-height: 2.6em; }
+
+/* ------------------------------------------------------- 展示页（落地首屏） */
+
+.landing { padding-top: 12px; }
+.landing-hero { padding: 34px 0 30px; border-bottom: 1px solid var(--rule); }
+
+.wordmark { margin: 18px 0 6px; font-weight: 800; font-stretch: 125%; text-transform: uppercase; line-height: 0.88; letter-spacing: 0.01em; }
+.wordmark .solid, .wordmark .hollow { display: block; font-size: clamp(3.6rem, 11.5vw, 9rem); white-space: nowrap; }
+.wordmark .solid i { font-style: normal; }
+.wordmark .lc { color: var(--cyan); }
+.wordmark .lm { color: var(--magenta); }
+.wordmark .ln { color: var(--mint); }
+.wordmark .ly { background: var(--yellow); color: #161616; padding: 0 0.05em; }
+.wordmark .hollow { color: var(--ink); }
+@supports (-webkit-text-stroke: 2px #000) {
+  .wordmark .hollow { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+}
+
+.marker-line { margin: 14px 0 8px; }
+.marker { display: inline-block; background: var(--yellow); color: #161616; font-weight: 700; padding: 2px 10px; }
+.landing-hero .lede { max-width: 38em; color: var(--ink2); margin-bottom: 20px; }
+
+.btn.action { background: var(--yellow); border-color: var(--yellow); color: #161616; }
+.btn.action::before { background: #141414; }
+.btn.action:hover:not(:disabled), .btn.action:focus-visible { color: var(--yellow); }
+.btn.action small { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-stretch: 125%; opacity: 0.72; }
+
+.facts { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 0; margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.facts li { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+.facts li + li::before { content: "│"; margin: 0 14px; color: var(--rule); }
+.facts small { font-size: 11px; letter-spacing: 0.1em; color: var(--ink2); }
+.facts b { font-size: 20px; font-weight: 700; font-stretch: 112%; font-variant-numeric: tabular-nums; }
+.facts .fc { color: var(--cyan); }
+.facts .fm { color: var(--magenta); }
+.facts .fn { color: var(--mint); }
+.facts .fy { background: var(--yellow); color: #161616; padding: 0 6px; }
+
+.feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 30px 0 8px; }
+.feat { position: relative; background: var(--panel); border-top: 1px solid var(--rule); padding: 18px 18px 16px; cursor: pointer; }
+.feat:hover { background: color-mix(in srgb, var(--chip) 45%, var(--panel)); }
+.feat:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.feat::before { content: ""; position: absolute; top: 0; left: 0; width: 96px; height: 6px; }
+.feat.f-mint::before { background: var(--mint); }
+.feat.f-cyan::before { background: var(--cyan); }
+.feat.f-yellow::before { background: var(--yellow); }
+.feat-num { font-size: 56px; font-weight: 800; font-stretch: 125%; line-height: 1; color: var(--ink2); }
+@supports (-webkit-text-stroke: 2px #000) {
+  .feat-num { color: transparent; -webkit-text-stroke: 2px var(--ink2); }
+}
+.feat h3 { margin: 10px 0 6px; font-size: 1.1rem; font-weight: 700; }
+.feat p { font-family: var(--font-read); font-size: 13px; line-height: 1.8; color: var(--ink2); }
+.feat .go-on { margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--ink); }
+.feat.f-mint .go-on { box-shadow: inset 0 -0.45em var(--mint); }
+.feat.f-cyan .go-on { box-shadow: inset 0 -0.45em var(--cyan); }
+.feat.f-yellow .go-on { box-shadow: inset 0 -0.45em var(--yellow); }
+
+/* 面板页签分色（看板四联） */
+.p-corpus::before { background: var(--mint); }
+.p-engine::before { background: var(--cyan); }
+.p-scan::before { background: var(--yellow); }
+.p-export::before { background: var(--magenta); }
+
+/* 分级环扇区按风险着色 */
+#dial .sector.on { fill: var(--chip); }
+#dial .sec-S0.on { fill: var(--ink2); }
+#dial .sec-S1.on { fill: var(--mint); }
+#dial .sec-S2.on { fill: var(--cyan); }
+#dial .sec-S3.on { fill: var(--yellow); }
+#dial .sec-S4.on { fill: var(--magenta); }
+#dial .core-big { font-size: 96px; }
+#dial .core-big.r-S1 { fill: var(--mint); }
+#dial .core-big.r-S2 { fill: var(--cyan); }
+#dial .core-big.r-S3 { fill: #b89b00; }
+#dial .core-big.r-S4 { fill: var(--magenta); }
+[data-theme="dark"] #dial .core-big.r-S3 { fill: var(--yellow); }
+#dial .core-idle { font-family: var(--font-ui); font-size: 54px; font-weight: 800; font-stretch: 125%; fill: none; stroke: var(--ink2); stroke-width: 1.5; letter-spacing: 0.04em; }
+
+/* AI 卡片按类型分色 */
+.ai-card { border-left-color: var(--cyan); }
+.ai-card::before { background: var(--cyan); }
+.ai-card.k-interpret { border-left-color: var(--mint); }
+.ai-card.k-interpret::before { background: var(--mint); }
+.ai-card.k-summary { border-left-color: var(--cyan); }
+.ai-card.k-summary::before { background: var(--cyan); }
+.ai-card.k-ask { border-left-color: var(--magenta); }
+.ai-card.k-ask::before { background: var(--magenta); }
+.ai-card.k-licence { border-left-color: #b89b00; }
+.ai-card.k-licence::before { background: var(--yellow); }
