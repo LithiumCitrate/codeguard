@@ -111,7 +111,9 @@ function setDial({ risk = '', confidence = null, spans = null, coverage = null, 
   const active = Boolean(risk);
   dialParts.idle.setAttribute('display', active ? 'none' : 'inline');
   dialParts.big.textContent = active ? risk : '';
-  dialParts.sub.textContent = active ? `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}` : label;
+  dialParts.sub.textContent = active
+    ? (confidence === null ? (RISK_ZH[risk] || '') : `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}`)
+    : label;
   RISK_ORDER.forEach((code) => dialParts.big.classList.toggle(`r-${code}`, active && code === risk));
   dialParts.svg.setAttribute('aria-label', active ? `风险分级环：本次最高 ${risk}（${RISK_ZH[risk]}）` : '风险分级环：尚未审查');
   const cells = { spans: $('statSpans'), coverage: $('statCoverage'), verbatim: $('statVerbatim') };
@@ -226,7 +228,7 @@ function count() {
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll('[data-demo],#scan,#file,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
+  document.querySelectorAll('[data-demo],#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
   $('scan').textContent = value ? '正在检索和验证来源…' : '开始来源审查';
 }
 
@@ -268,6 +270,113 @@ document.querySelectorAll('[data-demo]').forEach((button) => button.addEventList
 $('code').addEventListener('input', () => { count(); invalidate(); });
 ['name', 'targetLicense', 'usage'].forEach((id) => $(id).addEventListener('change', invalidate));
 
+/* ------------------------------------------------------- 文件夹目录树 */
+const tree = { files: new Map(), root: '', selected: '', selectedIsFile: false };
+
+const TREE_EXTS = ['.py', '.js', '.ts', '.java', '.c', '.cpp', '.h', '.go', '.rs', '.txt',
+  '.mjs', '.jsx', '.tsx', '.cc', '.hpp', '.rb', '.php', '.md'];
+
+$('folder').addEventListener('change', async (event) => {
+  const list = [...event.target.files];
+  if (!list.length) return;
+  tree.files.clear();
+  tree.root = list[0].webkitRelativePath.split('/')[0] || 'uploaded';
+  let skipped = 0;
+  for (const f of list) {
+    const rel = (f.webkitRelativePath || f.name).split('/').slice(1).join('/') || f.name;
+    const ext = '.' + (f.name.split('.').pop() || '').toLowerCase();
+    if (!TREE_EXTS.includes(ext)) { skipped += 1; continue; }
+    if (f.size > 200000) { skipped += 1; continue; }
+    tree.files.set(rel, f);
+  }
+  tree.selected = '';
+  tree.selectedIsFile = false;
+  $('treeBox').hidden = false;
+  buildTree();
+  $('treeSel').textContent = '整个文件夹 · ' + tree.root;
+  $('treeNote').textContent = `已载入 ${tree.files.size} 个可分析文件` +
+    (skipped ? `（跳过 ${skipped} 个：类型不支持或超过 200KB）` : '') +
+    '。默认分析整个文件夹的风险；点击文件或子文件夹可缩小范围。';
+  $('name').value = tree.root;
+  count();
+  invalidate();
+});
+
+function buildTree() {
+  const rootEl = $('tree');
+  rootEl.replaceChildren();
+  const dirSet = new Set();
+  const fileByParent = new Map();
+  for (const path of tree.files.keys()) {
+    const parent = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '';
+    if (!fileByParent.has(parent)) fileByParent.set(parent, []);
+    fileByParent.get(parent).push(path);
+    const parts = path.split('/');
+    for (let i = 1; i < parts.length; i++) dirSet.add(parts.slice(0, i).join('/'));
+  }
+  const dirByParent = new Map();
+  for (const dir of dirSet) {
+    const parent = dir.includes('/') ? dir.slice(0, dir.lastIndexOf('/')) : '';
+    if (!dirByParent.has(parent)) dirByParent.set(parent, []);
+    dirByParent.get(parent).push(dir);
+  }
+  const build = (parent, container) => {
+    for (const dir of (dirByParent.get(parent) || []).sort()) {
+      const details = node('details', undefined, 'tree-dir');
+      details.dataset.dir = dir;
+      const summary = node('summary');
+      const label = node('span', dir.split('/').pop(), 't-dir');
+      const count = node('span', String((fileByParent.get(dir) || []).length), 't-count');
+      summary.append(label, count);
+      details.append(summary);
+      build(dir, details);
+      label.addEventListener('click', () => selectNode(dir, false));
+      container.append(details);
+    }
+    for (const path of (fileByParent.get(parent) || []).sort()) {
+      const btn = node('button', path.split('/').pop(), 't-file');
+      btn.type = 'button';
+      btn.dataset.path = path;
+      btn.addEventListener('click', () => selectNode(path, true));
+      container.append(btn);
+    }
+  };
+  build('', rootEl);
+}
+
+function selectNode(path, isFile) {
+  tree.selected = path;
+  tree.selectedIsFile = isFile;
+  $('treeSel').textContent = isFile ? '文件 · ' + path : '子文件夹 · ' + path;
+  document.querySelectorAll('.t-file').forEach((b) => b.classList.toggle('here', isFile && b.dataset.path === path));
+  count();
+  invalidate();
+}
+
+$('treeRoot').addEventListener('click', () => {
+  tree.selected = '';
+  tree.selectedIsFile = false;
+  $('treeSel').textContent = '整个文件夹 · ' + tree.root;
+  document.querySelectorAll('.t-file').forEach((b) => b.classList.remove('here'));
+  count();
+  invalidate();
+});
+
+async function filesUnderSelection() {
+  const picked = [];
+  let skipped = 0;
+  for (const [path, f] of tree.files) {
+    const inScope = !tree.selected ||
+      (tree.selectedIsFile ? path === tree.selected : path.startsWith(tree.selected + '/'));
+    if (!inScope) continue;
+    if (picked.length >= 400) { skipped += 1; continue; }
+    try {
+      picked.push({ path, content: await f.text() });
+    } catch (error) { skipped += 1; }
+  }
+  return { picked, skipped };
+}
+
 $('file').addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -281,18 +390,36 @@ $('file').addEventListener('change', async (event) => {
 
 $('scan').addEventListener('click', async () => {
   if (busy) return;
-  if (!$('code').value.trim()) { toast('请先输入代码或选择体验案例'); return; }
+  const useTree = tree.files.size > 0;
+  const singleFile = useTree && tree.selectedIsFile;
+  if (!useTree && !$('code').value.trim()) { toast('请先输入代码或选择体验案例'); return; }
   setBusy(true);
   latest = null;
   $('exports').hidden = true;
   $('result').hidden = true;
   $('empty').hidden = false;
   $('resultBadge').className = 'state';
-  $('resultBadge').textContent = '正在分析';
+  $('resultBadge').textContent = useTree && !singleFile ? '正在分析文件夹…' : '正在分析';
   try {
-    const data = await api('/api/scan', { code: $('code').value, name: $('name').value, license: $('targetLicense').value, usage: $('usage').value, assist: $('assistScan').checked && llm.configured });
+    let data;
+    if (useTree && !singleFile) {
+      const { picked, skipped } = await filesUnderSelection();
+      if (!picked.length) { toast('所选范围内没有可分析的文本文件'); return; }
+      data = await api('/api/scan_tree', { files: picked,
+        license: $('targetLicense').value, usage: $('usage').value });
+      renderTree(data, skipped);
+    } else {
+      if (singleFile) {
+        $('code').value = await tree.files.get(tree.selected).text();
+        $('name').value = tree.selected;
+        count();
+      }
+      data = await api('/api/scan', { code: $('code').value, name: $('name').value,
+        license: $('targetLicense').value, usage: $('usage').value,
+        assist: $('assistScan').checked && llm.configured });
+      render(data);
+    }
     latest = data;
-    render(data);
   } catch (error) {
     $('resultBadge').textContent = '分析未完成';
     toast(error.message);
@@ -300,6 +427,61 @@ $('scan').addEventListener('click', async () => {
     setBusy(false);
   }
 });
+
+function riskTag(risk, label) {
+  return node('span', `${risk} · ${label || RISK_ZH[risk] || risk}`, `risk ${risk}`);
+}
+
+function renderTree(data, skipped) {
+  $('empty').hidden = true;
+  $('result').hidden = false;
+  $('exports').hidden = true;
+  const s = data.summary;
+  $('resultBadge').className = 'state' + (s.blocked ? ' is-alert' : '');
+  $('resultBadge').textContent = s.blocked ? '文件夹内有阻断级风险' : '文件夹分析完成';
+  const root = $('result');
+  root.replaceChildren();
+
+  const head = node('div', undefined, 'decision' + (s.blocked ? ' block' : ''));
+  head.append(node('h3', `整夹分析：${s.files} 个文件，${s.blocked} 个建议阻断`));
+  const chips = node('p');
+  RISK_ORDER.forEach((code) => {
+    const n = s.risk_counts[code] || 0;
+    if (n) chips.append(node('span', `${code} ${n}`, `risk ${code}`), document.createTextNode(' '));
+  });
+  head.append(chips, node('p', `最高风险 ${s.overall_risk}（${s.overall_label}） · ${s.findings_files} 个文件存在命中` +
+    (skipped ? ` · ${skipped} 个文件被跳过（超限或读取失败）` : '')));
+  root.append(head);
+
+  const table = node('div', undefined, 'tree-table');
+  for (const r of data.results) {
+    const row = node('details', undefined, 'tree-row');
+    const summary = node('summary');
+    summary.append(node('span', r.path, 't-path'),
+      node('span', `${r.matched_spans}/${r.total_spans} 片段`, 't-spans'),
+      riskTag(r.risk, r.risk_label));
+    row.append(summary);
+    if (r.findings.length) {
+      for (const f of r.findings) {
+        const line = node('p', `${f.package}@${f.version} · ${f.license_spdx} · 评分 ${(f.confidence * 100).toFixed(1)}% · 覆盖 ${(f.coverage * 100).toFixed(1)}% · 来源 ${f.path}`, 'tree-finding');
+        row.append(line);
+      }
+    } else {
+      row.append(node('p', '当前语料内未发现足够的来源证据。', 'tree-finding'));
+    }
+    table.append(row);
+  }
+  root.append(table);
+
+  setDial({ risk: s.overall_risk, confidence: null });
+  $('scanSpans').textContent = `${s.findings_files}/${s.files}`;
+  $('scanProbe').textContent = '—';
+  $('scanVerify').textContent = '—';
+  $('scanRisk').textContent = `${s.overall_risk} · ${s.overall_label}`;
+  $('scanRisk').title = s.overall_label;
+  $('scan').classList.add('done');
+  setTimeout(() => $('scan').classList.remove('done'), 420);
+}
 
 document.querySelectorAll('[data-export]').forEach((button) => button.addEventListener('click', () => {
   if (!latest) return;

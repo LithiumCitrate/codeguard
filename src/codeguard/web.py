@@ -28,6 +28,22 @@ from .llm import get_provider
 from .report import provenance_receipt, to_cyclonedx, to_html
 
 USAGES = {'internal_use', 'inline_copy', 'static_link', 'dynamic_link', 'distribution', 'network_service'}
+RISK_ORDER = ['S0', 'S1', 'S2', 'S3', 'S4']
+
+# 文件夹分析上限：一次请求最多 400 个文件、单文件 200KB、总内容 8MB。
+# 超限的文件由前端跳过并计数；后端仍做二次校验，防止任何绕过。
+MAX_TREE_FILES = 400
+MAX_TREE_FILE_BYTES = 200_000
+MAX_TREE_TOTAL_BYTES = 8_000_000
+
+
+def _sanitize_tree_path(raw) -> str:
+    if not isinstance(raw, str) or not raw.strip():
+        raise ValueError('文件路径无效')
+    parts = [p for p in raw.replace('\\', '/').split('/') if p not in ('', '.')]
+    if not parts or any(p == '..' or ':' in p for p in parts):
+        raise ValueError('文件路径不允许越出上传目录')
+    return '/'.join(parts)[-260:]
 
 
 class Workbench:
@@ -136,6 +152,81 @@ class Workbench:
             except ValueError as exc:
                 llm = {'model': provider.model, 'error': '解释失败：%s' % exc}
         return {'analysis': analysis.as_dict(), 'llm': llm}
+
+    def scan_tree(self, data):
+        """Analyze every file of an uploaded folder (or a selected subtree).
+
+        The browser reads the files locally and posts their text; everything is
+        analyzed on this machine. Findings come from the same deterministic
+        pipeline as a single scan, aggregated per file and for the whole tree.
+        """
+        files = data.get('files')
+        if not isinstance(files, list) or not files:
+            raise ValueError('请先导入文件夹或选择文件')
+        if len(files) > MAX_TREE_FILES:
+            raise ValueError('单次最多分析 %d 个文件，请分批或缩小选择范围' % MAX_TREE_FILES)
+        usage = data.get('usage', 'distribution')
+        license_id = data.get('license', 'MIT')
+        if usage not in USAGES or not isinstance(license_id, str) or len(license_id) > 100:
+            raise ValueError('许可证或使用方式无效')
+        if not self.health()['ready']:
+            raise ValueError('语料原文缺失或哈希不一致，无法完成可信验证；请重新建立语料')
+        prepared = []
+        total_bytes = 0
+        for item in files:
+            if not isinstance(item, dict):
+                raise ValueError('文件条目无效')
+            path = _sanitize_tree_path(item.get('path'))
+            content = item.get('content')
+            if not isinstance(content, str) or not content.strip():
+                continue  # 空文件直接不计入
+            size = len(content.encode('utf-8'))
+            if size > MAX_TREE_FILE_BYTES:
+                continue  # 超单文件上限：跳过（前端同步跳过并计数）
+            total_bytes += size
+            if total_bytes > MAX_TREE_TOTAL_BYTES:
+                raise ValueError('文件总内容超过 8 MB，请分批分析')
+            prepared.append((path, content))
+        if not prepared:
+            raise ValueError('所选范围内没有可分析的文本文件')
+
+        provider = get_provider('offline')
+        from .adjudicate import language_for
+        results = []
+        risk_counts = {'S0': 0, 'S1': 0, 'S2': 0, 'S3': 0, 'S4': 0}
+        blocked = 0
+        with self.lock:
+            for path, content in prepared:
+                result = Scanner(self.index, model=self.model, usage=usage).scan_text(
+                    content, target=path, target_license=license_id, language=language_for(path))
+                risks = [f.risk for f in result.findings] or ['S0']
+                top_risk = max(risks, key=lambda r: RISK_ORDER.index(r))
+                risk_counts[top_risk] += 1
+                if result.blocking:
+                    blocked += 1
+                details = []
+                for finding in sorted(result.findings,
+                                      key=lambda f: -RISK_ORDER.index(f.risk))[:3]:
+                    item = finding.as_dict()
+                    item['explanation'] = provider.describe(finding)
+                    details.append(item)
+                results.append({
+                    'path': path,
+                    'total_spans': result.total_spans,
+                    'matched_spans': result.matched_spans,
+                    'blocking': result.blocking,
+                    'risk': top_risk,
+                    'risk_label': RISK_LABELS[top_risk],
+                    'findings': details,
+                })
+        results.sort(key=lambda r: (-RISK_ORDER.index(r['risk']), r['path']))
+        overall = results[0]['risk'] if results else 'S0'
+        return {'summary': {
+                    'files': len(results), 'risk_counts': risk_counts, 'blocked': blocked,
+                    'overall_risk': overall, 'overall_label': RISK_LABELS[overall],
+                    'license': license_id, 'usage': usage,
+                    'findings_files': sum(1 for r in results if r['findings'])},
+                'results': results}
 
     def health(self):
         total, readable = self.index.corpus_health()
@@ -280,6 +371,7 @@ def handler_for(app):
             if not self.valid_host() or self.headers.get('X-CodeGuard-Token') != app.token:
                 return self.send(403, {'error': '会话失效，请刷新页面'})
             routes = {'/api/scan': app.scan, '/api/licenses': None,
+                      '/api/scan_tree': app.scan_tree,
                       '/api/llm/models': app.llm_models, '/api/llm/config': app.llm_save,
                       '/api/llm/clear': app.llm_clear, '/api/interpret': app.interpret,
                       '/api/assist': app.assist, '/api/license/explain': app.license_explain}
@@ -287,8 +379,11 @@ def handler_for(app):
                 return self.send(404, {'error': '接口不存在'})
             try:
                 size = int(self.headers.get('Content-Length', '0'))
-                if not 0 < size <= 1_300_000:
-                    return self.send(413, {'error': '请求大小超限'})
+                # 文件夹分析把整个目录的文本发到本机回环接口，上限放宽到 9.5MB；
+                # 其余接口维持 1.3MB。超限一律 413。
+                cap = 9_500_000 if self.path == '/api/scan_tree' else 1_300_000
+                if not 0 < size <= cap:
+                    return self.send(413, {'error': '请求大小超限，请缩小所选范围'})
                 data = json.loads(self.rfile.read(size))
                 if not isinstance(data, dict):
                     raise ValueError('请求必须是对象')

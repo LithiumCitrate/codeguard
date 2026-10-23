@@ -440,6 +440,30 @@ footer .eyebrow { font-size: 10px; }
 .check { display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; font-size: 12px; color: var(--ink2); cursor: pointer; }
 .check input { margin-top: 3px; accent-color: var(--ink); }
 
+/* ------------------------------------------------------------------ 文件夹目录树 */
+.tree-box { margin-bottom: 12px; border: 1px solid var(--rule); padding: 10px 12px; background: color-mix(in srgb, var(--chip) 30%, var(--panel)); }
+.tree-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.tree-sel { flex: 1; min-width: 0; font-size: 12px; font-weight: 700; font-stretch: 112%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tree { max-height: 220px; overflow: auto; border-top: 1px solid var(--rule); padding-top: 6px; font-size: 12px; }
+.tree details { margin-left: 0; }
+.tree details details { margin-left: 16px; }
+.tree summary { cursor: pointer; display: flex; align-items: baseline; gap: 8px; padding: 2px 0; list-style: none; }
+.tree summary::-webkit-details-marker { display: none; }
+.tree summary::before { content: "+"; width: 10px; color: var(--ink2); }
+.tree details[open] > summary::before { content: "–"; }
+.t-dir { font-weight: 700; }
+.t-dir:hover { box-shadow: inset 0 -0.4em var(--mint); }
+.t-count { font-size: 10px; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.t-file { display: block; width: 100%; text-align: left; padding: 2px 0 2px 26px; color: var(--ink2); font-family: var(--font-code); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-file:hover { color: var(--ink); }
+.t-file.here { background: var(--signal); color: var(--on-signal); }
+.tree-row summary { cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--rule); }
+.tree-row summary::-webkit-details-marker { display: none; }
+.t-path { flex: 1; min-width: 0; font: 11px/1.4 var(--font-code); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-spans { font-size: 11px; color: var(--ink2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tree-finding { margin: 4px 0 6px; font-size: 11px; color: var(--ink2); padding-left: 12px; border-left: 2px solid var(--rule); }
+.tree-finding:first-of-type { margin-top: 6px; }
+
 #aiBtn.armed { background: var(--signal); color: var(--on-signal); }
 
 .ai-cards { display: grid; gap: 10px; margin-bottom: 14px; }

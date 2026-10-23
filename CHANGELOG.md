@@ -4,6 +4,38 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.5.0] - 2026-10-24
+
+### Added
+
+- **Corpus widened 3.8x with real GitHub repositories**: a new
+  `scripts/expand_corpus_github.py` shallow-clones 13 repos (fastapi, django,
+  git, nginx, radare2, minio, cobra, jquery, html5ever, ...) covering C / Go /
+  JavaScript / Rust and GPL-2.0-only / AGPL-3.0-only / LGPL-3.0-only on top of
+  the PyPI set; the licence is detected from each repo's root licence files
+  (with the commit hash recorded per entry). The knowledge base is now
+  **32 sources / 1717 files / 138 928 chunks / 11 SPDX ids**.
+- **Folder analysis in the workbench**: upload a folder (webkitdirectory) to
+  build a browsable directory tree; by default the whole folder is analyzed
+  (`POST /api/scan_tree`, up to 400 files / 8 MB per request, oversized files
+  skipped and counted), and clicking a subfolder or a file narrows the scope.
+  Results aggregate per file and for the tree (risk histogram, blocking
+  count, per-file findings) and drive the risk dial.
+- 5 new offline tests for the tree path (129 total).
+
+### Changed
+
+- **Honest re-measurement on the wider corpus** (same benchmark, 24 files x 8
+  mutations + 9 negatives): file-level detection 99% -> **97%** (7 of 8
+  mutation classes still 100%; mismatch 0.02; negatives 0/9), and the judge's
+  held-out metrics moved from AUC 0.983 / F1 0.976 to **AUC 0.892 / F1 0.839**
+  as cross-package boilerplate makes candidate pairs harder - precision stays
+  1.000 and gate decisions remain backed by the corroboration rules, not the
+  model score alone. HumanEval clean negatives re-run on the wider index:
+  still **0/164 blocked** (upper limit 1.81%, p50 37.4 ms). Every document
+  citing the old figures now states the 0.5.0 numbers.
+- Version 0.5.0.
+
 ## [0.4.3] - 2026-10-24
 
 ### Added

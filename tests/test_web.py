@@ -72,6 +72,38 @@ def test_invalid_scan_rejected(app, data):
         app.scan(data)
 
 
+def test_scan_tree_aggregates_risks_and_blocks(app):
+    clean = 'def add(a, b):\n    return a + b\n\n\ndef mul(a, b):\n    return a * b\n'
+    data = app.scan_tree({'files': [
+        {'path': 'src/evil.py', 'content': read_negative('ring_cache.py')},
+        {'path': 'src/util/clean.py', 'content': clean},
+        {'path': 'docs/readme.md', 'content': '# docs\n'},  # 空泛内容不会命中，但 md 不该报错
+    ], 'license': 'MIT', 'usage': 'distribution'})
+    s = data['summary']
+    assert s['files'] == 3
+    assert s['blocked'] == 1
+    assert s['overall_risk'] == 'S4' and s['overall_label']
+    assert s['risk_counts']['S4'] == 1
+    top = data['results'][0]
+    assert top['path'] == 'src/evil.py' and top['blocking']
+    assert top['findings'] and top['findings'][0]['explanation']
+    clean_row = next(r for r in data['results'] if r['path'] == 'src/util/clean.py')
+    assert clean_row['risk'] == 'S0' and not clean_row['blocking']
+
+
+def test_scan_tree_rejects_escape_caps_and_empty(app):
+    with pytest.raises(ValueError, match='越出'):
+        app.scan_tree({'files': [{'path': '../evil.py', 'content': 'x = 1\n'}]})
+    with pytest.raises(ValueError, match='最多'):
+        app.scan_tree({'files': [{'path': f'f{i}.py', 'content': 'x = 1\n'} for i in range(401)]})
+    with pytest.raises(ValueError, match='8 MB'):
+        app.scan_tree({'files': [{'path': f'f{i}.py', 'content': 'x' * 200_000} for i in range(41)]})
+    with pytest.raises(ValueError, match='没有可分析'):
+        app.scan_tree({'files': [{'path': 'huge.py', 'content': 'x' * 300_000}]})
+    with pytest.raises(ValueError, match='请先导入'):
+        app.scan_tree({'files': []})
+
+
 def test_sbom_refs_and_occurrence_locations(app):
     from codeguard.adjudicate import Scanner
     result = Scanner(app.index, usage='distribution').scan_text(read_negative('ring_cache.py'), target='review.py', target_license='MIT')
