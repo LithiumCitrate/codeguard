@@ -265,6 +265,7 @@ def handler_for(app):
                     return self.send(200, app.demo(kind))
                 assets = {'/': ('index.html', 'text/html'), '/app.js': ('app.js', 'text/javascript'),
                           '/style.css': ('style.css', 'text/css'),
+                          '/favicon.svg': ('favicon.svg', 'image/svg+xml'),
                           '/fonts/Saira.ttf': ('fonts/Saira.ttf', 'font/ttf')}
                 if self.path not in assets:
                     return self.send(404, {'error': '页面不存在'})

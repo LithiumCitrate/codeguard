@@ -68,7 +68,7 @@ function svgNode(tag, attrs = {}, text) {
   return el;
 }
 
-const dialParts = { sectors: {}, big: null, sub: null, gauges: [], svg: null };
+const dialParts = { sectors: {}, eyebrow: null, big: null, sub: null, svg: null };
 
 function buildDial() {
   const svg = $('dial');
@@ -86,20 +86,12 @@ function buildDial() {
     svg.append(path, code, sub);
   }
   svg.append(svgNode('circle', { class: 'hub-disc', cx: DIAL.cx, cy: DIAL.cy, r: 178 }));
-  svg.append(svgNode('path', { class: 'core-tag', d: 'M236 244 H364 L372 252 V266 H236 Z' }));
-  svg.append(svgNode('text', { class: 'core-tag-label', x: DIAL.cx, y: 259, 'text-anchor': 'middle' }, 'LAST SCAN'));
-  dialParts.big = svgNode('text', { class: 'core-big', x: DIAL.cx, y: 330, 'text-anchor': 'middle' }, '—');
-  dialParts.sub = svgNode('text', { class: 'core-sub', x: DIAL.cx, y: 358, 'text-anchor': 'middle' }, '等待审查');
-  svg.append(dialParts.big, dialParts.sub);
-  ['命中片段', '最高覆盖', '最长逐字'].forEach((label, index) => {
-    const y = 390 + index * 26;
-    const track = svgNode('rect', { class: 'gauge-track', x: 208, y: y - 5, width: 128, height: 5 });
-    const arc = svgNode('rect', { class: 'gauge-arc', x: 208, y: y - 5, width: 0, height: 5 });
-    const name = svgNode('text', { class: 'gauge-label', x: 196, y: y, 'text-anchor': 'end' }, label);
-    const value = svgNode('text', { class: 'gauge-label', x: 348, y: y, 'text-anchor': 'start' }, '—');
-    dialParts.gauges.push({ arc, value });
-    svg.append(track, arc, name, value);
-  });
+  svg.append(svgNode('line', { class: 'core-tick', x1: 218, y1: 250, x2: 246, y2: 250 }),
+             svgNode('line', { class: 'core-tick', x1: 354, y1: 250, x2: 382, y2: 250 }));
+  dialParts.eyebrow = svgNode('text', { class: 'core-eyebrow', x: DIAL.cx, y: 254, 'text-anchor': 'middle' }, 'LAST SCAN');
+  dialParts.big = svgNode('text', { class: 'core-big', x: DIAL.cx, y: 336, 'text-anchor': 'middle' }, '—');
+  dialParts.sub = svgNode('text', { class: 'core-sub', x: DIAL.cx, y: 372, 'text-anchor': 'middle' }, '等待审查');
+  svg.append(dialParts.eyebrow, dialParts.big, dialParts.sub);
   dialParts.svg = svg;
 }
 
@@ -114,15 +106,14 @@ function setDial({ risk = '', confidence = null, spans = null, coverage = null, 
   }
   dialParts.big.textContent = risk || '—';
   dialParts.sub.textContent = risk ? `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}` : label;
-  const apply = (gauge, share, text) => {
-    gauge.arc.setAttribute('width', share === null ? 0 : Math.max(2, 128 * Math.min(1, share)).toFixed(1));
-    gauge.value.textContent = text;
-    gauge.value.classList.toggle('alert', share !== null && share >= 0.85);
-  };
-  apply(dialParts.gauges[0], spans, spans === null ? '—' : `${spans.hit}/${spans.total}`);
-  apply(dialParts.gauges[1], coverage, coverage === null ? '—' : pct(coverage));
-  apply(dialParts.gauges[2], verbatim === null ? null : Math.min(1, verbatim / 48), verbatim === null ? '—' : `${verbatim} token`);
   dialParts.svg.setAttribute('aria-label', risk ? `风险分级环：本次最高 ${risk}（${RISK_ZH[risk]}）` : '风险分级环：尚未审查');
+  const cells = { spans: $('statSpans'), coverage: $('statCoverage'), verbatim: $('statVerbatim') };
+  cells.spans.textContent = spans === null ? '—' : `${spans.hit}/${spans.total}`;
+  cells.coverage.textContent = coverage === null ? '—' : pct(coverage);
+  cells.verbatim.textContent = verbatim === null ? '—' : `${verbatim} token`;
+  cells.spans.classList.toggle('hot', spans !== null && spans.total > 0 && spans.hit === spans.total);
+  cells.coverage.classList.toggle('hot', coverage !== null && coverage >= 0.85);
+  cells.verbatim.classList.toggle('hot', verbatim !== null && verbatim >= 40);
 }
 
 /* ------------------------------------------------------------------ evidence */

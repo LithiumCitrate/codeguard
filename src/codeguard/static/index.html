@@ -11,6 +11,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CodeGuard · 开源代码溯源工作台</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.css">
 <script src="/app.js" defer></script>
 </head>
@@ -19,7 +20,17 @@
 <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <header class="cmdbar">
-  <a class="brand" href="#review"><span class="seal" aria-hidden="true">CG</span><span>CODEGUARD<small>代码溯源工作台</small></span></a>
+  <a class="brand" href="#review" aria-label="CodeGuard 首页">
+    <svg class="seal" viewBox="0 0 28 28" aria-hidden="true">
+      <path class="badge" d="M3 3h22v14l-8 8H3z"/>
+      <g class="mark">
+        <path d="M9 20v-6a5 5 0 0 1 10 0v6"/>
+        <path d="M14 20v-7"/>
+        <path d="M8 22.5h12"/>
+      </g>
+    </svg>
+    <span>CODEGUARD<small>代码溯源工作台</small></span>
+  </a>
   <nav aria-label="分区">
     <button class="here" data-tab="review" aria-current="page">审查<small>Review</small></button>
     <button data-tab="license">许可推演<small>Licences</small></button>
@@ -51,7 +62,14 @@
     <div class="board">
       <figure class="hub">
         <svg id="dial" viewBox="0 0 600 600" role="img" aria-label="风险分级环，等待审查"></svg>
-        <figcaption><span class="eyebrow">RISK SCALE</span>风险分级环 · 中心读数为最近一次审查结果</figcaption>
+        <figcaption>
+          <span class="eyebrow">RISK SCALE</span>风险分级环 · 中心读数为最近一次审查结果
+          <div id="dialStats" class="dial-stats" aria-live="polite">
+            <div><small>命中片段</small><b id="statSpans">—</b></div>
+            <div><small>最高覆盖</small><b id="statCoverage">—</b></div>
+            <div><small>最长逐字</small><b id="statVerbatim">—</b></div>
+          </div>
+        </figcaption>
       </figure>
 
       <section class="panel cut-br p-corpus">

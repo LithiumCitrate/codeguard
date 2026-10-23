@@ -4,6 +4,32 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.4.2] - 2026-10-24
+
+### Fixed
+
+- **Hero figures overlapped at wide font sizes**: the four-up strip gave each
+  cell ~124px while "36,193" at the clamp maximum needed more, letting numbers
+  paint over their neighbours. The strip is now a 2×2 big-number kanban with a
+  hairline cross (label above, wide tabular number below, `overflow:hidden` as
+  the backstop), which cannot collide at any width.
+- **Dial gauges escaped the hub disc**: the bottom gauge row (y=442) spanned
+  x=151–196 while the r=178 disc chord starts at x=207, so the labels sat on
+  the sector ring. The three gauges moved out of the SVG entirely: the dial
+  centre is now a clean big-number stack (LAST SCAN eyebrow + 84px risk code +
+  confidence sub-line, getBBox-verified inside the disc), and the metrics live
+  in a divided read-out strip under the dial where hot values take the cyan
+  fill.
+
+### Changed
+
+- **Redrew the CodeGuard mark**: the old "CG" text chip became an angular
+  badge — cut-corner cyan plate with a knocked-out fingerprint ridge glyph
+  (outer arc, centre ridge, baseline), matching the Hypergryph block-plus-
+  knockout language; a standalone `favicon.svg` ships behind `/favicon.svg`
+  with CSP-safe same-origin serving.
+- Version 0.4.2.
+
 ## [0.4.1] - 2026-10-24
 
 ### Changed

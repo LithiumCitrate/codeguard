@@ -104,7 +104,9 @@ a { color: inherit; text-decoration: none; }
   color: var(--cmd-text);
 }
 .cmdbar .brand { display: flex; align-items: center; gap: 10px; font-stretch: 125%; font-weight: 800; letter-spacing: 0.08em; }
-.cmdbar .brand .seal { display: grid; place-items: center; width: 26px; height: 26px; background: var(--signal); color: var(--on-signal); font-size: 11px; font-weight: 800; letter-spacing: 0; clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%); }
+.cmdbar .brand .seal { width: 28px; height: 28px; flex: none; }
+.seal .badge { fill: var(--signal); }
+.seal .mark { fill: none; stroke: var(--cmd); stroke-width: 2; stroke-linecap: square; }
 .cmdbar .brand small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: color-mix(in srgb, var(--cmd-text) 62%, transparent); }
 .cmdbar nav { display: flex; align-items: stretch; margin-left: auto; }
 .cmdbar nav button { display: flex; flex-direction: column; justify-content: center; padding: 0 16px; min-height: 44px; color: color-mix(in srgb, var(--cmd-text) 72%, transparent); text-align: left; font-weight: 600; }
@@ -132,12 +134,14 @@ main { max-width: 1360px; margin: 0 auto; padding: 32px var(--pad) 56px; }
 .hero-copy .lede { max-width: 34em; color: var(--ink2); }
 .lede { font-family: var(--font-read); line-height: 1.8; }
 
-.figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.figs > div { min-width: 0; padding: 2px 14px; border-left: 1px solid var(--rule); }
-.figs > div:first-child { padding-left: 0; border-left: 0; }
-.figs dt { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-stretch: 125%; color: var(--ink2); }
-.figs dd { margin-top: 2px; font-size: clamp(1.4rem, 1.9vw, 2rem); font-weight: 700; font-stretch: 112%; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.figs dd.word { font-size: 1.05rem; font-stretch: 112%; padding-top: 8px; }
+/* 大数字看板：2×2 细线十字分区，任何宽度都不与相邻格重叠 */
+.figs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.figs > div { min-width: 0; padding: 8px 0 2px; }
+.figs > div:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--rule); }
+.figs > div:nth-child(n+3) { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.figs dt { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-stretch: 125%; color: var(--ink2); }
+.figs dd { margin-top: 4px; font-size: clamp(1.5rem, 2vw, 2rem); font-weight: 700; font-stretch: 112%; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; }
+.figs dd.word { font-size: 1.02rem; line-height: 1.4; padding-top: 6px; white-space: normal; }
 
 /* --------------------------------------------------------------------- board */
 .board {
@@ -191,17 +195,19 @@ main { max-width: 1360px; margin: 0 auto; padding: 32px var(--pad) 56px; }
 #dial .sector-sub { font-family: var(--font-ui); font-size: 10px; fill: var(--ink2); }
 #dial .sector.on + .sector-label, #dial .sector.on + .sector-label + .sector-sub { fill: var(--ink); }
 #dial .hub-disc { fill: var(--panel); stroke: var(--rule); stroke-width: 1; }
-#dial .core-tag { fill: var(--ink); }
-#dial .core-tag-label { font-family: var(--font-ui); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-stretch: 125%; fill: var(--panel); }
-#dial .core-big { font-family: var(--font-ui); font-size: 64px; font-weight: 800; font-stretch: 112%; fill: var(--ink); font-variant-numeric: tabular-nums; }
-#dial .core-sub { font-family: var(--font-ui); font-size: 12px; fill: var(--ink2); }
-#dial .gauge-track { fill: none; stroke: var(--rule); stroke-width: 6; }
-#dial .gauge-arc { fill: none; stroke: var(--ink); stroke-width: 6; }
-#dial .gauge.alert .gauge-arc { stroke: var(--ink); }
-#dial .gauge.flag { fill: var(--signal); }
+#dial .core-tick { stroke: var(--ink2); stroke-width: 2; opacity: 0.6; }
+#dial .core-eyebrow { font-family: var(--font-ui); font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; font-stretch: 125%; fill: var(--ink2); }
+#dial .core-big { font-family: var(--font-ui); font-size: 84px; font-weight: 800; font-stretch: 112%; fill: var(--ink); font-variant-numeric: tabular-nums; }
+#dial .core-sub { font-family: var(--font-ui); font-size: 13px; fill: var(--ink2); }
 #dial .gauge-label { font-family: var(--font-ui); font-size: 11px; fill: var(--ink2); font-variant-numeric: tabular-nums; }
-#dial .gauge.alert .gauge-label { fill: var(--ink); font-weight: 700; }
-#dial .here-mark { fill: var(--signal); }
+
+/* 分级环读数条：三条指标从圆心移到盘下，字段｜数字的终末地式排布 */
+.dial-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--rule); }
+.dial-stats > div { min-width: 0; text-align: center; }
+.dial-stats > div + div { border-left: 1px solid var(--rule); }
+.dial-stats small { display: block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-stretch: 125%; color: var(--ink2); }
+.dial-stats b { display: inline-block; margin-top: 3px; padding: 0 6px; font-size: 15px; font-weight: 700; font-stretch: 112%; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dial-stats b.hot { background: var(--signal); color: var(--on-signal); }
 
 /* ----------------------------------------------------------------------- work */
 .work { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 28px; align-items: start; padding-top: 20px; }
@@ -380,7 +386,6 @@ footer .eyebrow { font-size: 10px; }
 @media (max-width: 1080px) {
   .board { grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem) minmax(0, 1fr); gap: 18px; }
   .hero { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .hero-figs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 @media (max-width: 900px) {
@@ -407,8 +412,6 @@ footer .eyebrow { font-size: 10px; }
   .board { grid-template-columns: minmax(0, 1fr); }
   .p-corpus, .p-engine, .p-scan, .p-export { grid-column: 1; grid-row: auto; }
   .hero-copy h1 { font-size: clamp(1.8rem, 7.4vw, 2.4rem); }
-  .hero-figs { grid-template-columns: 1fr 1fr; gap: 12px 0; }
-  .hero-figs > div:nth-child(3) { padding-left: 0; border-left: 0; }
   .board { gap: 14px; }
   .panel { padding: 16px 14px 18px; }
   .panel.cut-br, .panel.cut-bl { padding-bottom: calc(12px + var(--cut-panel)); }
@@ -416,6 +419,7 @@ footer .eyebrow { font-size: 10px; }
   .compare { grid-template-columns: 1fr; }
   .finding-head { align-items: flex-start; flex-direction: column; gap: 4px; }
   .cmdbar .brand small { display: none; }
+  .dial-stats b { font-size: 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
