@@ -200,6 +200,8 @@ function render(data) {
     coverage: top ? top.coverage : 0,
     verbatim: top ? top.max_verbatim_run : 0,
   });
+  $('assistSummary').disabled = false;
+  $('askForm').hidden = false;
   $('scan').classList.add('done');
   setTimeout(() => $('scan').classList.remove('done'), 420);
 }
@@ -213,6 +215,10 @@ function invalidate() {
   $('resultBadge').textContent = '输入已更新';
   ['scanSpans', 'scanProbe', 'scanVerify', 'scanRisk'].forEach((id) => { $(id).textContent = '—'; });
   $('exportNote').textContent = '审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。';
+  $('aiCards').hidden = true;
+  $('aiCards').replaceChildren();
+  $('askForm').hidden = true;
+  $('assistSummary').disabled = true;
   setDial();
 }
 
@@ -222,7 +228,7 @@ function count() {
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll('[data-demo],#scan,#file,#name,#code,#targetLicense,#usage').forEach((el) => { el.disabled = value; });
+  document.querySelectorAll('[data-demo],#scan,#file,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
   $('scan').textContent = value ? '正在检索和验证来源…' : '开始来源审查';
 }
 
@@ -286,7 +292,7 @@ $('scan').addEventListener('click', async () => {
   $('resultBadge').className = 'state';
   $('resultBadge').textContent = '正在分析';
   try {
-    const data = await api('/api/scan', { code: $('code').value, name: $('name').value, license: $('targetLicense').value, usage: $('usage').value });
+    const data = await api('/api/scan', { code: $('code').value, name: $('name').value, license: $('targetLicense').value, usage: $('usage').value, assist: $('assistScan').checked && llm.configured });
     latest = data;
     render(data);
   } catch (error) {
@@ -323,6 +329,198 @@ $('reason').addEventListener('click', async () => {
   } catch (error) { toast(error.message); } finally { button.disabled = false; }
 });
 
+/* ------------------------------------------------------------------ AI layer */
+const llm = { configured: false, model: '', baseUrl: '', fetched: [] };
+
+function aiCardTitle(kind) {
+  return ({ interpret: 'AI 文件解读', summary: 'AI 审查摘要', ask: '追问', licence: 'AI 许可通俗解释' })[kind] || 'AI 输出';
+}
+
+function renderAiCard(kind, { model = '', text = '', offline = false, note = '' }) {
+  const wrap = $('aiCards');
+  wrap.hidden = false;
+  const card = node('article', undefined, 'ai-card');
+  const head = node('div', undefined, 'ai-head');
+  head.append(node('b', aiCardTitle(kind)),
+    node('span', offline ? '确定性输出 · 本机' : 'AI 生成 · ' + (model || '外部模型'), offline ? 'tag' : 'tag ai'));
+  card.append(head);
+  const body = node('p', text, 'ai-text');
+  card.append(body);
+  if (note) card.append(node('p', note, 'note'));
+  card.append(node('p', '内容为解读参考，不构成法律意见；风险结论以确定性引擎为准。', 'note'));
+  wrap.append(card);
+  card.scrollIntoView({ block: 'nearest' });
+}
+
+function refreshAiButton() {
+  $('aiBtn').textContent = llm.configured ? 'AI · ' + llm.model : 'AI 未配置';
+  $('aiBtn').classList.toggle('armed', llm.configured);
+}
+
+function openAiSetup(prefill = true) {
+  const dialog = $('aiSetup');
+  $('aiStatus').textContent = llm.configured
+    ? '已配置：' + llm.model + '。修改后保存即可切换；留空 API Key 表示沿用已保存的密钥。'
+    : '未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。';
+  $('aiClear').hidden = !llm.configured;
+  $('aiSave').disabled = !llm.configured;
+  const placeholder = node('option', llm.configured ? llm.model : '先拉取模型列表');
+  placeholder.value = llm.configured ? llm.model : '';
+  $('aiModel').replaceChildren(placeholder);
+  if (prefill && llm.configured) {
+    $('aiBase').value = llm.baseUrl || '';
+    $('aiKey').value = '';
+    $('aiKey').placeholder = '已保存，留空沿用';
+  }
+  dialog.showModal();
+}
+
+$('aiBtn').addEventListener('click', () => openAiSetup());
+
+$('aiSetup').addEventListener('close', () => {
+  localStorage.setItem('cg-ai-setup-seen', '1');
+});
+
+$('aiFetch').addEventListener('click', async () => {
+  const base = $('aiBase').value.trim();
+  const key = $('aiKey').value.trim();
+  if (!base || !key) { $('aiStatus').textContent = '请先填写 Base URL 与 API Key，再拉取模型列表。'; return; }
+  $('aiStatus').textContent = '正在拉取模型列表…';
+  $('aiFetch').disabled = true;
+  try {
+    const data = await api('/api/llm/models', { base_url: base, api_key: key });
+    llm.fetched = data.models;
+    const select = $('aiModel');
+    select.replaceChildren();
+    data.models.forEach((id) => {
+      const option = node('option', id);
+      option.value = id;
+      select.append(option);
+    });
+    select.disabled = false;
+    const preferred = data.models.find((id) => /qwen|max|plus|turbo|pro/i.test(id)) || data.models[0];
+    select.value = preferred;
+    $('aiSave').disabled = false;
+    $('aiStatus').textContent = '拉取到 ' + data.models.length + ' 个模型，已预选 ' + preferred + '；可手动更换后保存。';
+  } catch (error) {
+    $('aiStatus').textContent = error.message;
+  } finally {
+    $('aiFetch').disabled = false;
+  }
+});
+
+$('aiSave').addEventListener('click', async () => {
+  const model = $('aiModel').value;
+  if (!model) { $('aiStatus').textContent = '请先拉取并选择模型。'; return; }
+  const payload = { base_url: $('aiBase').value.trim(), model };
+  if ($('aiKey').value.trim()) payload.api_key = $('aiKey').value.trim();
+  $('aiStatus').textContent = '正在保存…';
+  try {
+    const data = await api('/api/llm/config', payload);
+    llm.configured = true;
+    llm.model = data.model;
+    refreshAiButton();
+    $('aiStatus').textContent = '已启用 ' + data.model + '（密钥 ' + data.key_masked + '）。';
+    setTimeout(() => $('aiSetup').close(), 700);
+  } catch (error) {
+    $('aiStatus').textContent = error.message;
+  }
+});
+
+$('aiClear').addEventListener('click', async () => {
+  try {
+    await api('/api/llm/clear', {});
+    llm.configured = false;
+    llm.model = '';
+    refreshAiButton();
+    $('aiStatus').textContent = '已清除本机配置；所有功能恢复纯离线。';
+    $('aiClear').hidden = true;
+    $('aiSave').disabled = true;
+  } catch (error) { $('aiStatus').textContent = error.message; }
+});
+
+$('interpret').addEventListener('click', async () => {
+  if (busy) return;
+  if (!$('code').value.trim()) { toast('请先输入或导入代码，再使用 AI 解读'); return; }
+  const button = $('interpret');
+  button.disabled = true;
+  button.textContent = '解读中…';
+  try {
+    const data = await api('/api/interpret', { code: $('code').value, name: $('name').value });
+    if (data.llm && data.llm.text) {
+      renderAiCard('interpret', { model: data.llm.model, text: data.llm.text });
+    } else if (data.llm && data.llm.error) {
+      renderAiCard('interpret', { text: data.markers.summary, offline: true, note: data.llm.error });
+    } else {
+      renderAiCard('interpret', { text: data.markers.summary, offline: true, note: '未配置大模型：以上为本机确定性许可证标记提取。' });
+    }
+  } catch (error) { toast(error.message); } finally {
+    button.disabled = false;
+    button.textContent = 'AI 解读';
+  }
+});
+
+$('assistSummary').addEventListener('click', async () => {
+  if (busy || !latest) return;
+  const button = $('assistSummary');
+  button.disabled = true;
+  button.textContent = '生成中…';
+  try {
+    const data = await api('/api/assist', { action: 'summary' });
+    renderAiCard('summary', data);
+  } catch (error) { toast(error.message); } finally {
+    button.disabled = false;
+    button.textContent = 'AI 摘要';
+  }
+});
+
+$('askForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (busy) return;
+  const question = $('askInput').value.trim();
+  if (!question) return;
+  const input = $('askInput');
+  input.disabled = true;
+  try {
+    const data = await api('/api/assist', { action: 'ask', question });
+    renderAiCard('ask', Object.assign({ note: '问题：' + question }, data));
+    $('askInput').value = '';
+  } catch (error) { toast(error.message); } finally { input.disabled = false; input.focus(); }
+});
+
+$('licenceExplain').addEventListener('click', async () => {
+  const button = $('licenceExplain');
+  button.disabled = true;
+  button.textContent = '解释中…';
+  try {
+    const data = await api('/api/license/explain', {
+      source: $('sourceLicense').value, target: $('destinationLicense').value, usage: $('licenseUsage').value });
+    if (data.llm && data.llm.text) {
+      const wrap = $('licenseResult');
+      wrap.append(node('b', 'AI 通俗解释 · ' + data.llm.model), node('p', data.llm.text, 'ai-inline'));
+    } else if (data.llm && data.llm.error) {
+      toast(data.llm.error);
+    } else {
+      toast('未配置大模型；上方为规则引擎的原始推理结果。');
+    }
+  } catch (error) { toast(error.message); } finally {
+    button.disabled = false;
+    button.textContent = 'AI 通俗解释';
+  }
+});
+
+function initAi(health) {
+  llm.configured = !!(health.llm && health.llm.configured);
+  llm.model = (health.llm && health.llm.model) || '';
+  llm.baseUrl = (health.llm && health.llm.base_url) || '';
+  refreshAiButton();
+  $('licenceExplain').disabled = false;
+  if (!llm.configured && !localStorage.getItem('cg-ai-setup-seen')) {
+    localStorage.setItem('cg-ai-setup-seen', '1');
+    openAiSetup(false);
+  }
+}
+
 buildDial();
 setDial();
 
@@ -345,6 +543,7 @@ api('/api/health').then((data) => {
   $('connection').textContent = ready ? '● 本机引擎就绪' : '● 语料缺失';
   $('connection').style.color = ready ? 'var(--signal)' : 'var(--cmd-text)';
   if (!ready) { $('scan').disabled = true; toast('语料不完整，扫描已禁用；请重新建立语料。'); }
+  initAi(data);
 }).catch((error) => {
   $('connection').textContent = '● 本机引擎未连接';
   $('connection').style.color = 'var(--cmd-text)';

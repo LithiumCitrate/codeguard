@@ -407,3 +407,36 @@ footer .eyebrow { font-size: 10px; }
 }
 
 [data-motion="calm"] .btn::before { transition-duration: 90ms; }
+
+/* ------------------------------------------------------------------ AI layer */
+
+.head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.check { display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; font-size: 12px; color: var(--ink2); cursor: pointer; }
+.check input { margin-top: 3px; accent-color: var(--ink); }
+
+#aiBtn.armed { background: var(--signal); color: var(--on-signal); }
+
+.ai-cards { display: grid; gap: 10px; margin-bottom: 14px; }
+.ai-card { border: 1px solid var(--rule); border-left: 3px solid var(--signal); padding: 12px 14px; background: color-mix(in srgb, var(--signal) 5%, var(--panel)); }
+.ai-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.ai-head b { font-size: 13px; }
+.tag { font-size: 10px; letter-spacing: 0.1em; color: var(--ink2); border: 1px solid var(--rule); padding: 1px 6px; white-space: nowrap; font-stretch: 112%; }
+.tag.ai { background: var(--signal); color: var(--on-signal); border-color: var(--signal); }
+.ai-text { font-family: var(--font-read); font-size: 13px; line-height: 1.85; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+.ai-card .note { margin-top: 8px; font-size: 11px; }
+.ai-inline { margin: 8px 0 4px; font-family: var(--font-read); font-size: 13px; line-height: 1.85; white-space: pre-wrap; }
+
+.ask-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.ask-row input { flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--rule); padding: 8px 10px; font: 13px/1.4 var(--font-ui); }
+.ask-row input:focus-visible { outline: 0; border-color: var(--ink); }
+
+.ai-dialog { border: 1px solid var(--rule); border-top: 3px solid var(--signal); background: var(--panel); color: var(--ink); padding: 0; width: min(560px, calc(100vw - 32px)); }
+.ai-dialog::backdrop { background: color-mix(in srgb, var(--cmd) 72%, transparent); }
+.ai-form { padding: 22px 22px 18px; }
+.ai-form header { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.ai-form h2 { font-size: 1.25rem; font-weight: 800; margin: 4px 0 6px; }
+.ai-form .field { margin-bottom: 12px; }
+.ai-actions { display: flex; align-items: flex-end; gap: 8px; padding-bottom: 1px; }
+.ai-foot { display: flex; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+#aiStatus { min-height: 2.6em; }

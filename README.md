@@ -1,6 +1,6 @@
 # CodeGuard · AI 生成代码的开源许可证污染溯源与合规门禁
 
-**2026-10-20 升级版：新增外部干净负例、真实 GitHub 仓库评测与 SARIF 集成。**
+**2026-10-24 v0.4.0：工作台新增可选大模型增强（首次运行配置 Base URL/API Key、自动拉取模型列表、AI 文件解读、审查摘要与追问、许可通俗解释）。**
 解压应用包后双击 `CodeGuard.exe`；源码运行可双击 `启动工作台.cmd` 或执行 `python launch.py`。
 本地网页工作台支持真实扫描、文件导入、命中代码对照、许可证推演和报告下载，见 [docs/WORKBENCH.md](docs/WORKBENCH.md)。
 新增 `codeguard eval` 外部评测命令：HumanEval 164 个独立实现中 **0 个阻断级误报**（95% 单侧上限 1.81%），
@@ -145,7 +145,7 @@ S2 复核；变异基准仍是 99% 检出、阻断召回 100%。
 
 ## 6. AI 使用声明
 
-系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式设置 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL` 时才会调用外部大模型，调用失败自动回退到离线模板。任何模式下，**风险等级与合规结论都不由大模型决定**，AI 只做证据的"翻译官"。该声明同时写入每份报告的"AI 使用声明"区块。
+系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式配置大模型（命令行用环境变量 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL`，工作台在首次运行的设置对话框里保存到本机 `.codeguard/llm_config.json`，密钥不返回浏览器、不写入任何导出物）时才会调用外部大模型，调用失败自动回退到离线模板。v0.4.0 起工作台的大模型还可用于文件解读、审查执行摘要、基于证据摘要的追问与许可证通俗解释——每次调用均为用户主动触发并标注模型名。任何模式下，**风险等级与合规结论都不由大模型决定**，AI 只做证据的"翻译官"。该声明同时写入每份报告的"AI 使用声明"区块。
 
 ## 7. 目录结构
 
@@ -164,7 +164,7 @@ src/codeguard/
   benchmark.py     变异基准、消融实验、模型训练
   mutations.py     8 类确定性洗代码变异
   corpus.py        从 PyPI/源包构建带许可证标注的语料
-  llm.py           离线模板撰写 + 可选外部大模型适配层
+  llm.py           离线模板撰写 + 可选外部大模型适配层（配置持久化、模型列表、解读/摘要/追问/许可解释四类提示词）
   report.py        出处证书 / CycloneDX / 自包含 HTML / SARIF 2.1.0
   cli.py           corpus index scan gate licenses model benchmark eval doctor
   data/negatives/  9 个自研"干净实现"（基准负例 + 测试 fixture）

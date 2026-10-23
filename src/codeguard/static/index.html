@@ -27,6 +27,7 @@
   </nav>
   <div class="util">
     <span id="connection" class="engine">● 正在连接本机引擎</span>
+    <button id="aiBtn" class="btn small" type="button">AI 未配置</button>
     <button id="themeToggle" class="btn small" type="button" aria-label="切换深浅主题">深浅</button>
   </div>
 </header>
@@ -37,7 +38,7 @@
       <div class="hero-copy">
         <p class="eyebrow">ORIGIN TRACE</p>
         <h1>让 AI 代码的每一段来源，都有可核验的证据。</h1>
-        <p class="lede">从相似片段到来源原文，再到许可证义务。全部在本机完成，不上传、不执行、不依赖外部模型。</p>
+        <p class="lede">从相似片段到来源原文，再到许可证义务。默认全部在本机完成，不上传、不执行；配置大模型后，仅在你主动点击 AI 功能时才把相关文字发往你指定的接口。</p>
       </div>
       <dl class="figs hero-figs">
         <div><dt>语料文件</dt><dd id="docs">—</dd></div>
@@ -99,7 +100,10 @@
       <section class="panel input">
         <div class="panel-head">
           <h2><span class="eyebrow">01 / Input</span>待审查代码</h2>
-          <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
+          <div class="head-actions">
+            <button id="interpret" class="btn small" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
+            <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
+          </div>
         </div>
         <div class="demo-bar" role="group" aria-label="体验案例">
           <span class="field-label">体验案例</span>
@@ -119,13 +123,17 @@
           </label>
         </div>
         <button id="scan" class="btn go" type="button">开始来源审查</button>
+        <label class="check"><input id="assistScan" type="checkbox"> 审查中用大模型重写处置建议（需已配置；风险结论仍由确定性引擎给出）</label>
         <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
       </section>
 
       <section class="panel results">
         <div class="panel-head">
           <h2><span class="eyebrow">02 / Result</span>审查结果</h2>
-          <span id="resultBadge" class="state">等待输入</span>
+          <div class="head-actions">
+            <button id="assistSummary" class="btn small" type="button" disabled title="生成/刷新本次审查的 AI 执行摘要">AI 摘要</button>
+            <span id="resultBadge" class="state">等待输入</span>
+          </div>
         </div>
         <div id="empty" class="empty">
           <p class="eyebrow">NO SUBMISSION YET</p>
@@ -133,8 +141,13 @@
           <p class="note">审查后在这里查看来源项目、风险分级、命中行号与原文对照。所有计数来自本次运行。</p>
           <div class="hatch-band" aria-hidden="true"></div>
         </div>
+        <div id="aiCards" class="ai-cards" hidden></div>
         <div id="result" hidden></div>
-        <p class="note">证据评分反映相似度判定，不是法律结论；未发现命中不等于已排查所有开源项目。</p>
+        <form id="askForm" class="ask-row" hidden>
+          <input id="askInput" type="text" maxlength="1000" placeholder="就本次审查结果提问，例如：哪个命中最需要优先处理？" autocomplete="off">
+          <button class="btn small" type="submit">追问</button>
+        </form>
+        <p class="note">证据评分反映相似度判定，不是法律结论；未发现命中不等于已排查所有开源项目。AI 文字仅为解读参考。</p>
       </section>
     </div>
   </section>
@@ -154,6 +167,7 @@
         </label>
       </div>
       <button id="reason" class="btn go" type="button">分析义务与冲突</button>
+      <button id="licenceExplain" class="btn small" type="button" disabled>AI 通俗解释</button>
       <div id="licenseResult" class="licence-result" aria-live="polite"></div>
     </section>
     <p class="note">结论是工程风险提示，不构成法律意见；许可证标签与条款存在版本差异，发布前需人工核验原项目授权。</p>
@@ -176,6 +190,8 @@
       <h2>适用边界</h2>
       <p>检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p>
       <p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。语料版本已锁定，索引与判定权重随发布包一同提供。</p>
+      <h2>大模型增强（可选）</h2>
+      <p>风险分级、证据评分与许可冲突判定始终由本机确定性算法给出，断网也完全可用。大模型只在显式配置后作为解读层参与：文件速读、审查执行摘要、基于证据摘要的追问与许可条款通俗解释。每次调用的模型与用途写入报告的 ai_usage 字段；密钥仅保存在本机工作目录，不出现在任何导出物中。</p>
     </article>
   </section>
 
@@ -184,6 +200,33 @@
     <span class="eyebrow">CodeGuard / Review Workbench</span>
   </footer>
 </main>
+
+<dialog id="aiSetup" class="ai-dialog" aria-labelledby="aiSetupTitle">
+  <form method="dialog" class="ai-form">
+    <header>
+      <p class="eyebrow">LLM SETUP</p>
+      <h2 id="aiSetupTitle">配置大模型（可选）</h2>
+      <p class="note">填写任意 OpenAI 兼容接口的 Base URL 与 API Key，拉取模型列表后选择模型。风险判定不受此配置影响；密钥只保存在本机工作目录，不会写入导出报告。</p>
+    </header>
+    <label class="field" for="aiBase"><span>Base URL（如 https://host/compatible-mode/v1）</span>
+      <input id="aiBase" type="text" autocomplete="off" spellcheck="false" placeholder="https://…/v1"></label>
+    <label class="field" for="aiKey"><span>API Key</span>
+      <input id="aiKey" type="password" autocomplete="off" placeholder="sk-…"></label>
+    <div class="field-row">
+      <label class="field" for="aiModel"><span>模型</span>
+        <select id="aiModel" disabled><option value="">先拉取模型列表</option></select></label>
+      <div class="ai-actions">
+        <button id="aiFetch" class="btn small" type="button">拉取模型列表</button>
+        <button id="aiSave" class="btn cut" type="button" disabled>保存并启用</button>
+      </div>
+    </div>
+    <p id="aiStatus" class="note" aria-live="polite">未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。</p>
+    <footer class="ai-foot">
+      <button id="aiClear" class="btn small danger" type="button" hidden>清除本机配置</button>
+      <button value="close" class="btn small">关闭</button>
+    </footer>
+  </form>
+</dialog>
 
 <div id="status" role="status" aria-live="polite"></div>
 </body>

@@ -4,6 +4,48 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [0.4.0] - 2026-10-24
+
+### Added
+
+- **First-run LLM setup in the workbench**: an optional dialog collects any
+  OpenAI-compatible base URL + API key, lists models via `/models` (the key is
+  verified live before saving) and stores the choice in the local workspace
+  (`llm_config.json`, git-ignored, permission 0600 where the OS allows). The
+  key is never returned to the browser (masked form only), never embedded in
+  exports, and clearing it restores the fully offline tool.
+- **AI file reading** (`POST /api/interpret`): uploaded/pasted code gets a
+  deterministic licence-marker extraction (SPDX ids, copyright lines, vendored
+  hints, source URLs — same input, same output, works with no key) plus an
+  optional LLM reading of what the file does and what to check next.
+- **AI scan summary and grounded Q&A** (`POST /api/assist`): after a scan the
+  model writes an executive summary and answers questions strictly from the
+  evidence digest (no source code stored); when no model is configured the
+  summary degrades to a deterministic digest text and Q&A states it needs a
+  model.
+- **AI plain-language licence notes** (`POST /api/license/explain`): the rule
+  engine's verdict is explained for non-specialists; the verdict itself is
+  never generated or altered by the model.
+- Optional per-scan checkbox "审查中用大模型重写处置建议": when enabled and a
+  model is configured, finding explanations come from the LLM and the receipt's
+  `ai_usage` honestly records `openai-compatible`, the model name and
+  `external_calls: true`; disabled (default) keeps the byte-reproducible
+  offline template.
+- 19 new offline tests (126 total) covering settings hygiene and masking,
+  model-list failures, prompt construction against a loopback stub, endpoint
+  token gating, and the no-key-leak guarantee.
+
+### Changed
+
+- `llm.py` grew a small settings/marker module (`save/load/clear`, validation,
+  `list_models`, `extract_license_markers`); `OpenAICompatProvider` gained a
+  generic `chat()` used by all four interpretation prompts, each with the same
+  guardrails (only interpret given material, never legal advice, ≤400 chars).
+- The workbench hero and "方法与边界" copy now state exactly what leaves the
+  machine: nothing by default, and only user-triggered AI actions send text to
+  the configured endpoint.
+- Version 0.4.0.
+
 ## [0.3.0] - 2026-10-21
 
 ### Changed
