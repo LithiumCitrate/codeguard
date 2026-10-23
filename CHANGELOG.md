@@ -21,7 +21,7 @@ abides by semantic versioning.
   skipped and counted), and clicking a subfolder or a file narrows the scope.
   Results aggregate per file and for the tree (risk histogram, blocking
   count, per-file findings) and drive the risk dial.
-- 5 new offline tests for the tree path (129 total).
+- 2 new offline tests for the tree path (128 total).
 
 ### Changed
 
