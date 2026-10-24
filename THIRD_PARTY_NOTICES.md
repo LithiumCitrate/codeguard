@@ -5,7 +5,7 @@
 源码仓库与 Windows 离线发布包的范围不同：离线应用包额外附带只读语料、原始上游源码发布包与对应许可文件。
 这些资源保持原许可证，不能统称 Apache-2.0。`submission/evidence/corpus-integrity.json` 记录精确版本、来源 URL、原包 SHA-256 与许可文件位置。
 程序运行不安装、不执行、不链接这些语料项目；上游原始源码包位于 `third-party-source`，供来源核查和对应源码获取。
-本次核验共20包、676文件；索引按长度条件收录585文件。下文“不再分发”描述仅适用于原源码仓库获取方式，离线包以上述说明为准。
+2026-10-24 复核：语料已扩至 33 包 / 1717 文件（PyPI sdist 20 包 + GitHub 浅克隆 13 仓库，提交哈希记于语料清单 sdist_sha256 字段）；离线包内每个语料包目录均随附上游许可/声明文件（sync_corpus_licenses.py 保证，package_release.py 对缺证包拒绝打包）。下文“不再分发”描述仅适用于原源码仓库获取方式，离线包以上述说明为准。
 Windows 包还包含 CPython 3.14.3（PSF 授权及其捆绑许可，见随包 PYTHON-LICENSE.txt）及 PyInstaller 6.22.3 启动器（GPL 加 bootloader exception，见 PYINSTALLER-COPYING.txt）。
 PyInstaller、setuptools、packaging 等打包工具不作为应用运行依赖；其构建用途应在团队资源清单中如实记录。
 网页、修复、文档与打包使用 Codex 辅助生成；团队需确认人工审核、验证和权利边界，不应把所有内容声称为独立手写。
@@ -28,6 +28,8 @@ PyInstaller、setuptools、packaging 等打包工具不作为应用运行依赖�
 | Saira 可变字体（界面字体） | Saira Project Authors，随应用分发 `src/codeguard/static/fonts/Saira.ttf` | SIL OFL 1.1 | 仅作网页界面字体，经本机 `@font-face` 加载；不修改字形 | 保留版权声明与许可证（`static/fonts/Saira-OFL.txt` 同目录分发）；若修改字体文件须改用新名称 | 界面样式与页面实现为自研；字体只提供字形 | 合规 |
 
 ## 2. 语料库（只读输入，不在仓库中分发）
+
+GitHub 克隆组（v0.5.0 起，`scripts/expand_corpus_github.py` 浅克隆，根目录许可文件随语料目录分发）：fastapi(MIT)、httpx(BSD-3)、requests(Apache-2.0)、flask(BSD-3)、pydantic(MIT)、django(BSD-3)、git(GPL-2.0-only)、nginx(BSD-2)、radare2(LGPL-3.0-only)、minio(AGPL-3.0-only)、cobra(Apache-2.0)、jquery(MIT)、html5ever(Apache-2.0/MIT 双许可)。
 
 `codeguard corpus` 默认拉取以下 PyPI sdist；许可证由本项目解析链自动判定，"解析来源"列给出该
 SPDX 标识是从哪个元数据字段得到的（PEP 639 表达式 / legacy license 字段 / trove 分类 / 源码头部）。

@@ -73,6 +73,24 @@ REPOS = [
 ]
 
 _LIC_RE = re.compile(r"^(licen[cs]e|copying|copyright)([.\-_ ].*)?$", re.I)
+# 语料树会随 Windows 便携包逐字再分发，根目录许可/声明文件必须随附（GPL/AGPL §4 要求）
+_LIC_SHIP_RE = re.compile(r"^(licen[cs]e|copying|copyright|notice|unlicense)([.\-_ ].*)?$", re.I)
+
+
+def copy_license_files(repo_dir: Path, pkg_dir: Path) -> list:
+    """Copy root licence/notice files next to the copied sources.
+
+    The corpus tree is redistributed verbatim inside the portable Windows
+    build; copyleft licences require the licence text to accompany the
+    source. These files carry no source extension, so the index ignores
+    them.
+    """
+    copied = []
+    for item in sorted(repo_dir.iterdir()):
+        if item.is_file() and _LIC_SHIP_RE.match(item.name):
+            shutil.copyfile(item, pkg_dir / item.name)
+            copied.append(item.name)
+    return copied
 _LIC_PHRASES = [
     (re.compile(r"affero.*general public license.*version 3|gnu affero general public license", re.I | re.S), "AGPL-3.0-only"),
     (re.compile(r"lesser general public license.*version 3|gnu lesser general public license v3", re.I | re.S), "LGPL-3.0-only"),
@@ -155,6 +173,9 @@ def expand_repo(name: str, url: str, expected: str | None, note: str, log=print)
     version = short
     pkg_dir = CORPUS_ROOT / ("%s-%s" % (name, version))
     pkg_dir.mkdir(parents=True, exist_ok=True)
+    shipped = copy_license_files(repo_dir, pkg_dir)
+    if shipped:
+        log("  随附许可/声明文件：%s" % ", ".join(shipped))
     entries = []
     for lang, full in collect_files(repo_dir):
         data = full.read_bytes()

@@ -1,8 +1,10 @@
 """Assemble portable application and clean source ZIPs, with checksums."""
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
+import subprocess
 import sys
 import zipfile
 
@@ -11,6 +13,13 @@ release = root / 'release'
 app = release / 'app' / 'CodeGuard'
 if not (app / 'CodeGuard.exe').exists():
     raise SystemExit('Build the Windows EXE first')
+
+# 语料树会随便携包逐字再分发：每个包目录必须携带上游许可/声明文件
+_LIC_RE = re.compile(r'^(licen[cs]e|copying|copyright|notice|unlicense)([.\-_ ].*)?$', re.I)
+for pkg in sorted((root / '.codeguard' / 'corpus').iterdir()):
+    if pkg.is_dir() and not any(_LIC_RE.match(p.name) for p in pkg.iterdir()):
+        raise SystemExit('语料包缺少许可/声明文件：%s（先运行 python scripts/sync_corpus_licenses.py）' % pkg.name)
+
 integrity = json.loads((root/'submission/evidence/corpus-integrity.json').read_text(encoding='utf-8'))
 data = app / '.codeguard'
 data.mkdir(exist_ok=True)
@@ -33,7 +42,9 @@ shutil.copyfile(release/'PYINSTALLER-COPYING.txt',app/'PYINSTALLER-COPYING.txt')
 bench = root/'.codeguard/benchmark-20261020'
 for suffix in ['json','md']:
     shutil.copyfile(bench/('benchmark.'+suffix),root/'submission/evidence'/('benchmark-20261020.'+suffix))
-shutil.copyfile(root/'output/pdf/CodeGuard-技术报告-升级版.pdf',root/'submission/CodeGuard-技术报告-升级版.pdf')
+report_pdf = root/'output/pdf/CodeGuard-技术报告-升级版.pdf'
+if report_pdf.exists():
+    shutil.copyfile(report_pdf,root/'submission/CodeGuard-技术报告-升级版.pdf')
 
 
 def zip_tree(path, filename, prefix):
@@ -46,16 +57,15 @@ def zip_tree(path, filename, prefix):
 if '--source-only' not in sys.argv:
     zip_tree(app,release/'CodeGuard-Windows-x64.zip','CodeGuard')
 source_zip = release/'CodeGuard-Source.zip'
-selected_dirs = ['src/codeguard','tests','scripts','docs','submission','.github','hooks']
-selected_files = ['README.md','LICENSE','NOTICE','THIRD_PARTY_NOTICES.md','CONTRIBUTING.md','CHANGELOG.md',
-                  'SECURITY.md','pyproject.toml','launch.py','启动工作台.cmd','.gitignore','CodeGuard.spec']
+# Source 包只放会进公开仓库的内容：git 已跟踪或未忽略的文件（与提交后的仓库一致）。
+# submission/ 的内部材料与 release/ 私人文件均被 .gitignore 排除，不会混入对外分发包。
+out = subprocess.run(['git','-c','core.quotepath=off','ls-files','--cached','--others',
+                      '--exclude-standard','-z'], cwd=root, capture_output=True, check=True)
+public_files = [Path(p) for p in out.stdout.decode('utf-8').split('\0') if p]
 with zipfile.ZipFile(source_zip,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as archive:
-    for folder in selected_dirs:
-        for item in sorted((root/folder).rglob('*')):
-            if item.is_file() and '__pycache__' not in item.parts:
-                archive.write(item,str(Path('CodeGuard-Source')/item.relative_to(root)))
-    for filename in selected_files:
-        archive.write(root/filename,str(Path('CodeGuard-Source')/filename))
+    for item in sorted(public_files):
+        if '__pycache__' not in item.parts and (root/item).is_file():
+            archive.write(root/item,str(Path('CodeGuard-Source')/item))
 checksums = []
 handover = sorted(p.name for p in release.glob('CodeGuard-队友材料包-*.zip'))
 for filename in ['CodeGuard-Windows-x64.zip','CodeGuard-Source.zip'] + handover:
