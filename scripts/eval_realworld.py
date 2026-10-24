@@ -163,27 +163,28 @@ def commit_of(path: Path) -> str:
                           check=True, capture_output=True, text=True).stdout.strip()
 
 
-def select_files(root: Path, rel_roots, exclude_parts, limit: int):
+def select_files(root: Path, rel_roots, exclude_parts, limit: int, patterns=(".py",)):
     candidates = []
     seen = set()
     for rel in rel_roots:
         start = root / rel
         if not start.exists():
             continue
-        for path in start.rglob("*.py"):
-            if path in seen:
-                continue
-            seen.add(path)
-            parts = set(path.relative_to(root).parts)
-            if parts & EXCLUDE_PARTS or parts & set(exclude_parts or ()):
-                continue
-            try:
-                size = path.stat().st_size
-            except OSError:
-                continue
-            if not MIN_BYTES <= size <= MAX_BYTES:
-                continue
-            candidates.append(path)
+        for pattern in patterns:
+            for path in start.rglob("*" + pattern):
+                if path in seen:
+                    continue
+                seen.add(path)
+                parts = set(path.relative_to(root).parts)
+                if parts & EXCLUDE_PARTS or parts & set(exclude_parts or ()):
+                    continue
+                try:
+                    size = path.stat().st_size
+                except OSError:
+                    continue
+                if not MIN_BYTES <= size <= MAX_BYTES:
+                    continue
+                candidates.append(path)
     # Deterministic hash sample: stable across runs and independent of walk order.
     ranked = sorted(candidates, key=lambda p: hashlib.sha256(
         str(p.relative_to(root)).encode("utf-8")).hexdigest())
@@ -244,7 +245,7 @@ def run(args):
         commit = commit_of(repo_dir)
         limit = args.vendor_limit if spec["name"].endswith("-vendor") else args.per_repo
         files = select_files(repo_dir, spec["roots"], spec.get("exclude_parts"),
-                             limit)
+                             limit, patterns=tuple(spec.get("exts", [".py"])))
         rows, findings, latencies, spans, errors = [], [], [], 0, []
         for path in files:
             rel = str(path.relative_to(repo_dir)).replace(os.sep, "/")
@@ -418,7 +419,22 @@ def main(argv=None):
     parser.add_argument("--out-dir", default=str(ROOT / "submission" / "evidence"))
     parser.add_argument("--date", default="")
     parser.add_argument("--only", nargs="*", default=[])
+    parser.add_argument("--add", nargs="*", default=[], metavar="NAME:OWNER/REPO:SPDX[:ROOT][:exts=a,b]",
+                        help="附加扫描仓库（复测用），如 jinja:pallets/jinja:BSD-3-Clause:src/jinja2 ；"
+                             "非 Python 仓库用 exts=go,c 指定扩展名")
     args = parser.parse_args(argv)
+    for item in args.add:
+        parts = item.split(":")
+        if len(parts) < 3 or "/" not in parts[1]:
+            raise SystemExit("--add 格式应为 NAME:OWNER/REPO:SPDX[:ROOT][:exts=a,b]：%r" % item)
+        spec = {"name": parts[0], "repo": parts[1], "license": parts[2],
+                "roots": [""], "expected": []}
+        for extra in parts[3:]:
+            if extra.startswith("exts="):
+                spec["exts"] = ["." + e.strip() for e in extra[5:].split(",") if e.strip()]
+            elif extra:
+                spec["roots"] = [extra]
+        REPOS.append(spec)
     payload = run(args)
     date = args.date or datetime.date.today().strftime("%Y%m%d")
     out = Path(args.out_dir)

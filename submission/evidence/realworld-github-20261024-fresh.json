@@ -1,0 +1,2706 @@
+{
+ "schema": "codeguard.realworld/v1",
+ "generated_at": "2026-10-24T04:41:34Z",
+ "method": {
+  "sample": "deterministic SHA-256 rank by repository-relative path",
+  "file_size_bytes": [
+   900,
+   90000
+  ],
+  "usage": "distribution",
+  "target_license": "each repository LICENSE file (verified at pinned commit)",
+  "exclusions": "tests/docs/examples/__pycache__; vendor directories only in the explicit *-vendor entries",
+  "not_redistributed": "repositories stay under .codeguard/github (gitignored); evidence contains findings only"
+ },
+ "metadata": {
+  "tool": "codeguard",
+  "version": "0.5.1",
+  "index_fingerprint": "03b8e6bd7bd74c8de0d2d114dec0e2de",
+  "model_sha256": "2e317568f380d3b1d4c35d0edf5c6f2d7ab55583841ecfd0745745088a3c218a",
+  "elapsed_s": 93.8
+ },
+ "summary": {
+  "repositories": 5,
+  "sampled_files": 168,
+  "scanned_files": 168,
+  "findings": 263,
+  "blocking": 0,
+  "files_with_blocking": 0,
+  "risk_counts": {
+   "S0": 220,
+   "S1": 20,
+   "S2": 23,
+   "S3": 0,
+   "S4": 0
+  },
+  "expected_hits": 0,
+  "latency_ms": {
+   "p50": 232.5,
+   "p95": 2215.0,
+   "max": 6268.1
+  },
+  "regression": {
+   "case": "setuptools/_vendor/wheel/_commands/__init__.py",
+   "old_risk": "S3 (false block)",
+   "new_risk": "S2 (review)",
+   "evidence": "6 generic argparse spans, coverage 0.222, 5 verbatim tokens, confidence 0.671"
+  }
+ },
+ "repositories": [
+  {
+   "name": "jinja",
+   "repo": "pallets/jinja",
+   "commit": "5ef70112a1ff19c05324ff889dd30405b1002044",
+   "license": "BSD-3-Clause",
+   "roots": [
+    "src/jinja2"
+   ],
+   "sampled_files": 25,
+   "scanned_files": 25,
+   "total_spans": 2545,
+   "errors": [],
+   "findings": 56,
+   "risk_counts": {
+    "S0": 49,
+    "S1": 2,
+    "S2": 5,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 825.0,
+    "p95": 5176.0,
+    "max": 6268.1
+   },
+   "files": [
+    {
+     "file": "src/jinja2/idtracking.py",
+     "spans": 86,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/exceptions.py",
+     "spans": 24,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/sandbox.py",
+     "spans": 68,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/lexer.py",
+     "spans": 147,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/visitor.py",
+     "spans": 17,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/constants.py",
+     "spans": 0,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/nodes.py",
+     "spans": 189,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/bccache.py",
+     "spans": 55,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/environment.py",
+     "spans": 260,
+     "findings": 9,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/tests.py",
+     "spans": 29,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/runtime.py",
+     "spans": 179,
+     "findings": 5,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/compiler.py",
+     "spans": 473,
+     "findings": 13,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/nativetypes.py",
+     "spans": 23,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/debug.py",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/__init__.py",
+     "spans": 11,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/utils.py",
+     "spans": 117,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/_identifier.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/optimizer.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/defaults.py",
+     "spans": 7,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/parser.py",
+     "spans": 272,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/loaders.py",
+     "spans": 109,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/meta.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/ext.py",
+     "spans": 164,
+     "findings": 5,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/filters.py",
+     "spans": 247,
+     "findings": 4,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "src/jinja2/async_utils.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9995,
+     "coverage": 0.6364,
+     "spans": 7,
+     "verbatim": 15,
+     "verdict": "compatible",
+     "query_lines": [
+      12,
+      57
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8406,
+     "coverage": 0.1818,
+     "spans": 2,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      36
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6721,
+     "coverage": 0.0435,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      12
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6669,
+     "coverage": 0.0231,
+     "spans": 6,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      1158
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6376,
+     "coverage": 0.0063,
+     "spans": 3,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      31
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/ctx.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6347,
+     "coverage": 0.0171,
+     "spans": 2,
+     "verbatim": 18,
+     "verdict": "compatible",
+     "query_lines": [
+      753,
+      765
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/utils.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6281,
+     "coverage": 0.0081,
+     "spans": 2,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      34
+     ]
+    },
+    {
+     "package": "snowballstemmer",
+     "version": "3.1.1",
+     "path": "snowballstemmer-3.1.1/src/snowballstemmer/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6125,
+     "coverage": 0.0038,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      29,
+      39
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/app.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5748,
+     "coverage": 0.0085,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      16
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.562,
+     "coverage": 0.0061,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      11,
+      23
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/globals.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.56,
+     "coverage": 0.1429,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      14
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/termui.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5465,
+     "coverage": 0.0056,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      16
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/app.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5457,
+     "coverage": 0.0081,
+     "spans": 2,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      27
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/templating.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5448,
+     "coverage": 0.0183,
+     "spans": 2,
+     "verbatim": 27,
+     "verdict": "compatible",
+     "query_lines": [
+      478,
+      579
+     ]
+    },
+    {
+     "package": "urllib3",
+     "version": "2.8.0",
+     "path": "urllib3-2.8.0/src/urllib3/_base_connection.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5352,
+     "coverage": 0.0061,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      139,
+      144
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/app.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5331,
+     "coverage": 0.0042,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      15,
+      1613
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/app.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5297,
+     "coverage": 0.0112,
+     "spans": 2,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      27
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/app.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5011,
+     "coverage": 0.0077,
+     "spans": 2,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      39,
+      53
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_termui_impl.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4938,
+     "coverage": 0.0021,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "compatible",
+     "query_lines": [
+      750,
+      758
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/decorators.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4909,
+     "coverage": 0.0147,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "name": "starlette",
+   "repo": "encode/starlette",
+   "commit": "a85a5c36d7797f8a0816cc8a4de87a28938891e3",
+   "license": "BSD-3-Clause",
+   "roots": [
+    "starlette"
+   ],
+   "sampled_files": 35,
+   "scanned_files": 35,
+   "total_spans": 1690,
+   "errors": [],
+   "findings": 81,
+   "risk_counts": {
+    "S0": 70,
+    "S1": 0,
+    "S2": 11,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 246.5,
+    "p95": 1300.9,
+    "max": 1564.6
+   },
+   "files": [
+    {
+     "file": "starlette/applications.py",
+     "spans": 31,
+     "findings": 4,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/templating.py",
+     "spans": 31,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/staticfiles.py",
+     "spans": 54,
+     "findings": 4,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/exceptions.py",
+     "spans": 10,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/status.py",
+     "spans": 22,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/websockets.py",
+     "spans": 51,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/concurrency.py",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/trustedhost.py",
+     "spans": 16,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/base.py",
+     "spans": 50,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/routing.py",
+     "spans": 208,
+     "findings": 12,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/sessions.py",
+     "spans": 36,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/body_limit.py",
+     "spans": 30,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/requests.py",
+     "spans": 79,
+     "findings": 4,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/testclient.py",
+     "spans": 162,
+     "findings": 7,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/background.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/httpsredirect.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/_exception_handler.py",
+     "spans": 13,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/cors.py",
+     "spans": 42,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/formparsers.py",
+     "spans": 69,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/types.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/exceptions.py",
+     "spans": 18,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/responses.py",
+     "spans": 166,
+     "findings": 7,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/errors.py",
+     "spans": 32,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/opentelemetry.py",
+     "spans": 33,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/wsgi.py",
+     "spans": 39,
+     "findings": 5,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/schemas.py",
+     "spans": 31,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/authentication.py",
+     "spans": 36,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/endpoints.py",
+     "spans": 35,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/gzip.py",
+     "spans": 54,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/datastructures.py",
+     "spans": 198,
+     "findings": 11,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/__init__.py",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/convertors.py",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "starlette/middleware/authentication.py",
+     "spans": 12,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "starlette/_utils.py",
+     "spans": 28,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "starlette/config.py",
+     "spans": 39,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "mercurial",
+     "version": "7.2.4",
+     "path": "mercurial-7.2.4/contrib/python-zstandard/zstandard/backend_cffi.py",
+     "license": "GPL-2.0-or-later",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.8885,
+     "coverage": 0.2273,
+     "spans": 5,
+     "verbatim": 1,
+     "verdict": "incompatible",
+     "query_lines": [
+      20,
+      91
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/options.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7188,
+     "coverage": 0.0833,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      13
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/frames.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7009,
+     "coverage": 0.2727,
+     "spans": 6,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      110,
+      180
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/sites.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6897,
+     "coverage": 0.0645,
+     "spans": 2,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      12
+     ]
+    },
+    {
+     "package": "iniconfig",
+     "version": "2.3.0",
+     "path": "iniconfig-2.3.0/src/iniconfig/exceptions.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6806,
+     "coverage": 0.2,
+     "spans": 2,
+     "verbatim": 13,
+     "verdict": "compatible",
+     "query_lines": [
+      11,
+      32
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/sites.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6579,
+     "coverage": 0.0286,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      14
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/application.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6514,
+     "coverage": 0.0769,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      9
+     ]
+    },
+    {
+     "package": "glances",
+     "version": "4.5.7",
+     "path": "glances-4.5.7/glances/globals.py",
+     "license": "LGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.6432,
+     "coverage": 0.0357,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "conditional",
+     "query_lines": [
+      1,
+      10
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/transport.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.6429,
+     "coverage": 0.0323,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "conditional",
+     "query_lines": [
+      9,
+      14
+     ]
+    },
+    {
+     "package": "fava",
+     "version": "1.30.16",
+     "path": "fava-1.30.16/src/fava/application.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6413,
+     "coverage": 0.0145,
+     "spans": 1,
+     "verbatim": 9,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      12
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/sites.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6354,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      15,
+      23
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6339,
+     "coverage": 0.012,
+     "spans": 2,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      27
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/checks.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.629,
+     "coverage": 0.0051,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      4,
+      11
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/__init__.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.6277,
+     "coverage": 0.0127,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "conditional",
+     "query_lines": [
+      12,
+      18
+     ]
+    },
+    {
+     "package": "paramiko",
+     "version": "5.0.0",
+     "path": "paramiko-5.0.0/paramiko/transport.py",
+     "license": "LGPL-2.1",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.6234,
+     "coverage": 0.0048,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "conditional",
+     "query_lines": [
+      21,
+      26
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_iv.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6225,
+     "coverage": 0.0062,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      110,
+      114
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/sites.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.62,
+     "coverage": 0.0127,
+     "spans": 1,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      15,
+      23
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/trio/connection.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6139,
+     "coverage": 0.0048,
+     "spans": 1,
+     "verbatim": 7,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      13
+     ]
+    },
+    {
+     "package": "requests",
+     "version": "611c6162cb",
+     "path": "requests-611c6162cb/tests/test_utils.py",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6117,
+     "coverage": 0.0286,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      11
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/tests/test_cli.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6033,
+     "coverage": 0.0185,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      15
+     ]
+    }
+   ]
+  },
+  {
+   "name": "typer",
+   "repo": "tiangolo/typer",
+   "commit": "a5882dedf0bc7a46cd861fdfca020f88519e0f21",
+   "license": "MIT",
+   "roots": [
+    "typer"
+   ],
+   "sampled_files": 28,
+   "scanned_files": 28,
+   "total_spans": 2272,
+   "errors": [],
+   "findings": 109,
+   "risk_counts": {
+    "S0": 88,
+    "S1": 17,
+    "S2": 4,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 427.6,
+    "p95": 1662.6,
+    "max": 2105.5
+   },
+   "files": [
+    {
+     "file": "typer/_click/_winconsole.py",
+     "spans": 53,
+     "findings": 3,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/globals.py",
+     "spans": 8,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/core.py",
+     "spans": 208,
+     "findings": 4,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/rich_utils.py",
+     "spans": 137,
+     "findings": 6,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/_termui_impl.py",
+     "spans": 100,
+     "findings": 5,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "typer/_completion_classes.py",
+     "spans": 49,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/termui.py",
+     "spans": 83,
+     "findings": 5,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/main.py",
+     "spans": 267,
+     "findings": 11,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/params.py",
+     "spans": 132,
+     "findings": 10,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/parser.py",
+     "spans": 87,
+     "findings": 3,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/completion.py",
+     "spans": 25,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/cli.py",
+     "spans": 75,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/types.py",
+     "spans": 114,
+     "findings": 3,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/models.py",
+     "spans": 126,
+     "findings": 20,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "typer/_completion_shared.py",
+     "spans": 45,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "typer/utils.py",
+     "spans": 35,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/exceptions.py",
+     "spans": 52,
+     "findings": 5,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/_textwrap.py",
+     "spans": 8,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_typing.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/decorators.py",
+     "spans": 11,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/formatting.py",
+     "spans": 55,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/core.py",
+     "spans": 263,
+     "findings": 9,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/testing.py",
+     "spans": 70,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/__init__.py",
+     "spans": 9,
+     "findings": 2,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/utils.py",
+     "spans": 75,
+     "findings": 4,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "typer/_types.py",
+     "spans": 27,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/_compat.py",
+     "spans": 103,
+     "findings": 4,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "typer/_click/shell_completion.py",
+     "spans": 45,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9998,
+     "coverage": 0.7778,
+     "spans": 7,
+     "verbatim": 11,
+     "verdict": "compatible",
+     "query_lines": [
+      8,
+      33
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/termui.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9997,
+     "coverage": 0.5663,
+     "spans": 47,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      9,
+      431
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_winconsole.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.996,
+     "coverage": 0.7925,
+     "spans": 42,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      34,
+      300
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_textwrap.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9958,
+     "coverage": 0.75,
+     "spans": 6,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      46
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/shell_completion.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9956,
+     "coverage": 0.4889,
+     "spans": 22,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      6,
+      306
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/testing.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.993,
+     "coverage": 0.4714,
+     "spans": 33,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      20,
+      342
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/globals.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9929,
+     "coverage": 0.625,
+     "spans": 5,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      18,
+      61
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/types.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9892,
+     "coverage": 0.3596,
+     "spans": 41,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      82,
+      696
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/formatting.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9888,
+     "coverage": 0.6545,
+     "spans": 36,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      1,
+      272
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_compat.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9878,
+     "coverage": 0.5631,
+     "spans": 58,
+     "verbatim": 46,
+     "verdict": "compatible",
+     "query_lines": [
+      46,
+      562
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/_termui_impl.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9877,
+     "coverage": 0.77,
+     "spans": 77,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      41,
+      522
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.972,
+     "coverage": 0.4423,
+     "spans": 92,
+     "verbatim": 46,
+     "verdict": "compatible",
+     "query_lines": [
+      43,
+      1110
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/parser.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9716,
+     "coverage": 0.4598,
+     "spans": 40,
+     "verbatim": 48,
+     "verdict": "compatible",
+     "query_lines": [
+      75,
+      459
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/utils.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9609,
+     "coverage": 0.52,
+     "spans": 39,
+     "verbatim": 44,
+     "verdict": "compatible",
+     "query_lines": [
+      51,
+      477
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/exceptions.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8973,
+     "coverage": 0.25,
+     "spans": 13,
+     "verbatim": 44,
+     "verdict": "compatible",
+     "query_lines": [
+      10,
+      229
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/types.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8588,
+     "coverage": 0.2593,
+     "spans": 7,
+     "verbatim": 47,
+     "verdict": "compatible",
+     "query_lines": [
+      17,
+      116
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/core.py",
+     "license": "BSD-3-Clause",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.8444,
+     "coverage": 0.2053,
+     "spans": 54,
+     "verbatim": 46,
+     "verdict": "compatible",
+     "query_lines": [
+      168,
+      1166
+     ]
+    },
+    {
+     "package": "flask",
+     "version": "d086db856b",
+     "path": "flask-d086db856b/src/flask/__init__.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7605,
+     "coverage": 0.1111,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      16,
+      22
+     ]
+    },
+    {
+     "package": "click",
+     "version": "8.5.0",
+     "path": "click-8.5.0/src/click/shell_completion.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.7116,
+     "coverage": 0.102,
+     "spans": 5,
+     "verbatim": 43,
+     "verdict": "compatible",
+     "query_lines": [
+      34,
+      77
+     ]
+    },
+    {
+     "package": "websockets",
+     "version": "17.2",
+     "path": "websockets-17.2/src/websockets/legacy/server.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6651,
+     "coverage": 0.0317,
+     "spans": 4,
+     "verbatim": 1,
+     "verdict": "compatible",
+     "query_lines": [
+      474,
+      614
+     ]
+    }
+   ]
+  },
+  {
+   "name": "pyinstaller",
+   "repo": "pyinstaller/pyinstaller",
+   "commit": "b206650681ecc827b6870c29d3196dfd1a1d0a08",
+   "license": "GPL-2.0-or-later",
+   "roots": [
+    "PyInstaller"
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 616,
+   "errors": [],
+   "findings": 8,
+   "risk_counts": {
+    "S0": 7,
+    "S1": 1,
+    "S2": 0,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 30.8,
+    "p95": 378.8,
+    "max": 1544.8
+   },
+   "files": [
+    {
+     "file": "PyInstaller/exceptions.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-gi.py",
+     "spans": 2,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/depend/imphook.py",
+     "spans": 57,
+     "findings": 3,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-typing_extensions.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/rthooks/pyi_rth_inspect.py",
+     "spans": 10,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/cliutils/bindepend.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/win32/icon.py",
+     "spans": 49,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-setuptools.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/hooks/qt/__init__.py",
+     "spans": 204,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-django.core.mail.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/cliutils/set_version.py",
+     "spans": 6,
+     "findings": 1,
+     "max_risk": "S1",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-scipy.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/hooks/qt/_modules_info.py",
+     "spans": 67,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/fake-modules/_pyi_rth_utils/tempfile.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/__main__.py",
+     "spans": 53,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-keyring.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-backports.tarfile.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-_ctypes.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-pandas.plotting.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-pkg_resources.py",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-setuptools._vendor.jaraco.text.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/rthooks/pyi_rth_gtk.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-more_itertools.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/rthooks/pyi_rth_pkgutil.py",
+     "spans": 5,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-webbrowser.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-importlib_metadata.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/configure.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-django.py",
+     "spans": 14,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-autocommand.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_safe_import_module/hook-zipp.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/pre_find_module_path/hook-_pyi_rth_utils.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/_shared_with_waf.py",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/config.py",
+     "spans": 1,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/utils/win32/winresource.py",
+     "spans": 32,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-matplotlib.backends.backend_qtagg.py",
+     "spans": 0,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/rthooks/pyi_rth_pyside6.py",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-PyQt5.Qt.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/loader/pyimod01_archive.py",
+     "spans": 17,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/rthooks/pyi_rth__tkinter.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "PyInstaller/hooks/hook-kivy.py",
+     "spans": 3,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "mercurial",
+     "version": "7.2.4",
+     "path": "mercurial-7.2.4/contrib/automation/hgautomation/cli.py",
+     "license": "GPL-2.0-or-later",
+     "risk": "S1",
+     "risk_label": "低风险：满足声明保留即可",
+     "confidence": 0.9053,
+     "coverage": 0.3333,
+     "spans": 2,
+     "verbatim": 13,
+     "verdict": "compatible",
+     "query_lines": [
+      23,
+      39
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/nodes.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5803,
+     "coverage": 0.0149,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "compatible",
+     "query_lines": [
+      114,
+      132
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_iv.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.565,
+     "coverage": 0.0204,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      65,
+      72
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/examples/yaml-highlight/yaml_hl.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.456,
+     "coverage": 0.0049,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "compatible",
+     "query_lines": [
+      24,
+      97
+     ]
+    },
+    {
+     "package": "defusedxml",
+     "version": "0.7.1",
+     "path": "defusedxml-0.7.1/tests.py",
+     "license": "PSF-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3922,
+     "coverage": 0.0175,
+     "spans": 1,
+     "verbatim": 4,
+     "verdict": "compatible",
+     "query_lines": [
+      525,
+      543
+     ]
+    },
+    {
+     "package": "django",
+     "version": "1b40abab06",
+     "path": "django-1b40abab06/django/contrib/admin/helpers.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3779,
+     "coverage": 0.0175,
+     "spans": 1,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      214,
+      306
+     ]
+    },
+    {
+     "package": "pyyaml",
+     "version": "6.0.3",
+     "path": "pyyaml-6.0.3/lib/yaml/__init__.py",
+     "license": "MIT",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3775,
+     "coverage": 0.0175,
+     "spans": 1,
+     "verbatim": 2,
+     "verdict": "compatible",
+     "query_lines": [
+      516,
+      540
+     ]
+    },
+    {
+     "package": "mpmath",
+     "version": "1.4.1",
+     "path": "mpmath-1.4.1/mpmath/ctx_mp_python.py",
+     "license": "BSD-3-Clause",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3637,
+     "coverage": 0.0049,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      523,
+      538
+     ]
+    }
+   ]
+  },
+  {
+   "name": "gin",
+   "repo": "gin-gonic/gin",
+   "commit": "0f09c3a9b4626d9fe9979cf4d0521d6ae32ab646",
+   "license": "MIT",
+   "roots": [
+    ""
+   ],
+   "sampled_files": 40,
+   "scanned_files": 40,
+   "total_spans": 2773,
+   "errors": [],
+   "findings": 9,
+   "risk_counts": {
+    "S0": 6,
+    "S1": 0,
+    "S2": 3,
+    "S3": 0,
+    "S4": 0
+   },
+   "blocking": [],
+   "expected_packages": [],
+   "expected_hits": [],
+   "latency_ms": {
+    "p50": 249.4,
+    "p95": 1879.0,
+    "max": 3443.1
+   },
+   "files": [
+    {
+     "file": "auth_test.go",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "mode_test.go",
+     "spans": 15,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "tree.go",
+     "spans": 242,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "render/json.go",
+     "spans": 44,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "response_writer.go",
+     "spans": 32,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "render/render_test.go",
+     "spans": 229,
+     "findings": 1,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "utils_test.go",
+     "spans": 51,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "codec/json/json.go",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "auth.go",
+     "spans": 31,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/validate_test.go",
+     "spans": 50,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/protobuf.go",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "recovery.go",
+     "spans": 53,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/form.go",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "internal/fs/fs_test.go",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fs_test.go",
+     "spans": 14,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "render/redirect.go",
+     "spans": 7,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "test_helpers.go",
+     "spans": 18,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "gin.go",
+     "spans": 243,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "benchmarks_test.go",
+     "spans": 46,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/multipart_form_mapping_test.go",
+     "spans": 40,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "ginS/gins_test.go",
+     "spans": 71,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/plain.go",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "debug.go",
+     "spans": 25,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "context_file_test.go",
+     "spans": 8,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "context.go",
+     "spans": 490,
+     "findings": 2,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "render/reader.go",
+     "spans": 11,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "logger_test.go",
+     "spans": 153,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "githubapi_test.go",
+     "spans": 135,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    },
+    {
+     "file": "errors_test.go",
+     "spans": 43,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "codec/json/jsoniter.go",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "fs.go",
+     "spans": 12,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "render/text.go",
+     "spans": 9,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "errors.go",
+     "spans": 41,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "render/html.go",
+     "spans": 26,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/default_validator_test.go",
+     "spans": 34,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "utils.go",
+     "spans": 42,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "recovery_test.go",
+     "spans": 111,
+     "findings": 2,
+     "max_risk": "S2",
+     "blocking": false
+    },
+    {
+     "file": "gin_integration_test.go",
+     "spans": 228,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "binding/default_validator.go",
+     "spans": 22,
+     "findings": 0,
+     "max_risk": "",
+     "blocking": false
+    },
+    {
+     "file": "response_writer_test.go",
+     "spans": 91,
+     "findings": 1,
+     "max_risk": "S0",
+     "blocking": false
+    }
+   ],
+   "top_findings": [
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/completions_test.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6297,
+     "coverage": 0.0588,
+     "spans": 2,
+     "verbatim": 13,
+     "verdict": "compatible",
+     "query_lines": [
+      39,
+      85
+     ]
+    },
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/completions_test.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.6082,
+     "coverage": 0.022,
+     "spans": 2,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      190,
+      260
+     ]
+    },
+    {
+     "package": "minio",
+     "version": "7aac2a2c5b",
+     "path": "minio-7aac2a2c5b/cmd/batch-handlers_test.go",
+     "license": "AGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.5948,
+     "coverage": 0.0294,
+     "spans": 1,
+     "verbatim": 24,
+     "verdict": "incompatible",
+     "query_lines": [
+      83,
+      86
+     ]
+    },
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/completions_test.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.5453,
+     "coverage": 0.027,
+     "spans": 3,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      168,
+      401
+     ]
+    },
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/powershell_completions.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4845,
+     "coverage": 0.0122,
+     "spans": 6,
+     "verbatim": 5,
+     "verdict": "compatible",
+     "query_lines": [
+      319,
+      390
+     ]
+    },
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/doc/md_docs.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.4584,
+     "coverage": 0.002,
+     "spans": 1,
+     "verbatim": 10,
+     "verdict": "compatible",
+     "query_lines": [
+      755,
+      766
+     ]
+    },
+    {
+     "package": "minio",
+     "version": "7aac2a2c5b",
+     "path": "minio-7aac2a2c5b/cmd/batch-handlers_test.go",
+     "license": "AGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.4052,
+     "coverage": 0.009,
+     "spans": 1,
+     "verbatim": 6,
+     "verdict": "incompatible",
+     "query_lines": [
+      358,
+      366
+     ]
+    },
+    {
+     "package": "cobra",
+     "version": "adbc881390",
+     "path": "cobra-adbc881390/cobra_test.go",
+     "license": "Apache-2.0",
+     "risk": "S0",
+     "risk_label": "无风险：未检出复用或许可证无实质条件",
+     "confidence": 0.3746,
+     "coverage": 0.0074,
+     "spans": 1,
+     "verbatim": 3,
+     "verdict": "compatible",
+     "query_lines": [
+      374,
+      377
+     ]
+    },
+    {
+     "package": "minio",
+     "version": "7aac2a2c5b",
+     "path": "minio-7aac2a2c5b/cmd/api-response_test.go",
+     "license": "AGPL-3.0-only",
+     "risk": "S2",
+     "risk_label": "需确认：条件式合规或许可证信息缺失",
+     "confidence": 0.363,
+     "coverage": 0.0044,
+     "spans": 1,
+     "verbatim": 8,
+     "verdict": "incompatible",
+     "query_lines": [
+      523,
+      534
+     ]
+    }
+   ]
+  }
+ ],
+ "notes": [
+  "真实仓库扫描不做变异；阻断级发现必须逐条人工复核，可能包含真实 vendoring、通用代码形状或误报。",
+  "采样文件数与仓库总量不同；本结果不外推到未采样文件或未测试项目。",
+  "目标许可证按仓库 LICENSE 固定；更换使用方式（内部/网络服务）会改变风险等级。"
+ ]
+}
