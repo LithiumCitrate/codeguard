@@ -1,10 +1,9 @@
 <!doctype html>
 <!--
-  变体卡（改界面的人照这张卡做）
-  变体：冷库 ice / cool / tight / grid / standard / calm
-  主视觉：风险分级环 S0–S4；中心读数来自最近一次真实审查
-  页面类型：控制台（审查与许可推演），方法与边界用阅读体
-  强调色只做填充：当前位置、可点击、要看一眼；红色只给删除
+  CodeGuard workbench — flat tactical-console variant.
+  Rules: black / paper / signal-yellow; cut corners mark actions; hairline
+  rules divide data; no rounding, no shadows, no decorative gradients
+  (the hatched warning stripes are structural, not ornament).
 -->
 <html lang="zh-CN" data-theme="light">
 <head>
@@ -17,10 +16,11 @@
 </head>
 <body class="cg">
 
-<div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
+<a class="skip" href="#main">跳到主要内容</a>
+<div class="hazard" aria-hidden="true"></div>
 
 <header class="cmdbar">
-  <a class="brand" href="#home" aria-label="CodeGuard 首页">
+  <a class="brand" href="#home" data-tab="home" aria-label="CodeGuard 首页">
     <svg class="seal" viewBox="0 0 28 28" aria-hidden="true">
       <path class="badge" d="M3 3h22v14l-8 8H3z"/>
       <g class="mark">
@@ -29,139 +29,247 @@
         <path d="M8 22.5h12"/>
       </g>
     </svg>
-    <span>CODEGUARD<small>代码溯源工作台</small></span>
+    <span class="brand-type">CODEGUARD<small>ORIGIN TRACE SYSTEM</small></span>
   </a>
   <nav aria-label="分区">
-    <button data-tab="home" aria-current="page">首页<small>Home</small></button>
-    <button data-tab="review" aria-current="page">审查<small>Review</small></button>
-    <button data-tab="license">许可推演<small>Licences</small></button>
-    <button data-tab="about">方法与边界<small>Method</small></button>
+    <button data-tab="home" aria-current="page"><i>01</i><span>首页<small>Home</small></span></button>
+    <button data-tab="review"><i>02</i><span>审查<small>Review</small></span></button>
+    <button data-tab="license"><i>03</i><span>许可推演<small>Licences</small></span></button>
+    <button data-tab="about"><i>04</i><span>方法与边界<small>Method</small></span></button>
   </nav>
   <div class="util">
     <span id="connection" class="engine">● 正在连接本机引擎</span>
-    <button id="aiBtn" class="btn small" type="button">AI 未配置</button>
-    <button id="themeToggle" class="btn small" type="button" aria-label="切换深浅主题">深浅</button>
+    <button id="aiBtn" class="btn small btn-ghost" type="button">AI 未配置</button>
+    <button id="themeToggle" class="btn small btn-ghost theme-btn" type="button" aria-label="切换深浅主题">NIGHT</button>
   </div>
 </header>
 
-<main>
+<main id="main">
   <section id="home" class="tab landing">
-    <div class="landing-hero">
-      <p class="eyebrow">// OPEN SOURCE ORIGIN TRACE</p>
-      <h1 class="wordmark" aria-label="CodeGuard">
-        <span class="solid"><i class="lc">C</i><i class="lm">O</i><i class="ln">D</i><i class="ly">E</i></span>
-        <span class="hollow" aria-hidden="true">GUARD</span>
-      </h1>
-      <p class="marker-line"><span class="marker">AI 生成代码的开源许可证污染溯源与合规门禁</span></p>
-      <p class="lede">让 AI 代码的每一段来源，都有可核验的证据。四层不变性指纹检索候选来源，回读原文验证，
-        SPDX 义务模型推导结论，CI 门禁在合并前阻断；可选大模型只做解读，不改判结论。</p>
-      <div class="btn-row">
-        <button class="btn go action" data-tab="review" type="button">开始使用<small>Start Review</small></button>
-        <button class="btn" data-tab="about" type="button">方法与边界</button>
+    <div class="hero-shell">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow hero-kicker"><span class="eyebrow-num">001</span> AI CODE ORIGIN TRACE</p>
+          <h1 class="wordmark" aria-label="CodeGuard">
+            <span class="solid">COD<span class="lit">E</span></span>
+            <span class="hollow" aria-hidden="true">GUARD</span>
+          </h1>
+          <div class="hero-rule" aria-hidden="true"></div>
+          <p class="hero-cn">AI 代码溯源与许可合规门禁</p>
+          <p class="hero-sub">大模型会把训练语料里的开源代码“背”出来。CodeGuard 回答三件事：这段代码来自哪里、受什么许可证约束、它能不能进入你的产品。</p>
+          <div class="btn-row hero-actions">
+            <button class="btn go action" data-tab="review" type="button">开始审查<small>RUN TRACE</small></button>
+            <button class="btn btn-outline" data-tab="about" type="button">方法与边界<small>METHOD</small></button>
+          </div>
+          <div class="hero-tags">
+            <span><i></i>ZERO DEPENDENCY</span>
+            <span><i></i>OFFLINE FIRST</span>
+            <span><i></i>APACHE-2.0</span>
+          </div>
+        </div>
+
+        <aside class="dossier" aria-label="系统状态">
+          <div class="dossier-head">
+            <span class="tag tag-live"><i></i>ENGINE ONLINE</span>
+            <span class="tag">LOCAL / NO UPLOAD</span>
+          </div>
+          <div class="reticle" aria-hidden="true">
+            <svg viewBox="0 0 360 360">
+              <g fill="none" stroke="currentColor" stroke-width="1">
+                <circle cx="180" cy="180" r="164" class="ring-outer" stroke-dasharray="1 7"/>
+                <circle cx="180" cy="180" r="128" class="ring-mid"/>
+                <circle cx="180" cy="180" r="92" class="ring-inner" stroke-dasharray="2 6"/>
+                <circle cx="180" cy="180" r="54" class="ring-core"/>
+                <path d="M180 4v26M180 330v26M4 180h26M330 180h26" class="cross"/>
+                <path d="M180 72v216M72 180h216" class="hair"/>
+                <path d="M180 158v44M158 180h44" class="hair-strong"/>
+                <path d="M40 40h22M40 40v22M320 40h-22M320 40v22M40 320h22M40 320v-22M320 320h-22M320 320v-22" class="brackets"/>
+                <circle cx="180" cy="180" r="4" class="dot"/>
+                <path d="M180 44l7 12h-14z" class="needle"/>
+              </g>
+              <g class="reticle-labels">
+                <text x="180" y="24" text-anchor="middle">00</text>
+                <text x="342" y="184" text-anchor="middle">09</text>
+                <text x="180" y="348" text-anchor="middle">18</text>
+                <text x="18" y="184" text-anchor="middle">27</text>
+              </g>
+            </svg>
+            <div class="reticle-stamp">CG<small>TRACE</small></div>
+            <span class="reticle-coord rc-a">X 032</span>
+            <span class="reticle-coord rc-b">Y 1717</span>
+            <span class="reticle-coord rc-c">L 138928</span>
+          </div>
+          <ul class="facts" aria-label="知识底座规模">
+            <li><small>语料文件 / FILES</small><b class="fc" id="factDocs">—</b></li>
+            <li><small>指纹片段 / CHUNKS</small><b class="fm" id="factChunks">—</b></li>
+            <li><small>开源项目 / SOURCES</small><b class="fn" id="factPkgs">—</b></li>
+            <li><small>许可证 / LICENCES</small><b class="fy" id="factLic">—</b></li>
+          </ul>
+          <div class="dossier-foot"><span><i></i> READY FOR REVIEW</span><span>SPDX / v0.5.1</span></div>
+        </aside>
       </div>
-      <ul class="facts" aria-label="知识底座规模">
-        <li><small>语料文件</small><b class="fc" id="factDocs">—</b></li>
-        <li><small>指纹片段</small><b class="fm" id="factChunks">—</b></li>
-        <li><small>开源项目</small><b class="fn" id="factPkgs">—</b></li>
-        <li><small>许可证</small><b class="fy" id="factLic">—</b></li>
-      </ul>
+
+      <div class="hero-meta">
+        <span><b>01</b> 四层不变性指纹</span>
+        <span><b>02</b> MinHash + LSH</span>
+        <span><b>03</b> SPDX 义务推演</span>
+        <span><b>04</b> CI 门禁</span>
+      </div>
     </div>
-    <div class="feat-grid">
-      <article class="feat f-mint" data-tab="review" role="button" tabindex="0">
-        <div class="feat-num">01</div>
-        <h3>溯源检索</h3>
-        <p>字面、抽象、角色、结构边四层不变性指纹，配 MinHash 与分带 LSH——改名、重排、灌注释都骗不过角色层与结构边层。</p>
-        <p class="go-on">进入审查台 →</p>
-      </article>
-      <article class="feat f-cyan" data-tab="license" role="button" tabindex="0">
-        <div class="feat-num">02</div>
-        <h3>义务推演</h3>
-        <p>SPDX 义务模型按分发、网络服务、链接等使用方式推导义务与冲突；AGPL §13 这类网络条款被独立建模为触发器。</p>
-        <p class="go-on">查看许可推演 →</p>
-      </article>
-      <article class="feat f-yellow" data-tab="review" role="button" tabindex="0">
-        <div class="feat-num">03</div>
-        <h3>工程门禁</h3>
-        <p>CI 只看 diff 新增行，阻断级风险退出码 1；孤立弱匹配降级为 S2 提示并写明理由——"没检查"与"检查通过"绝不混同。</p>
-        <p class="go-on">导出 SBOM / SARIF →</p>
-      </article>
+
+    <div class="ticker">
+      <span class="ticker-lead">SYSTEM FEED</span>
+      <div class="ticker-track" aria-hidden="true">
+        <span>L1 LITERAL</span><em>◆</em>
+        <span>L2 ABSTRACT</span><em>◆</em>
+        <span>L3 ROLE</span><em>◆</em>
+        <span>L4 RELATIONAL EDGE</span><em>◆</em>
+        <span>MINHASH</span><em>◆</em>
+        <span>BANDED LSH</span><em>◆</em>
+        <span>IDF WEIGHTING</span><em>◆</em>
+        <span>SPDX OBLIGATION</span><em>◆</em>
+        <span>CYCLONEDX</span><em>◆</em>
+        <span>SARIF 2.1.0</span><em>◆</em>
+        <span>LOCAL ENGINE</span><em>◆</em>
+      </div>
+    </div>
+
+    <div class="home-body">
+      <header class="section-head">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-num">002</span> CAPABILITIES</p>
+          <h2>从相似片段，<br>到可执行的合规结论。</h2>
+        </div>
+        <p class="section-note">检索候选来源，回读原文验证，推演许可证义务，最后在合并前阻断。所有计数与证据都来自本机运行，可逐字节复现。</p>
+      </header>
+
+      <div class="feat-grid">
+        <article class="feat" data-tab="review" role="button" tabindex="0">
+          <div class="feat-top"><span class="feat-tag">A / TRACE</span><span class="feat-num">01</span></div>
+          <h3>溯源检索</h3>
+          <p>四层不变性指纹——字面、抽象、角色、结构边——配 MinHash 与分带 LSH；改名、重排、灌注释都骗不过角色层与结构边层。</p>
+          <p class="go-on">进入审查台 <b>→</b></p>
+        </article>
+        <article class="feat" data-tab="license" role="button" tabindex="0">
+          <div class="feat-top"><span class="feat-tag">B / DUTY</span><span class="feat-num">02</span></div>
+          <h3>义务推演</h3>
+          <p>SPDX 义务模型按分发、网络服务、链接等使用方式推导义务与冲突；AGPL §13 这类网络条款被独立建模为触发器。</p>
+          <p class="go-on">查看许可推演 <b>→</b></p>
+        </article>
+        <article class="feat" data-tab="review" role="button" tabindex="0">
+          <div class="feat-top"><span class="feat-tag">C / GATE</span><span class="feat-num">03</span></div>
+          <h3>工程门禁</h3>
+          <p>CI 只看 diff 新增行，阻断级风险退出码 1；孤立弱匹配降级为 S2 提示并写明理由——“没检查”与“检查通过”绝不混同。</p>
+          <p class="go-on">导出 SBOM / SARIF <b>→</b></p>
+        </article>
+      </div>
+
+      <div class="workflow-strip">
+        <span class="ws-label">REVIEW PROTOCOL</span>
+        <ol>
+          <li><b>01</b> RETRIEVE</li>
+          <li><b>02</b> VERIFY</li>
+          <li><b>03</b> ADJUDICATE</li>
+          <li><b>04</b> GATE</li>
+        </ol>
+        <button class="btn go small" data-tab="review" type="button">开始审查 <b>→</b></button>
+      </div>
     </div>
   </section>
 
-  <section id="review" class="tab">
-    <div class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">ORIGIN TRACE</p>
-        <h1>让 AI 代码的每一段来源，都有可核验的证据。</h1>
+  <section id="review" class="tab console" hidden>
+    <header class="page-head">
+      <div class="page-head-copy">
+        <p class="eyebrow"><span class="eyebrow-num">010</span> ORIGIN TRACE / REVIEW</p>
+        <h1>来源审查</h1>
         <p class="lede">从相似片段到来源原文，再到许可证义务。默认全部在本机完成，不上传、不执行；配置大模型后，仅在你主动点击 AI 功能时才把相关文字发往你指定的接口。</p>
       </div>
-      <dl class="figs hero-figs">
-        <div><dt>语料文件</dt><dd id="docs">—</dd></div>
-        <div><dt>指纹片段</dt><dd id="chunks">—</dd></div>
-        <div><dt>开源项目</dt><dd id="packages">—</dd></div>
-        <div><dt>判定引擎</dt><dd id="model" class="word">—</dd></div>
-      </dl>
-    </div>
+      <div class="page-head-side">
+        <div class="head-stamp"><small>PROTOCOL</small><b>TRACE-04</b></div>
+        <div class="head-stamp"><small>MODE</small><b>LOCAL</b></div>
+        <div class="page-num" aria-hidden="true">02</div>
+      </div>
+    </header>
 
-    <div class="board">
-      <figure class="hub">
-        <svg id="dial" viewBox="0 0 600 600" role="img" aria-label="风险分级环，等待审查"></svg>
-        <figcaption>
-          <span class="eyebrow">RISK SCALE</span>风险分级环 · 中心读数为最近一次审查结果
-          <div id="dialStats" class="dial-stats" aria-live="polite">
-            <div><small>命中片段</small><b id="statSpans">—</b></div>
-            <div><small>最高覆盖</small><b id="statCoverage">—</b></div>
-            <div><small>最长逐字</small><b id="statVerbatim">—</b></div>
-          </div>
-        </figcaption>
-      </figure>
-
-      <section class="panel cut-br p-corpus">
-        <h2><span class="eyebrow">Corpus</span>语料<span class="tab-lip" aria-hidden="true"></span></h2>
-        <ul class="ledger">
-          <li><span>文件</span><b id="corpusFiles">—</b></li>
-          <li><span>片段</span><b id="corpusChunks">—</b></li>
-          <li><span>项目</span><b id="corpusPackages">—</b></li>
-          <li><span>原文可读</span><b id="corpusReadable">—</b></li>
-        </ul>
-      </section>
-
-      <section class="panel cut-tl p-engine">
-        <h2><span class="eyebrow">Engine</span>引擎<span class="tab-lip" aria-hidden="true"></span></h2>
-        <ul class="ledger">
-          <li><span>判定器</span><b id="engineModel">—</b></li>
-          <li><span>检索层</span><b id="engineLayers">—</b></li>
-          <li><span>索引版本</span><b id="engineIndex">—</b></li>
-          <li><span>语料许可</span><b id="engineLicences">—</b></li>
-        </ul>
-      </section>
-
-      <section class="panel cut-bl p-scan">
-        <h2><span class="eyebrow">This scan</span>本次审查<span class="tab-lip" aria-hidden="true"></span></h2>
-        <ul class="ledger">
-          <li><span>命中片段</span><b id="scanSpans">—</b></li>
-          <li><span>检索耗时</span><b id="scanProbe">—</b></li>
-          <li><span>验证耗时</span><b id="scanVerify">—</b></li>
-          <li><span>最高风险</span><b id="scanRisk">—</b></li>
-        </ul>
-      </section>
-
-      <section class="panel cut-tr p-export">
-        <h2><span class="eyebrow">Export</span>导出<span class="tab-lip" aria-hidden="true"></span></h2>
-        <div class="hatch-band" aria-hidden="true"></div>
-        <div id="exports" class="export-list" hidden>
-          <button class="btn" data-export="receipt">出处证书<small>JSON</small></button>
-          <button class="btn" data-export="sbom">物料清单<small>CycloneDX</small></button>
-          <button class="btn" data-export="html">审查报告<small>HTML</small></button>
+    <div class="console-grid">
+      <section class="panel panel-dark risk-panel">
+        <div class="panel-head">
+          <h2><span class="eyebrow">RISK SCALE / S0—S4</span>风险分级</h2>
+          <span class="panel-code">R-00</span>
         </div>
-        <p class="note" id="exportNote">审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。</p>
+        <figure class="hub">
+          <svg id="dial" viewBox="0 0 600 600" role="img" aria-label="风险分级环，等待审查"></svg>
+          <figcaption>
+            <div id="dialStats" class="dial-stats" aria-live="polite">
+              <div><small>命中片段</small><b id="statSpans">—</b></div>
+              <div><small>最高覆盖</small><b id="statCoverage">—</b></div>
+              <div><small>最长逐字</small><b id="statVerbatim">—</b></div>
+            </div>
+            <p class="hub-note">中心读数为最近一次审查结果；证据不足时只降级提示，不直接阻断。</p>
+          </figcaption>
+        </figure>
       </section>
+
+      <div class="metric-grid">
+        <section class="panel p-corpus">
+          <div class="panel-head">
+            <h2><span class="eyebrow">CORPUS / A-01</span>语料</h2>
+            <span class="panel-code">INDEX</span>
+          </div>
+          <ul class="ledger">
+            <li><span>文件</span><b id="corpusFiles">—</b></li>
+            <li><span>片段</span><b id="corpusChunks">—</b></li>
+            <li><span>项目</span><b id="corpusPackages">—</b></li>
+            <li><span>原文可读</span><b id="corpusReadable">—</b></li>
+          </ul>
+        </section>
+
+        <section class="panel p-engine">
+          <div class="panel-head">
+            <h2><span class="eyebrow">ENGINE / A-02</span>引擎</h2>
+            <span class="panel-code">JUDGE</span>
+          </div>
+          <ul class="ledger">
+            <li><span>判定器</span><b id="engineModel">—</b></li>
+            <li><span>检索层</span><b id="engineLayers">—</b></li>
+            <li><span>索引版本</span><b id="engineIndex">—</b></li>
+            <li><span>语料许可</span><b id="engineLicences">—</b></li>
+          </ul>
+        </section>
+
+        <section class="panel p-scan">
+          <div class="panel-head">
+            <h2><span class="eyebrow">THIS SCAN / A-03</span>本次审查</h2>
+            <span class="panel-code">LIVE</span>
+          </div>
+          <ul class="ledger">
+            <li><span>命中片段</span><b id="scanSpans">—</b></li>
+            <li><span>检索耗时</span><b id="scanProbe">—</b></li>
+            <li><span>验证耗时</span><b id="scanVerify">—</b></li>
+            <li><span>最高风险</span><b id="scanRisk">—</b></li>
+          </ul>
+        </section>
+
+        <section class="panel p-export">
+          <div class="panel-head">
+            <h2><span class="eyebrow">EXPORT / A-04</span>导出</h2>
+            <span class="panel-code">EVIDENCE</span>
+          </div>
+          <div class="hatch-band" aria-hidden="true"></div>
+          <div id="exports" class="export-list" hidden>
+            <button class="btn small" data-export="receipt">出处证书<small>JSON</small></button>
+            <button class="btn small" data-export="sbom">物料清单<small>CycloneDX</small></button>
+            <button class="btn small" data-export="html">审查报告<small>HTML</small></button>
+          </div>
+          <p class="note" id="exportNote">审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。</p>
+        </section>
+      </div>
     </div>
 
     <div class="work">
       <section class="panel input">
         <div class="panel-head">
-          <h2><span class="eyebrow">01 / Input</span>待审查代码</h2>
+          <h2><span class="eyebrow">01 / INPUT BUFFER</span>待审查代码</h2>
           <div class="head-actions">
             <button id="interpret" class="btn small" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
             <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
@@ -178,40 +286,43 @@
           <p class="note" id="treeNote"></p>
         </div>
         <div class="demo-bar" role="group" aria-label="体验案例">
-          <span class="field-label">体验案例</span>
+          <span class="field-label">体验案例 / DEMO</span>
           <button class="chip" data-demo="copy">原文复制</button>
           <button class="chip" data-demo="rename">变量改名</button>
           <button class="chip" data-demo="clean">独立实现</button>
         </div>
         <p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p>
-        <label class="field" for="name"><span>文件名称</span><input id="name" value="review.py" maxlength="120"></label>
-        <label class="field" for="code"><span>源代码 <b id="codeCount" class="count">0 字符</b></span><textarea id="code" spellcheck="false" placeholder="粘贴需要审查的源代码…&#10;&#10;代码只用于相似度分析，不会被执行。"></textarea></label>
+        <label class="field" for="name"><span>文件名称 / SUBJECT</span><input id="name" value="review.py" maxlength="120"></label>
+        <label class="field code-field" for="code"><span>源代码 / SOURCE <b id="codeCount" class="count">0 字符</b></span><textarea id="code" spellcheck="false" placeholder="粘贴需要审查的源代码…&#10;&#10;代码只用于相似度分析，不会被执行。"></textarea></label>
         <div class="field-row">
-          <label class="field" for="targetLicense"><span>目标项目许可证</span>
+          <label class="field" for="targetLicense"><span>目标项目许可证 / TARGET</span>
             <select id="targetLicense"><option>MIT</option><option>Apache-2.0</option><option>GPL-3.0-only</option><option>GPL-2.0-or-later</option><option>BSD-3-Clause</option><option value="LicenseRef-Proprietary">专有软件</option></select>
           </label>
-          <label class="field" for="usage"><span>使用方式</span>
+          <label class="field" for="usage"><span>使用方式 / USAGE</span>
             <select id="usage"><option value="distribution">对外分发</option><option value="inline_copy">源码内联复制</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
           </label>
         </div>
-        <button id="scan" class="btn go" type="button">开始来源审查</button>
+        <div class="scan-actions">
+          <button id="scan" class="btn go scan-btn" type="button"><span>开始来源审查</span><small>RUN TRACE</small></button>
+        </div>
         <label class="check"><input id="assistScan" type="checkbox"> 审查中用大模型重写处置建议（需已配置；风险结论仍由确定性引擎给出）</label>
         <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
       </section>
 
       <section class="panel results">
         <div class="panel-head">
-          <h2><span class="eyebrow">02 / Result</span>审查结果</h2>
+          <h2><span class="eyebrow">02 / VERDICT</span>审查结果</h2>
           <div class="head-actions">
             <button id="assistSummary" class="btn small" type="button" disabled title="生成/刷新本次审查的 AI 执行摘要">AI 摘要</button>
             <span id="resultBadge" class="state">等待输入</span>
           </div>
         </div>
         <div id="empty" class="empty">
-          <p class="eyebrow">NO SUBMISSION YET</p>
+          <div class="empty-top"><span class="tag">NO SUBMISSION</span><span class="empty-num" aria-hidden="true">00</span></div>
           <h3>先给出一段代码，再谈结论。</h3>
           <p class="note">审查后在这里查看来源项目、风险分级、命中行号与原文对照。所有计数来自本次运行。</p>
           <div class="hatch-band" aria-hidden="true"></div>
+          <div class="empty-meta"><span>INPUT → RETRIEVE → VERIFY → VERDICT</span><span>LOCAL / READ-ONLY</span></div>
         </div>
         <div id="aiCards" class="ai-cards" hidden></div>
         <div id="result" hidden></div>
@@ -225,76 +336,124 @@
   </section>
 
   <section id="license" class="tab read" hidden>
-    <div class="read-head">
-      <p class="eyebrow">LICENCE DUTY</p>
-      <h1>许可证义务推演</h1>
-      <p class="lede">独立于相似度检索：根据来源许可证、目标许可证与使用方式推导义务和冲突，规则确定、可复算。</p>
+    <header class="page-head">
+      <div class="page-head-copy">
+        <p class="eyebrow"><span class="eyebrow-num">020</span> LICENCE DUTY / RULE ENGINE</p>
+        <h1>许可证义务推演</h1>
+        <p class="lede">独立于相似度检索：根据来源许可证、目标许可证与使用方式推导义务和冲突，规则确定、可复算。</p>
+      </div>
+      <div class="page-head-side">
+        <div class="head-stamp"><small>ENGINE</small><b>DETERMINISTIC</b></div>
+        <div class="page-num" aria-hidden="true">03</div>
+      </div>
+    </header>
+
+    <div class="read-grid">
+      <section class="panel">
+        <div class="panel-head">
+          <h2><span class="eyebrow">INPUT / SPDX</span>推演参数</h2>
+          <span class="panel-code">B-01</span>
+        </div>
+        <div class="field-row three">
+          <label class="field" for="sourceLicense"><span>来源许可证 / SPDX</span><input id="sourceLicense" value="GPL-3.0-only"></label>
+          <label class="field" for="destinationLicense"><span>目标许可证 / TARGET</span><input id="destinationLicense" value="MIT"></label>
+          <label class="field" for="licenseUsage"><span>使用方式 / USAGE</span>
+            <select id="licenseUsage"><option value="distribution">对外分发</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="inline_copy">源码复制</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
+          </label>
+        </div>
+        <div class="btn-row">
+          <button id="reason" class="btn go" type="button">分析义务与冲突<small>RUN RULES</small></button>
+          <button id="licenceExplain" class="btn" type="button" disabled>AI 通俗解释</button>
+        </div>
+        <div id="licenseResult" class="licence-result" aria-live="polite"></div>
+      </section>
+
+      <aside class="side-card">
+        <div class="side-card-head"><span class="eyebrow">DECISION MODEL</span><span class="panel-code">R-04</span></div>
+        <h2>义务模型，不是许可证查找表。</h2>
+        <p class="note">判定 = 在当前使用方式下，测试来源许可证的义务能否被满足。</p>
+        <ol class="mini-steps">
+          <li><b>01</b><span>触发条件</span><small>分发 / 网络服务 / 链接 / 内部使用</small></li>
+          <li><b>02</b><span>义务比对</span><small>SPDX 档案与冲突条款</small></li>
+          <li><b>03</b><span>风险定级</span><small>S0–S4，证据不足只提示</small></li>
+        </ol>
+        <div class="caution">工程风险提示，不构成法律意见。</div>
+      </aside>
     </div>
-    <section class="panel">
-      <div class="field-row three">
-        <label class="field" for="sourceLicense"><span>来源许可证 / SPDX 表达式</span><input id="sourceLicense" value="GPL-3.0-only"></label>
-        <label class="field" for="destinationLicense"><span>目标许可证</span><input id="destinationLicense" value="MIT"></label>
-        <label class="field" for="licenseUsage"><span>使用方式</span>
-          <select id="licenseUsage"><option value="distribution">对外分发</option><option value="internal_use">内部使用</option><option value="network_service">网络服务</option><option value="inline_copy">源码复制</option><option value="static_link">静态链接</option><option value="dynamic_link">动态链接</option></select>
-        </label>
-      </div>
-      <div class="btn-row">
-        <button id="reason" class="btn go" type="button">分析义务与冲突</button>
-        <button id="licenceExplain" class="btn" type="button" disabled>AI 通俗解释</button>
-      </div>
-      <div id="licenseResult" class="licence-result" aria-live="polite"></div>
-    </section>
     <p class="note">结论是工程风险提示，不构成法律意见；许可证标签与条款存在版本差异，发布前需人工核验原项目授权。</p>
   </section>
 
   <section id="about" class="tab read" hidden>
-    <div class="read-head">
-      <p class="eyebrow">METHOD AND LIMITS</p>
-      <h1>方法与边界</h1>
-      <p class="lede">CodeGuard 只回答一个问题：这段代码与本地语料里的哪些原文相似，按声明许可证要承担什么义务。</p>
-    </div>
-    <article class="read-body">
-      <h2>四阶段审查</h2>
-      <ol class="steps">
-        <li><b>多层指纹检索</b><p>字面、局部别名、角色与结构边四层视图；默认用角色、抽象与结构边做 LSH 候选检索，验证时计算四层相似度。</p></li>
-        <li><b>回读原文，精确验证</b><p>Jaccard、IDF 加权包含度与最长逐字 token 命中共同构成证据，原文只读回本机语料。</p></li>
-        <li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分是模型输出，不应解释为经过校准的来源概率。</p></li>
-        <li><b>义务推理与门禁</b><p>结合声明的许可证与使用方式给出工程风险；证据不足时降级为复核提示，而不是直接阻断。</p></li>
-      </ol>
-      <h2>适用边界</h2>
-      <p>检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p>
-      <p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。语料版本已锁定，索引与判定权重随发布包一同提供。</p>
-      <h2>大模型增强（可选）</h2>
-      <p>风险分级、证据评分与许可冲突判定始终由本机确定性算法给出，断网也完全可用。大模型只在显式配置后作为解读层参与：文件速读、审查执行摘要、基于证据摘要的追问与许可条款通俗解释。每次调用的模型与用途写入报告的 ai_usage 字段；密钥仅保存在本机工作目录，不出现在任何导出物中。</p>
-    </article>
-  </section>
+    <header class="page-head">
+      <div class="page-head-copy">
+        <p class="eyebrow"><span class="eyebrow-num">030</span> METHOD AND LIMITS</p>
+        <h1>方法与边界</h1>
+        <p class="lede">CodeGuard 只回答一个问题：这段代码与本地语料里的哪些原文相似，按声明许可证要承担什么义务。</p>
+      </div>
+      <div class="page-head-side">
+        <div class="head-stamp"><small>OUTPUT</small><b>ENGINEERING RISK</b></div>
+        <div class="page-num" aria-hidden="true">04</div>
+      </div>
+    </header>
 
-  <footer>
-    <span>本机离线 │ 不执行提交代码 │ 工程风险提示，不构成法律意见</span>
-    <span class="eyebrow">CodeGuard / Review Workbench</span>
-  </footer>
+    <div class="about-grid">
+      <aside class="about-index">
+        <span class="eyebrow">INDEX</span>
+        <button type="button" data-scroll="about-stages"><b>01</b> 四阶段审查</button>
+        <button type="button" data-scroll="about-limits"><b>02</b> 适用边界</button>
+        <button type="button" data-scroll="about-llm"><b>03</b> 大模型增强</button>
+        <div class="index-stamp">DETERMINISTIC<br>BY DESIGN</div>
+      </aside>
+      <article class="read-body">
+        <h2 id="about-stages">四阶段审查</h2>
+        <ol class="steps">
+          <li><b>多层指纹检索</b><p>字面、局部别名、角色与结构边四层视图；默认用角色、抽象与结构边做 LSH 候选检索，验证时计算四层相似度。</p></li>
+          <li><b>回读原文，精确验证</b><p>Jaccard、IDF 加权包含度与最长逐字 token 命中共同构成证据，原文只读回本机语料。</p></li>
+          <li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分是模型输出，不应解释为经过校准的来源概率。</p></li>
+          <li><b>义务推理与门禁</b><p>结合声明的许可证与使用方式给出工程风险；证据不足时降级为复核提示，而不是直接阻断。</p></li>
+        </ol>
+        <h2 id="about-limits">适用边界</h2>
+        <p>检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p>
+        <p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。语料版本已锁定，索引与判定权重随发布包一同提供。</p>
+        <h2 id="about-llm">大模型增强（可选）</h2>
+        <p>风险分级、证据评分与许可冲突判定始终由本机确定性算法给出，断网也完全可用。大模型只在显式配置后作为解读层参与：文件速读、审查执行摘要、基于证据摘要的追问与许可条款通俗解释。每次调用的模型与用途写入报告的 ai_usage 字段；密钥仅保存在本机工作目录，不出现在任何导出物中。</p>
+        <div class="caution">检测的是相似关系，不是法律侵权结论；未命中不等于安全。</div>
+      </article>
+    </div>
+    <p class="note">本页方法说明与报告、README 保持一致；所有数字以发布版本的证据文件为准。</p>
+  </section>
 </main>
+
+<footer class="site-foot">
+  <div class="foot-inner">
+    <span class="foot-brand">CODEGUARD<small>ORIGIN TRACE SYSTEM</small></span>
+    <span>本机离线 │ 不执行提交代码 │ 工程风险提示，不构成法律意见</span>
+    <span class="eyebrow">TERMINAL 04 / OFFLINE</span>
+  </div>
+</footer>
 
 <dialog id="aiSetup" class="ai-dialog" aria-labelledby="aiSetupTitle">
   <form method="dialog" class="ai-form">
-    <header>
-      <p class="eyebrow">LLM SETUP</p>
+    <header class="ai-dialog-head">
+      <p class="eyebrow">LLM / OPTIONAL LAYER</p>
       <h2 id="aiSetupTitle">配置大模型（可选）</h2>
       <p class="note">填写任意 OpenAI 兼容接口的 Base URL 与 API Key，拉取模型列表后选择模型。风险判定不受此配置影响；密钥只保存在本机工作目录，不会写入导出报告。</p>
     </header>
-    <label class="field" for="aiBase"><span>Base URL（如 https://host/compatible-mode/v1）</span>
-      <input id="aiBase" type="text" autocomplete="off" spellcheck="false" placeholder="https://…/v1"></label>
-    <label class="field" for="aiKey"><span>API Key</span>
-      <input id="aiKey" type="password" autocomplete="off" placeholder="sk-…"></label>
-    <div class="field-row">
-      <label class="field" for="aiModel"><span>模型</span>
-        <select id="aiModel" disabled><option value="">先拉取模型列表</option></select></label>
-      <div class="ai-actions">
-        <button id="aiFetch" class="btn small" type="button">拉取模型列表</button>
-        <button id="aiSave" class="btn go small" type="button" disabled>保存并启用</button>
+    <div class="ai-dialog-body">
+      <label class="field" for="aiBase"><span>Base URL / ENDPOINT</span>
+        <input id="aiBase" type="text" autocomplete="off" spellcheck="false" placeholder="https://…/v1"></label>
+      <label class="field" for="aiKey"><span>API Key</span>
+        <input id="aiKey" type="password" autocomplete="off" placeholder="sk-…"></label>
+      <div class="field-row">
+        <label class="field" for="aiModel"><span>模型 / MODEL</span>
+          <select id="aiModel" disabled><option value="">先拉取模型列表</option></select></label>
+        <div class="ai-actions">
+          <button id="aiFetch" class="btn small" type="button">拉取模型列表</button>
+          <button id="aiSave" class="btn go small" type="button" disabled>保存并启用</button>
+        </div>
       </div>
+      <p id="aiStatus" class="note" aria-live="polite">未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。</p>
     </div>
-    <p id="aiStatus" class="note" aria-live="polite">未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。</p>
     <footer class="ai-foot">
       <button id="aiClear" class="btn small danger" type="button" hidden>清除本机配置</button>
       <button value="close" class="btn small">关闭</button>

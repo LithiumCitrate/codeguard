@@ -1,5 +1,5 @@
 'use strict';
-/* CodeGuard workbench — 冷库变体。自研实现：主题、分级环、扫描交互。 */
+/* CodeGuard workbench — flat tactical console. Theme, risk dial and scan wiring. */
 
 const $ = (id) => document.getElementById(id);
 const SVG = 'http://www.w3.org/2000/svg';
@@ -39,7 +39,10 @@ const pct = (value) => `${Math.round(value * 100)}%`;
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const button = $('themeToggle');
-  if (button) button.textContent = theme === 'dark' ? '深色' : '浅色';
+  if (button) {
+    button.textContent = theme === 'dark' ? 'DAY' : 'NIGHT';
+    button.setAttribute('aria-label', theme === 'dark' ? '切换到浅色主题' : '切换到深色主题');
+  }
 }
 (function initTheme() {
   const saved = localStorage.getItem('cg-theme');
@@ -68,7 +71,7 @@ function svgNode(tag, attrs = {}, text) {
   return el;
 }
 
-const dialParts = { sectors: {}, eyebrow: null, big: null, sub: null, idle: null, svg: null };
+const dialParts = { sectors: {}, eyebrow: null, big: null, sub: null, idle: null, marker: null, svg: null };
 
 function buildDial() {
   const svg = $('dial');
@@ -77,14 +80,30 @@ function buildDial() {
   for (let i = 0; i < 5; i += 1) {
     const a0 = DIAL.start + i * (step + DIAL.gap) + DIAL.gap / 2;
     const a1 = a0 + step;
+    const mid = (a0 + a1) / 2;
     const path = svgNode('path', { class: `sector sec-${RISK_ORDER[i]}`, d: sectorPath(DIAL.r1, DIAL.r2, a0, a1) });
-    const [lx, ly] = polar((DIAL.r1 + DIAL.r2) / 2, (a0 + a1) / 2);
+    const [lx, ly] = polar((DIAL.r1 + DIAL.r2) / 2 + 10, mid);
     const code = svgNode('text', { class: 'sector-label', x: lx.toFixed(1), y: (ly + 4).toFixed(1), 'text-anchor': 'middle' }, RISK_ORDER[i]);
-    const [sx, sy] = polar(DIAL.r2 + 18, (a0 + a1) / 2);
-    const sub = svgNode('text', { class: 'sector-sub', x: sx.toFixed(1), y: (sy + 4).toFixed(1), 'text-anchor': 'middle' }, RISK_ZH[RISK_ORDER[i]]);
+    const [sx, sy] = polar((DIAL.r1 + DIAL.r2) / 2 - 10, mid);
+    const sub = svgNode('text', { class: 'sector-sub', x: sx.toFixed(1), y: (sy + 3).toFixed(1), 'text-anchor': 'middle' }, RISK_ZH[RISK_ORDER[i]]);
     dialParts.sectors[RISK_ORDER[i]] = { path, code, sub };
     svg.append(path, code, sub);
   }
+  svg.append(svgNode('circle', { class: 'ring outer', cx: DIAL.cx, cy: DIAL.cy, r: 282 }));
+  const ticks = svgNode('g', { class: 'ticks' });
+  for (let i = 0; i < 60; i += 1) {
+    const angle = i * 6;
+    const major = i % 5 === 0;
+    const [x1, y1] = polar(256, angle);
+    const [x2, y2] = polar(major ? 276 : 266, angle);
+    ticks.append(svgNode('line', {
+      class: `tick${major ? ' major' : ''}`,
+      x1: x1.toFixed(1), y1: y1.toFixed(1), x2: x2.toFixed(1), y2: y2.toFixed(1),
+    }));
+  }
+  svg.append(ticks);
+  dialParts.marker = svgNode('path', { class: 'marker', d: 'M300 4l8 13h-16z', display: 'none' });
+  svg.append(dialParts.marker);
   svg.append(svgNode('circle', { class: 'hub-disc', cx: DIAL.cx, cy: DIAL.cy, r: 178 }));
   svg.append(svgNode('line', { class: 'core-tick', x1: 218, y1: 242, x2: 246, y2: 242 }),
              svgNode('line', { class: 'core-tick', x1: 354, y1: 242, x2: 382, y2: 242 }));
@@ -110,6 +129,17 @@ function setDial({ risk = '', confidence = null, spans = null, coverage = null, 
   }
   const active = Boolean(risk);
   dialParts.idle.setAttribute('display', active ? 'none' : 'inline');
+  if (dialParts.marker) {
+    if (active) {
+      const step = (DIAL.span - DIAL.gap * 5) / 5;
+      const index = RISK_ORDER.indexOf(risk);
+      const start = DIAL.start + index * (step + DIAL.gap) + DIAL.gap / 2;
+      dialParts.marker.setAttribute('transform', `rotate(${start + step / 2 + 90} ${DIAL.cx} ${DIAL.cy})`);
+      dialParts.marker.setAttribute('display', 'inline');
+    } else {
+      dialParts.marker.setAttribute('display', 'none');
+    }
+  }
   dialParts.big.textContent = active ? risk : '';
   dialParts.sub.textContent = active
     ? (confidence === null ? (RISK_ZH[risk] || '') : `${RISK_ZH[risk] || ''} · 置信度 ${pct(confidence)}`)
@@ -229,7 +259,10 @@ function count() {
 function setBusy(value) {
   busy = value;
   document.querySelectorAll('[data-demo],#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
-  $('scan').textContent = value ? '正在检索和验证来源…' : '开始来源审查';
+  const scan = $('scan');
+  const label = scan.querySelector('span');
+  if (label) label.textContent = value ? '正在检索和验证来源…' : '开始来源审查';
+  scan.classList.toggle('is-busy', value);
 }
 
 /* ---------------------------------------------------------------------- wiring */
@@ -246,6 +279,16 @@ function showTab(name, push = true) {
 document.querySelectorAll('[data-tab]').forEach((button) => button.addEventListener('click', () => {
   showTab(button.dataset.tab);
   window.scrollTo({ top: 0 });
+}));
+document.querySelectorAll('.feat[data-tab]').forEach((card) => card.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return;
+  event.preventDefault();
+  showTab(card.dataset.tab);
+  window.scrollTo({ top: 0 });
+}));
+document.querySelectorAll('[data-scroll]').forEach((button) => button.addEventListener('click', () => {
+  const target = document.getElementById(button.dataset.scroll);
+  if (target) target.scrollIntoView({ block: 'start' });
 }));
 window.addEventListener('popstate', () => showTab((location.hash || '#home').slice(1), false));
 showTab((location.hash || '#home').slice(1), false);
@@ -534,6 +577,7 @@ function renderAiCard(kind, { model = '', text = '', offline = false, note = '' 
 
 function refreshAiButton() {
   $('aiBtn').textContent = llm.configured ? 'AI · ' + llm.model : 'AI 未配置';
+  $('aiBtn').title = llm.configured ? '已配置大模型：' + llm.model + '（点击修改）' : '配置大模型（可选）';
   $('aiBtn').classList.toggle('armed', llm.configured);
 }
 
@@ -707,10 +751,6 @@ setDial();
 api('/api/health').then((data) => {
   token = data.token;
   const stats = data.stats;
-  $('docs').textContent = fmt(stats.documents);
-  $('chunks').textContent = fmt(stats.chunks);
-  $('packages').textContent = fmt(stats.packages);
-  $('model').textContent = data.model;
   $('corpusFiles').textContent = fmt(stats.documents);
   $('corpusChunks').textContent = fmt(stats.chunks);
   $('corpusPackages').textContent = fmt(stats.packages);
@@ -725,12 +765,14 @@ api('/api/health').then((data) => {
   $('factLic').textContent = ((stats.licenses || []).length) + ' 种';
   const ready = data.ready;
   $('connection').textContent = ready ? '● 本机引擎就绪' : '● 语料缺失';
-  $('connection').style.color = ready ? 'var(--signal)' : 'var(--cmd-text)';
+  $('connection').classList.toggle('is-ready', ready);
+  $('connection').classList.toggle('is-down', !ready);
   if (!ready) { $('scan').disabled = true; toast('语料不完整，扫描已禁用；请重新建立语料。'); }
   initAi(data);
 }).catch((error) => {
   $('connection').textContent = '● 本机引擎未连接';
-  $('connection').style.color = 'var(--cmd-text)';
+  $('connection').classList.remove('is-ready');
+  $('connection').classList.add('is-down');
   $('scan').disabled = true;
   toast(error.message);
 });

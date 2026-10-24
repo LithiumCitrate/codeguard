@@ -1,6 +1,6 @@
 # CodeGuard · AI 生成代码的开源许可证污染溯源与合规门禁
 
-**2026-10-24 v0.4.0：工作台新增可选大模型增强（首次运行配置 Base URL/API Key、自动拉取模型列表、AI 文件解读、审查摘要与追问、许可通俗解释）。**
+**2026-10-24 v0.5.1：工作台前端重构为明日方舟式平面控制台（黑 / 白 / 信号黄、切角、工业编号与战术读数盘），功能与 API 不变；v0.4.0 起支持可选大模型增强（首次运行配置 Base URL/API Key、自动拉取模型列表、AI 文件解读、审查摘要与追问、许可通俗解释）。**
 解压应用包后双击 `CodeGuard.exe`；源码运行可双击 `启动工作台.cmd` 或执行 `python launch.py`。
 本地网页工作台支持真实扫描、文件导入、命中代码对照、许可证推演和报告下载，见 [docs/WORKBENCH.md](docs/WORKBENCH.md)。
 新增 `codeguard eval` 外部评测命令：HumanEval 164 个独立实现中 **0 个阻断级误报**（95% 单侧上限 1.81%），
@@ -189,7 +189,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    false_block_control.py（误阻断对照组实验，佐证规则的证据）
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
-tests/             107 个用例，全部离线跑在 fixture 上
+tests/             130 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -199,7 +199,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 107 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 130 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

@@ -4,6 +4,20 @@ All notable changes to CodeGuard are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 abides by semantic versioning.
 
+## [Unreleased]
+
+### Changed
+
+- **Workbench frontend rebuilt as a flat tactical console in the Arknights /
+  Endfield print-HUD language**: ink and paper surfaces with a signal-yellow
+  accent, cut-corner actions, indexed labels, hairline data rules, a
+  reticle-style system readout on the landing page, a black risk-dial panel,
+  and a black terminal footer. Every API and user-facing behaviour is
+  unchanged; the optional AI layer and its disclosure strings are untouched.
+  Verified at 390 / 768 / 1024 / 1440 px in light and dark themes, including
+  demo copy and clean scans, licence reasoning, AI setup dialog, and the 130
+  offline tests.
+
 ## [0.5.1] - 2026-10-24
 
 ### Fixed
