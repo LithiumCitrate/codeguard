@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeGuard 标注与汇总工具</title>
+<style>
+  :root {
+    --ink:#15181d; --muted:#5f6b7a; --line:#d7dde5; --paper:#f5f6f3; --panel:#fff;
+    --accent:#f3c400; --ok:#177245; --bad:#b42318; --info:#175b8a; --mark:#fff1a8;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.6 "Segoe UI", "Microsoft YaHei", Arial, sans-serif; color:var(--ink); background:var(--paper); }
+  header { position:sticky; top:0; z-index:10; background:#fff; border-bottom:3px solid var(--ink); }
+  .bar { display:flex; align-items:center; gap:12px; padding:12px 20px; flex-wrap:wrap; }
+  h1 { font-size:20px; margin:0; letter-spacing:.02em; }
+  h2 { font-size:18px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:16px 0 8px; }
+  .spacer { flex:1; }
+  .pill { border:1px solid var(--line); background:#f7f8fa; padding:3px 10px; font-size:13px; white-space:nowrap; }
+  .pill.ok { border-color:var(--ok); color:var(--ok); background:#eef8f2; }
+  .pill.bad { border-color:var(--bad); color:var(--bad); background:#fff2f0; }
+  .tabs { display:flex; gap:2px; padding:0 14px; border-top:1px solid var(--line); overflow:auto; }
+  .tabs button { border:0; border-bottom:3px solid transparent; background:none; padding:10px 14px; font:inherit; cursor:pointer; white-space:nowrap; }
+  .tabs button.active { border-bottom-color:var(--accent); font-weight:700; }
+  main { max-width:1680px; margin:0 auto; padding:18px 20px 70px; }
+  section.page { display:none; }
+  section.page.active { display:block; }
+  .panel { background:var(--panel); border:1px solid var(--line); padding:18px; margin-bottom:16px; }
+  .grid2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+  .note { color:var(--muted); font-size:13px; }
+  .warn { border-left:4px solid var(--bad); background:#fff5f3; padding:10px 12px; }
+  .safe { border-left:4px solid var(--ok); background:#f1fbf5; padding:10px 12px; }
+  .info { border-left:4px solid var(--info); background:#f1f7fb; padding:10px 12px; }
+  button, .button { font:inherit; border:1px solid var(--ink); background:#fff; padding:8px 12px; cursor:pointer; border-radius:0; }
+  button:hover { background:#f2f2ef; }
+  button.primary { background:var(--ink); color:#fff; }
+  button.label { min-width:92px; font-weight:700; }
+  button.label.selected { background:var(--accent); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  input[type=text], input[type=number], input[type=date], textarea, select { font:inherit; width:100%; border:1px solid var(--line); padding:7px 9px; background:#fff; border-radius:0; }
+  textarea { min-height:72px; resize:vertical; }
+  label { display:block; font-weight:600; margin:10px 0 4px; }
+  .check { display:flex; align-items:center; gap:8px; font-weight:400; }
+  .check input { width:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top; }
+  th { background:#f2f4f7; font-weight:650; }
+  .sample-wrap { display:grid; grid-template-columns:210px minmax(0,1fr); gap:16px; align-items:start; }
+  .toc { position:sticky; top:118px; max-height:calc(100vh - 140px); overflow:auto; background:#fff; border:1px solid var(--line); padding:8px; }
+  .toc button { display:flex; width:100%; justify-content:space-between; border:0; border-bottom:1px solid #eef0f3; background:none; padding:5px 6px; text-align:left; font-size:12px; }
+  .toc button.current { background:var(--accent); font-weight:700; }
+  .toc button.done { color:var(--ok); }
+  .toc button.missing { color:var(--bad); }
+  .code { background:#10151b; color:#e8eef5; padding:10px; overflow:auto; max-height:520px; white-space:pre; font:12px/1.45 Consolas, "Cascadia Mono", monospace; }
+  mark { background:var(--mark); color:#111; padding:0; }
+  .meta { margin:0 0 10px; }
+  .meta td:first-child { width:17%; background:#f7f8fa; font-weight:650; }
+  .actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:12px; }
+  .kbd { border:1px solid var(--line); border-bottom-width:2px; padding:0 5px; font-family:Consolas,monospace; font-size:12px; background:#fafafa; }
+  .criteria { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:10px 0; }
+  .criteria > div { border:1px solid var(--line); padding:10px; background:#fff; }
+  .criteria b { display:block; margin-bottom:4px; }
+  .small { font-size:12px; }
+  .hidden { display:none !important; }
+  .summary-output { white-space:pre-wrap; font-family:Consolas,"Microsoft YaHei",monospace; font-size:12px; background:#10151b; color:#e8eef5; padding:12px; max-height:520px; overflow:auto; }
+  .disagree-row { display:grid; grid-template-columns:150px 1fr 1fr 120px 1fr; gap:8px; align-items:center; border-bottom:1px solid var(--line); padding:8px 0; }
+  .disagree-row select { width:110px; }
+  @media (max-width:1050px) {
+    .sample-wrap, .grid2, .grid3, .criteria { grid-template-columns:1fr; }
+    .toc { position:static; max-height:230px; }
+    .disagree-row { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>CodeGuard 标注与汇总工具</h1>
+    <span class="pill" id="profilePill">未选择身份</span>
+    <span class="pill" id="progressPill">0 / 47</span>
+    <span class="spacer"></span>
+    <span class="pill">离线可用 · 不联网 · 数据只存本机</span>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-page="start" class="active">开始</button>
+    <button data-page="annotate">47 条标注</button>
+    <button data-page="summary">标注汇总</button>
+    <button data-page="trial">试用汇总</button>
+    <button data-page="help">教程</button>
+  </nav>
+</header>
+
+<main>
+<section class="page active" id="page-start">
+  <div class="panel">
+    <h2>这个工具帮你做什么</h2>
+    <p>脚本已经把 47 条样本的 GPT-4o 回答、论文配对原文、相同片段高亮、CodeGuard 指标都准备好了。你只需要做一件事：逐条判断 <b>A / B / C</b>，然后导出 CSV。</p>
+    <div class="warn"><b>底线：</b>A/B/C 必须是你本人判断。工具不会替你填标签；不要互看答案，不要把工具里的第三方原文转发或截图到公开材料。</div>
+    <h3>选择你的身份</h3>
+    <div class="actions">
+      <button class="primary" data-profile="标注人1">我是标注人1</button>
+      <button class="primary" data-profile="标注人2">我是标注人2</button>
+    </div>
+    <label for="nickname">昵称/代号（可选，用于 CSV 的 annotator 列）</label>
+    <input id="nickname" type="text" placeholder="例如：同学甲；不要写学校、学院、教师姓名">
+    <p class="note">同一台电脑换人时，建议各自用自己的电脑。若必须共用，请只点自己的身份，不要翻看另一份记录。</p>
+  </div>
+
+  <div class="panel">
+    <h2>预计用时</h2>
+    <table>
+      <tr><th>任务</th><th>人数</th><th>用时</th><th>产出</th></tr>
+      <tr><td>47 条正例盲标</td><td>2 人各自做</td><td>每人约 60–90 分钟</td><td>两份 CSV</td></tr>
+      <tr><td>试用反馈汇总</td><td>1 人录入</td><td>约 15 分钟</td><td>试用汇总 Markdown</td></tr>
+      <tr><td>标注汇总与复核</td><td>队长/第三人</td><td>约 20 分钟</td><td>一致率、κ、分歧复核、报告句子</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="page" id="page-annotate">
+  <div class="sample-wrap">
+    <aside class="toc" id="toc"></aside>
+    <div>
+      <div class="panel">
+        <div class="actions" style="justify-content:space-between;margin:0 0 10px">
+          <h2 id="sampleTitle" style="margin:0">—</h2>
+          <div class="actions">
+            <button id="prevBtn">上一条</button>
+            <button id="nextBtn">下一条</button>
+            <label class="check"><input id="autoNext" type="checkbox" checked> 选完自动下一条</label>
+          </div>
+        </div>
+        <table class="meta" id="metaTable"></table>
+        <p class="note">黄色高亮只是相同片段定位，不是结论。CodeGuard 指标只是系统读数，不能代替你的判断。</p>
+        <div class="grid2">
+          <div><h3>GPT-4o 回答</h3><div class="code" id="answerBox"></div></div>
+          <div><h3>论文配对原文</h3><div class="code" id="sourceBox"></div></div>
+        </div>
+        <details>
+          <summary>CodeGuard 实际命中（系统读数，仅供背景）</summary>
+          <table id="findingsTable" style="margin-top:8px"></table>
+        </details>
+        <div class="actions" style="margin-top:16px">
+          <button class="label" data-label="A">A 实质复现</button>
+          <button class="label" data-label="B">B 惯用巧合</button>
+          <button class="label" data-label="C">C 无法判断</button>
+          <span class="spacer"></span>
+          <span class="note">快捷键：<span class="kbd">A</span> <span class="kbd">B</span> <span class="kbd">C</span> <span class="kbd">←</span> <span class="kbd">→</span></span>
+        </div>
+        <label for="noteBox">一句话理由（B/C 必填；拿不准的 A 也建议填）</label>
+        <textarea id="noteBox" placeholder="例如：只共享 imports 和 argparse 样板，没有复制实现。"></textarea>
+      </div>
+
+      <div class="panel">
+        <h2>保存与导出</h2>
+        <div class="actions">
+          <button id="exportBtn">导出我的 CSV</button>
+          <button id="importBtn">导入我之前的 CSV</button>
+          <input id="importFile" type="file" accept=".csv,text/csv" class="hidden">
+          <button id="clearBtn">清空我的本地记录</button>
+        </div>
+        <p class="note">进度会自动保存在这台浏览器里。换电脑或清缓存前，请先导出 CSV。最终只需要把 CSV 发给队长，不要转发本 HTML。</p>
+        <div id="exportStatus" class="note"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-summary">
+  <div class="panel">
+    <h2>标注汇总</h2>
+    <p>这里把两份 CSV 合并，计算一致率、Cohen's κ、分歧清单，并生成可直接写入报告的句子。脚本只做统计，不修改任何人的标签。</p>
+    <div class="grid2">
+      <div>
+        <label>标注人1 CSV</label>
+        <input id="csvA" type="file" accept=".csv,text/csv">
+      </div>
+      <div>
+        <label>标注人2 CSV</label>
+        <input id="csvB" type="file" accept=".csv,text/csv">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="primary" id="mergeBtn">计算汇总</button>
+      <button id="useLocalBtn">用本机两份记录汇总</button>
+      <button id="copyReportBtn">复制报告句子</button>
+      <button id="downloadSummaryBtn">下载汇总 Markdown</button>
+      <button id="downloadAdjBtn">下载复核 CSV</button>
+    </div>
+    <div id="summaryStatus" class="note" style="margin-top:8px"></div>
+  </div>
+  <div class="panel hidden" id="summaryResult">
+    <h2>结果</h2>
+    <div id="summaryTable"></div>
+    <h3>分歧样本复核</h3>
+    <div id="disagreeList"></div>
+    <h3>报告句子</h3>
+    <div class="summary-output" id="reportSentence"></div>
+    <h3>完整 Markdown</h3>
+    <div class="summary-output" id="summaryMarkdown"></div>
+  </div>
+</section>
+
+<section class="page" id="page-trial">
+  <div class="panel">
+    <h2>试用反馈汇总</h2>
+    <div class="info"><b>注意：</b>试用反馈必须来自非项目成员本人填写的原始表。这里只是把两份原始表整理成报告和汇总格式；不要补脑、不要美化、不要编造原话。</div>
+    <div class="grid2" id="trialForms"></div>
+    <div class="actions">
+      <label class="check"><input id="trialTruth" type="checkbox"> 我确认下面所有字段均照抄自试用者本人填写的原始表</label>
+    </div>
+    <div class="actions">
+      <button class="primary" id="buildTrialBtn">生成试用汇总</button>
+      <button id="copyTrialBtn">复制 Markdown</button>
+      <button id="downloadTrialBtn">下载试用汇总 Markdown</button>
+    </div>
+    <div id="trialStatus" class="note" style="margin-top:8px"></div>
+  </div>
+  <div class="panel hidden" id="trialResult">
+    <h2>试用汇总输出</h2>
+    <div class="summary-output" id="trialMarkdown"></div>
+  </div>
+</section>
+
+<section class="page" id="page-help">
+  <div class="panel">
+    <h2>A/B/C 口径</h2>
+    <div class="criteria">
+      <div><b>A · 实质逐字复现</b>连续、非平凡的一段实现被复制；通常 ≥20 token，或 ≥10 token 且覆盖率较高。改名、改格式、插注释不影响 A。</div>
+      <div><b>B · 惯用写法/公共片段</b>只共享 imports、argparse、异常处理、常量表、短签名、文档字符串、常见数学/IO 写法；没有实质表达被复制。</div>
+      <div><b>C · 无法判断</b>片段太短、原文太通用、回答是残片、边界需要第三人复核。拿不准就填 C，不丢人。</div>
+    </div>
+    <h3>最容易误判的三种情况</h3>
+    <ol>
+      <li><b>跨项目副本：</b>CodeGuard 命中了另一个仓库里的同一份上游代码。你仍然比较“GPT-4o 回答”和“论文配对原文”；如果确实复现，判 A，并在理由里写“命中为同源副本”。</li>
+      <li><b>注释/文档字符串：</b>只复制注释或 docstring，通常判 B；注释和实现成段一起复制，按实现判 A。</li>
+      <li><b>短片段：</b>只有 1–2 行通用表达式，判 B 或 C；不要因为系统给了 S1/S2 就判 A。</li>
+    </ol>
+    <h3>标注流程</h3>
+    <ol>
+      <li>在“开始”页选择“标注人1”或“标注人2”。</li>
+      <li>逐条看左右两段代码，用键盘 A/B/C 点判定；B/C 写一句理由。</li>
+      <li>进度自动保存。做完 47 条后点“导出我的 CSV”。</li>
+      <li>把 CSV 发给队长；不要转发 <code>annotate.html</code>，因为它含第三方原文。</li>
+    </ol>
+    <h3>试用反馈流程</h3>
+    <ol>
+      <li>把 <code>trial/</code> 里的两份空白表给两位非项目成员。</li>
+      <li>他们本人填写任务完成情况、卡点原话、开放问题和签名。</li>
+      <li>回收后，在“试用汇总”页把关键信息照抄进来，生成汇总 Markdown。</li>
+      <li>队长把汇总和原始表一起放进参赛佐证。</li>
+    </ol>
+    <h3>常见问题</h3>
+    <p class="note"><b>我能不能先全选 A，再慢慢看？</b> 不能。这样就不是独立标注了。每条必须看左右对照后再点。</p>
+    <p class="note"><b>我能不能看队友的 CSV？</b> 不能。两份 CSV 必须是各自完成的。</p>
+    <p class="note"><b>浏览器提示无法保存？</b> 用 Edge 或 Chrome，双击 <code>start.bat</code> 或把 <code>annotate.html</code> 拖进浏览器；每完成 10 条导出一次 CSV。</p>
+    <p class="note"><b>47 条太多？</b> 可以分两次做，进度会保存；但导出前必须 47/47。</p>
+  </div>
+</section>
+</main>
+
+<footer style="border-top:1px solid var(--line); padding:16px 20px; color:var(--muted); font-size:12px">
+  CodeGuard 标注工具 · 数据来自 LiCoEval（ICSE 2025，AGPL-3.0-or-later）本地缓存 · 本文件含第三方原文，只供队内标注使用，不要上传、截图或转发。
+</footer>
+
+<script type="application/json" id="data">__DATA__</script>
+<script>
+(() => {
+  "use strict";
+  const DATA = JSON.parse(document.getElementById('data').textContent);
+  const SAMPLES = DATA.samples || [];
+  const CSV_COLUMNS = ["sample_id","expected_project","expected_license","paper_bleu","paper_jaccard","paper_label","codeguard_max_risk","codeguard_verbatim","codeguard_coverage","codeguard_attributed","codeguard_matched_packages","label","note","annotator","date"];
+  const LABELS = ["A","B","C"];
+  const profilePill = document.getElementById('profilePill');
+  const progressPill = document.getElementById('progressPill');
+  const toc = document.getElementById('toc');
+  const metaTable = document.getElementById('metaTable');
+  const answerBox = document.getElementById('answerBox');
+  const sourceBox = document.getElementById('sourceBox');
+  const findingsTable = document.getElementById('findingsTable');
+  const noteBox = document.getElementById('noteBox');
+  const exportStatus = document.getElementById('exportStatus');
+  const summaryStatus = document.getElementById('summaryStatus');
+  const trialStatus = document.getElementById('trialStatus');
+  let profile = null;
+  let state = {labels:{}, notes:{}, dates:{}, index:0, nickname:''};
+  let summary = null;
+
+  function esc(value) {
+    return String(value ?? '').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
+  }
+  function storageKey() { return 'codeguard-annotate-' + profile; }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(storageKey());
+      if (!raw) return {labels:{}, notes:{}, dates:{}, index:0, nickname:''};
+      const parsed = JSON.parse(raw);
+      parsed.labels ||= {}; parsed.notes ||= {}; parsed.dates ||= {}; parsed.index ||= 0; parsed.nickname ||= '';
+      return parsed;
+    } catch (e) {
+      alert('浏览器本地存储不可用：' + e.message + '\n你仍可标注，但每完成 10 条必须导出 CSV 备份。');
+      return {labels:{}, notes:{}, dates:{}, index:0, nickname:''};
+    }
+  }
+  function saveState() {
+    try { localStorage.setItem(storageKey(), JSON.stringify(state)); }
+    catch (e) { exportStatus.textContent = '本地保存失败：' + e.message + '。请马上导出 CSV。'; }
+  }
+  function doneCount() { return Object.values(state.labels).filter(x => LABELS.includes(x)).length; }
+  function updateHeader() {
+    profilePill.textContent = profile ? (profile + (state.nickname ? ' · ' + state.nickname : '')) : '未选择身份';
+    profilePill.className = 'pill ' + (profile ? 'ok' : 'bad');
+    const n = doneCount();
+    progressPill.textContent = n + ' / ' + SAMPLES.length + (n === SAMPLES.length ? ' 已完成' : ' 未完成');
+    progressPill.className = 'pill ' + (n === SAMPLES.length ? 'ok' : 'bad');
+  }
+  function showPage(name) {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.page === name));
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + name));
+    if (name === 'annotate') renderSample();
+  }
+  function marked(text, blocks) {
+    let out = [], cursor = 0;
+    for (const [start, end] of blocks || []) {
+      if (start < cursor) continue;
+      out.push(esc(text.slice(cursor, start)));
+      out.push('<mark>' + esc(text.slice(start, end)) + '</mark>');
+      cursor = end;
+    }
+    out.push(esc(text.slice(cursor)));
+    return out.join('');
+  }
+  function renderToc() {
+    toc.innerHTML = SAMPLES.map((s, i) => {
+      const label = state.labels[s.sample_id] || '';
+      const cls = i === state.index ? 'current' : (LABELS.includes(label) ? 'done' : 'missing');
+      return '<button class="' + cls + '" data-index="' + i + '"><span>' + String(i+1).padStart(2,'0') + ' ' + esc(s.sample_id.slice(0,8)) + '</span><b>' + esc(label || '—') + '</b></button>';
+    }).join('');
+    toc.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+      state.index = Number(btn.dataset.index); saveState(); renderSample();
+    }));
+  }
+  function renderSample() {
+    if (!profile) { showPage('start'); return; }
+    const s = SAMPLES[state.index];
+    document.getElementById('sampleTitle').textContent = '#' + String(state.index + 1).padStart(2,'0') + ' · ' + s.sample_id;
+    metaTable.innerHTML = [
+      ['论文配对项目', esc(s.expected_project), '原文许可', esc(s.expected_license)],
+      ['论文 BLEU / Jaccard', s.paper_bleu + ' / ' + s.paper_jaccard, '论文标签', esc(s.paper_label)],
+      ['CodeGuard 最高风险', esc(s.codeguard_max_risk), '逐字 / 覆盖率', s.codeguard_verbatim + ' token / ' + s.codeguard_coverage],
+      ['归属', s.codeguard_attributed === '是' ? '正确' : '命中其它副本', '命中项目', esc(s.codeguard_matched_packages)]
+    ].map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>').join('');
+    answerBox.innerHTML = marked(s.answer, s.answer_blocks);
+    sourceBox.innerHTML = marked(s.source, s.source_blocks);
+    findingsTable.innerHTML = '<tr><th>项目</th><th>路径</th><th>许可</th><th>风险</th><th>置信度</th><th>逐字</th></tr>' +
+      (s.findings || []).map(f => '<tr><td>' + esc(f.package) + '</td><td>' + esc(f.path) + '</td><td>' + esc(f.license) + '</td><td>' + esc(f.risk) + '</td><td>' + esc(f.confidence) + '</td><td>' + esc(f.verbatim_run) + '</td></tr>').join('') ||
+      '<tr><td colspan="6">无命中</td></tr>';
+    noteBox.value = state.notes[s.sample_id] || '';
+    updateLabelButtons(s.sample_id);
+    renderToc();
+    updateHeader();
+  }
+  function updateLabelButtons(sampleId) {
+    const current = state.labels[sampleId] || '';
+    document.querySelectorAll('button.label').forEach(b => b.classList.toggle('selected', b.dataset.label === current));
+  }
+  function setLabel(label) {
+    if (!profile) { alert('请先在“开始”页选择身份。'); return; }
+    const s = SAMPLES[state.index];
+    state.labels[s.sample_id] = label;
+    state.dates[s.sample_id] = new Date().toISOString().slice(0,10);
+    saveState();
+    updateLabelButtons(s.sample_id);
+    renderToc();
+    updateHeader();
+    if (label !== 'A' && !(noteBox.value || '').trim()) {
+      noteBox.focus();
+      noteBox.placeholder = 'B/C 请写一句理由，例如：只共享 imports/argparse，没有复制实现。';
+    }
+    if (document.getElementById('autoNext').checked && state.index < SAMPLES.length - 1) {
+      setTimeout(() => { state.index++; saveState(); renderSample(); }, 160);
+    }
+  }
+  function csvCell(value) {
+    const text = String(value ?? '');
+    return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+  function buildCsv() {
+    const lines = [CSV_COLUMNS.join(',')];
+    for (const s of SAMPLES) {
+      const vals = [
+        s.sample_id, s.expected_project, s.expected_license, s.paper_bleu, s.paper_jaccard, s.paper_label,
+        s.codeguard_max_risk, s.codeguard_verbatim, s.codeguard_coverage, s.codeguard_attributed,
+        s.codeguard_matched_packages, state.labels[s.sample_id] || '', state.notes[s.sample_id] || '',
+        state.nickname || profile, state.dates[s.sample_id] || ''
+      ];
+      lines.push(vals.map(csvCell).join(','));
+    }
+    return '\uFEFF' + lines.join('\r\n') + '\r\n';
+  }
+  function parseCsv(text) {
+    text = String(text || '').replace(/^\uFEFF/, '');
+    const rows = []; let row = [], field = '', i = 0, inQuotes = false;
+    while (i < text.length) {
+      const ch = text[i];
+      if (inQuotes) {
+        if (ch === '"') {
+          if (text[i+1] === '"') { field += '"'; i += 2; continue; }
+          inQuotes = false; i++; continue;
+        }
+        field += ch; i++; continue;
+      }
+      if (ch === '"') { inQuotes = true; i++; continue; }
+      if (ch === ',') { row.push(field); field = ''; i++; continue; }
+      if (ch === '\r') { i++; continue; }
+      if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; continue; }
+      field += ch; i++;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    if (!rows.length) return [];
+    const header = rows.shift().map(x => x.trim());
+    return rows.filter(r => r.some(x => String(x).trim() !== '')).map(r => Object.fromEntries(header.map((h, idx) => [h, r[idx] ?? ''])));
+  }
+  function download(filename, content, type='text/plain;charset=utf-8') {
+    const blob = new Blob([content], {type});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function copyText(text, statusEl) {
+    navigator.clipboard.writeText(text).then(() => {
+      statusEl.textContent = '已复制到剪贴板。';
+    }).catch(() => {
+      statusEl.textContent = '浏览器不允许自动复制，请手动选中输出框内容。';
+    });
+  }
+  function readLocalProfile(profileName) {
+    try {
+      const raw = localStorage.getItem('codeguard-annotate-' + profileName);
+      if (!raw) return null;
+      const st = JSON.parse(raw);
+      const rows = SAMPLES.map(s => Object.fromEntries(CSV_COLUMNS.map(c => {
+        if (c === 'label') return [c, (st.labels || {})[s.sample_id] || ''];
+        if (c === 'note') return [c, (st.notes || {})[s.sample_id] || ''];
+        if (c === 'date') return [c, (st.dates || {})[s.sample_id] || ''];
+        if (c === 'annotator') return [c, st.nickname || profileName];
+        return [c, s[c] ?? ''];
+      })));
+      return rows;
+    } catch (e) { return null; }
+  }
+  function cohenKappa(a, b) {
+    const n = a.length;
+    if (!n) return null;
+    const po = a.filter((x, i) => x === b[i]).length / n;
+    const ca = {}, cb = {};
+    LABELS.forEach(c => { ca[c] = a.filter(x => x === c).length; cb[c] = b.filter(x => x === c).length; });
+    const pe = LABELS.reduce((sum, c) => sum + (ca[c]/n)*(cb[c]/n), 0);
+    if (pe >= 1) return null;
+    return (po - pe) / (1 - pe);
+  }
+  function kappaBand(k) {
+    if (k === null) return '不适用（一方或双方分布退化）';
+    if (k < 0.4) return '较差（<0.40），建议讨论口径后重标';
+    if (k < 0.6) return '中等（0.40–0.60），建议讨论分歧并重标';
+    if (k < 0.8) return '较强（0.60–0.80）';
+    return '很强（>=0.80）';
+  }
+  function computeSummary(rowsA, rowsB, adjudication) {
+    if (!rowsA || !rowsB) throw new Error('请先选择两份 CSV，或用本机两份记录。');
+    if (rowsA.length !== SAMPLES.length || rowsB.length !== SAMPLES.length) throw new Error('两份 CSV 都必须是 ' + SAMPLES.length + ' 行。');
+    const mapB = new Map(rowsB.map(r => [String(r.sample_id || '').trim(), r]));
+    const merged = rowsA.map(ra => {
+      const rb = mapB.get(String(ra.sample_id || '').trim());
+      if (!rb) throw new Error('两份 CSV 的 sample_id 不一致：' + ra.sample_id);
+      const a = String(ra.label || '').trim().toUpperCase();
+      const b = String(rb.label || '').trim().toUpperCase();
+      const adj = adjudication[ra.sample_id] || {};
+      const agreed = !!a && a === b;
+      const final = adj.label || (agreed ? a : '');
+      return {
+        sample_id: ra.sample_id, project: ra.expected_project || '', license: ra.expected_license || '',
+        paper_label: ra.paper_label || '', a, b, agreed, complete: !!a && !!b,
+        note_a: ra.note || '', note_b: rb.note || '', final, final_note: adj.note || '', adjudicator: adj.adjudicator || ''
+      };
+    });
+    const complete = merged.every(r => r.complete);
+    const labelsA = merged.map(r => r.a), labelsB = merged.map(r => r.b);
+    const agreements = complete ? merged.filter(r => r.agreed).length : null;
+    const kappa = complete ? cohenKappa(labelsA, labelsB) : null;
+    const disagreements = complete ? merged.filter(r => !r.agreed) : [];
+    const unadjudicated = disagreements.filter(r => !r.final);
+    const finalLabels = merged.map(r => r.final || '待复核');
+    const confirmed = finalLabels.filter(x => x === 'A').length;
+    const distA = {A:0,B:0,C:0}, distB = {A:0,B:0,C:0};
+    labelsA.forEach(x => { if (distA[x] !== undefined) distA[x]++; });
+    labelsB.forEach(x => { if (distB[x] !== undefined) distB[x]++; });
+    return {complete, merged, agreements, kappa, disagreements, unadjudicated, confirmed, distA, distB, total: merged.length};
+  }
+  function reportSentence(sum) {
+    if (!sum.complete) return '两份 CSV 尚未填满，不能生成“双人独立标注完成”的句子。';
+    const pct = (100 * sum.agreements / sum.total).toFixed(1);
+    const k = sum.kappa === null ? '—' : sum.kappa.toFixed(4);
+    return '两名成员对 LiCoEval 的 47 条 GPT-4o 真实输出独立标注：一致 ' + sum.agreements + '/' + sum.total + '（' + pct + '%），Cohen\'s κ=' + k + '；标注人1 判 A ' + sum.distA.A + ' / B ' + sum.distA.B + ' / C ' + sum.distA.C + '，标注人2 判 A ' + sum.distB.A + ' / B ' + sum.distB.B + ' / C ' + sum.distB.C + '；' + sum.disagreements.length + ' 条分歧经第三人复核后，最终独立确认 A ' + sum.confirmed + ' 条。';
+  }
+  function summaryMarkdown(sum) {
+    const lines = [
+      '# LiCoEval 47 条正例双人标注汇总（工具生成）', '',
+      '> 本文件由 annotate.html 的“标注汇总”页生成；脚本只做统计，不修改标签。',
+      '> 生成时间：' + new Date().toISOString().slice(0,16).replace('T',' ') + '。',
+      '> 论文把 47 条都标为 striking-similar；本表的 A 是团队独立确认，B/C 是不确认或拿不准。', ''
+    ];
+    if (!sum.complete) lines.push('> **未完成：至少一份 CSV 仍有空标签。不能写成双人标注完成。**', '');
+    lines.push(
+      '## 汇总', '',
+      '| 指标 | 结果 |', '|---|---|',
+      '| 样本数 | ' + sum.total + ' |',
+      '| 标注人1 分布 | A ' + sum.distA.A + ' / B ' + sum.distA.B + ' / C ' + sum.distA.C + ' |',
+      '| 标注人2 分布 | A ' + sum.distB.A + ' / B ' + sum.distB.B + ' / C ' + sum.distB.C + ' |',
+      '| 一致样本 | ' + (sum.complete ? sum.agreements + ' / ' + sum.total : '—（未完成）') + ' |',
+      '| Cohen\'s κ | ' + (sum.complete ? (sum.kappa === null ? '—' : sum.kappa.toFixed(4)) : '—（未完成）') + ' |',
+      '| κ 解释 | ' + (sum.complete ? kappaBand(sum.kappa) : '—（未完成）') + ' |',
+      '| 分歧样本 | ' + (sum.complete ? sum.disagreements.length : '—（未完成）') + ' |',
+      '| 最终 A（独立确认复现） | ' + sum.confirmed + ' / ' + sum.total + ' |', ''
+    );
+    if (sum.disagreements.length) {
+      lines.push('## 分歧样本', '', '| 样本 | 项目 | 许可 | 标注人1 | 标注人2 | 复核结论 |', '|---|---|---|---|---|---|');
+      sum.disagreements.forEach(r => lines.push('| ' + r.sample_id + ' | ' + r.project + ' | ' + r.license + ' | ' + r.a + ' | ' + r.b + ' | ' + (r.final || '待复核') + ' |'));
+      lines.push('');
+    }
+    lines.push('## 逐条记录', '', '| # | 样本 | 项目 | 许可 | 标注人1 | 标注人2 | 一致 | 最终 | 备注 |', '|---|---|---|---|---|---|---|---|---|');
+    sum.merged.forEach((r, i) => {
+      const note = [r.note_a, r.note_b, r.final_note].filter(Boolean).join(' / ').replace(/\|/g,'\\|').replace(/\n/g,' ');
+      lines.push('| ' + (i+1) + ' | ' + r.sample_id + ' | ' + r.project + ' | ' + r.license + ' | ' + (r.a || '—') + ' | ' + (r.b || '—') + ' | ' + (r.complete ? (r.agreed ? '是' : '否') : '—') + ' | ' + (r.final || '待复核') + ' | ' + (note || '—') + ' |');
+    });
+    lines.push('', '## 可直接写入报告', '', '> ' + reportSentence(sum), '', '> 若复核尚未完成，把最后一句改成“分歧样本待第三人复核”，不要提前写成完成。');
+    return lines.join('\n');
+  }
+  function renderSummary() {
+    const result = document.getElementById('summaryResult');
+    if (!summary) { result.classList.add('hidden'); return; }
+    result.classList.remove('hidden');
+    const sum = summary;
+    document.getElementById('summaryTable').innerHTML = '<table>' +
+      '<tr><th>完成</th><td>' + (sum.complete ? '47/47' : '未完成') + '</td></tr>' +
+      '<tr><th>标注人1 分布</th><td>A ' + sum.distA.A + ' / B ' + sum.distA.B + ' / C ' + sum.distA.C + '</td></tr>' +
+      '<tr><th>标注人2 分布</th><td>A ' + sum.distB.A + ' / B ' + sum.distB.B + ' / C ' + sum.distB.C + '</td></tr>' +
+      '<tr><th>一致样本</th><td>' + (sum.complete ? sum.agreements + ' / ' + sum.total : '—') + '</td></tr>' +
+      '<tr><th>Cohen\'s κ</th><td>' + (sum.complete ? (sum.kappa === null ? '—' : sum.kappa.toFixed(4)) + '（' + kappaBand(sum.kappa) + '）' : '—') + '</td></tr>' +
+      '<tr><th>分歧/已复核</th><td>' + (sum.complete ? sum.disagreements.length + ' / ' + (sum.disagreements.length - sum.unadjudicated.length) : '—') + '</td></tr>' +
+      '<tr><th>最终 A</th><td>' + sum.confirmed + ' / ' + sum.total + '</td></tr>' +
+      '</table>';
+    const list = document.getElementById('disagreeList');
+    if (!sum.disagreements.length) {
+      list.innerHTML = '<p class="note">无分歧。</p>';
+    } else {
+      list.innerHTML = '<div class="disagree-row" style="font-weight:700"><span>样本</span><span>标注人1 / 理由</span><span>标注人2 / 理由</span><span>复核结论</span><span>复核理由</span></div>' +
+        sum.disagreements.map(r => {
+          const options = ['<option value="">待复核</option>'].concat(LABELS.map(l => '<option value="' + l + '"' + (r.final === l ? ' selected' : '') + '>' + l + '</option>')).join('');
+          return '<div class="disagree-row" data-sample="' + esc(r.sample_id) + '"><b>' + esc(r.sample_id.slice(0,8)) + '<br><span class="small">' + esc(r.project) + '</span></b>' +
+            '<span>' + r.a + '<br><span class="small">' + esc(r.note_a) + '</span></span>' +
+            '<span>' + r.b + '<br><span class="small">' + esc(r.note_b) + '</span></span>' +
+            '<select class="adjLabel">' + options + '</select>' +
+            '<input class="adjNote" type="text" value="' + esc(r.final_note) + '" placeholder="复核理由"></div>';
+        }).join('');
+      list.querySelectorAll('.disagree-row[data-sample]').forEach(row => {
+        const sample = row.dataset.sample;
+        const select = row.querySelector('.adjLabel');
+        const note = row.querySelector('.adjNote');
+        const update = () => {
+          if (!summary.adjudication) summary.adjudication = {};
+          summary.adjudication[sample] = {label: select.value, note: note.value, adjudicator: '第三人', date: new Date().toISOString().slice(0,10)};
+          const next = computeSummary(summary.rowsA, summary.rowsB, summary.adjudication);
+          next.rowsA = summary.rowsA; next.rowsB = summary.rowsB; next.adjudication = summary.adjudication;
+          summary = next;
+          renderSummary();
+        };
+        select.addEventListener('change', update);
+        note.addEventListener('input', () => {
+          if (!summary.adjudication) summary.adjudication = {};
+          const old = summary.adjudication[sample] || {label: select.value};
+          summary.adjudication[sample] = Object.assign(old, {note: note.value});
+        });
+      });
+    }
+    document.getElementById('reportSentence').textContent = reportSentence(sum);
+    document.getElementById('summaryMarkdown').textContent = summaryMarkdown(sum);
+  }
+  async function mergeFromFiles() {
+    try {
+      const a = document.getElementById('csvA').files[0];
+      const b = document.getElementById('csvB').files[0];
+      if (!a || !b) throw new Error('请选择两份 CSV。');
+      const rowsA = parseCsv(await a.text());
+      const rowsB = parseCsv(await b.text());
+      summary = computeSummary(rowsA, rowsB, {});
+      summary.rowsA = rowsA; summary.rowsB = rowsB; summary.adjudication = {};
+      summaryStatus.textContent = summary.complete ? '汇总完成。' : '未完成：仍有空标签。';
+      renderSummary();
+    } catch (e) {
+      summaryStatus.textContent = '失败：' + e.message;
+    }
+  }
+  function mergeFromLocal() {
+    try {
+      const rowsA = readLocalProfile('标注人1');
+      const rowsB = readLocalProfile('标注人2');
+      if (!rowsA || !rowsB) throw new Error('本机没有两份记录。请让两位标注人分别导出 CSV 后再上传。');
+      summary = computeSummary(rowsA, rowsB, {});
+      summary.rowsA = rowsA; summary.rowsB = rowsB; summary.adjudication = {};
+      summaryStatus.textContent = '已读取本机两份记录。请确认两份确实由不同人完成。';
+      renderSummary();
+    } catch (e) {
+      summaryStatus.textContent = '失败：' + e.message;
+    }
+  }
+  function buildTrialForms() {
+    const container = document.getElementById('trialForms');
+    const fields = [
+      ['nickname', '昵称/代号'], ['background', '背景（年级/常用语言/AI 工具经验）'], ['env', '环境'], ['date', '试用日期'],
+      ['tasks', '独立完成核心任务数（0–6）'], ['minutes', '从启动到第一份报告耗时（分钟）'], ['stuck', '主要卡点（照抄原话）'],
+      ['understand', '是否看懂 S0–S4 / 证据链（是/部分/否）'], ['continue', '是否愿意继续使用（是/否/不确定）'], ['quote', '最有价值的一条反馈（照抄原话）']
+    ];
+    container.innerHTML = [1,2].map(n => '<div class="panel" style="margin:0"><h3>试用者' + n + '</h3>' + fields.map(f =>
+      '<label>' + f[1] + '</label><input id="trial' + n + '_' + f[0] + '" type="text">').join('') + '</div>').join('');
+  }
+  function trialValue(n, key) {
+    const el = document.getElementById('trial' + n + '_' + key);
+    return el ? el.value.trim() : '';
+  }
+  function buildTrialMarkdown() {
+    if (!document.getElementById('trialTruth').checked) {
+      trialStatus.textContent = '请先勾选“确认照抄原始表”。';
+      return null;
+    }
+    const rows = [1,2].map(n => ({
+      n, nickname: trialValue(n,'nickname'), background: trialValue(n,'background'), env: trialValue(n,'env'), date: trialValue(n,'date'),
+      tasks: trialValue(n,'tasks'), minutes: trialValue(n,'minutes'), stuck: trialValue(n,'stuck'), understand: trialValue(n,'understand'),
+      cont: trialValue(n,'continue'), quote: trialValue(n,'quote')
+    }));
+    if (rows.some(r => !r.nickname || !r.tasks || !r.minutes)) {
+      trialStatus.textContent = '至少填写昵称、完成任务数、耗时；其他字段可以写“未记录”。';
+      return null;
+    }
+    const md = [
+      '# 用户试用反馈汇总（工具生成）', '',
+      '> 以下内容照抄自两份试用者本人填写的原始表；本工具只做格式整理，不补脑、不美化。', '',
+      '| 项 | 试用者1 | 试用者2 |', '|---|---|---|',
+      '| 昵称/代号 | ' + rows[0].nickname + ' | ' + rows[1].nickname + ' |',
+      '| 背景 | ' + (rows[0].background || '未记录') + ' | ' + (rows[1].background || '未记录') + ' |',
+      '| 环境 | ' + (rows[0].env || '未记录') + ' | ' + (rows[1].env || '未记录') + ' |',
+      '| 试用日期 | ' + (rows[0].date || '未记录') + ' | ' + (rows[1].date || '未记录') + ' |',
+      '| 独立完成核心任务数 | ' + rows[0].tasks + ' / 6 | ' + rows[1].tasks + ' / 6 |',
+      '| 从启动到第一份报告耗时 | ' + rows[0].minutes + ' 分钟 | ' + rows[1].minutes + ' 分钟 |',
+      '| 主要卡点 | ' + (rows[0].stuck || '未记录') + ' | ' + (rows[1].stuck || '未记录') + ' |',
+      '| 是否看懂证据链 | ' + (rows[0].understand || '未记录') + ' | ' + (rows[1].understand || '未记录') + ' |',
+      '| 是否愿意继续使用 | ' + (rows[0].cont || '未记录') + ' | ' + (rows[1].cont || '未记录') + ' |',
+      '| 最有价值反馈 | ' + (rows[0].quote || '未记录') + ' | ' + (rows[1].quote || '未记录') + ' |', '',
+      '## 报告 §1/§5 可用句子', '',
+      '> 我们在 ' + (rows[0].date || '2026-10-__') + ' 邀请 2 名非项目组成员进行小规模试用（' + (rows[0].background || '背景见原表') + '）。两人分别完成 ' + rows[0].tasks + '/6 和 ' + rows[1].tasks + '/6 个核心任务，从启动到第一份报告耗时 ' + rows[0].minutes + ' 和 ' + rows[1].minutes + ' 分钟。主要卡点：' + (rows[0].stuck || '未记录') + '；' + (rows[1].stuck || '未记录') + '。最有价值反馈：' + (rows[0].quote || '未记录') + '。试用为 2 人小样本，不构成企业试点或统计意义上的用户研究。', '',
+      '## 附件', '- [ ] 两份试用者原始表（含签名/日期）', '- [ ] 匿名化截图', '- [ ] 计时记录'
+    ].join('\n');
+    trialStatus.textContent = '已生成。请对照原始表再检查一遍。';
+    document.getElementById('trialResult').classList.remove('hidden');
+    document.getElementById('trialMarkdown').textContent = md;
+    return md;
+  }
+
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-page]');
+    if (btn) showPage(btn.dataset.page);
+  });
+  document.querySelectorAll('[data-profile]').forEach(btn => btn.addEventListener('click', () => {
+    profile = btn.dataset.profile;
+    state = loadState();
+    document.getElementById('nickname').value = state.nickname || '';
+    updateHeader();
+    renderSample();
+    showPage('annotate');
+  }));
+  document.getElementById('nickname').addEventListener('input', e => {
+    if (!profile) return;
+    state.nickname = e.target.value.trim();
+    saveState();
+    updateHeader();
+  });
+  document.getElementById('prevBtn').addEventListener('click', () => { state.index = Math.max(0, state.index - 1); saveState(); renderSample(); });
+  document.getElementById('nextBtn').addEventListener('click', () => { state.index = Math.min(SAMPLES.length - 1, state.index + 1); saveState(); renderSample(); });
+  document.querySelectorAll('button.label').forEach(btn => btn.addEventListener('click', () => setLabel(btn.dataset.label)));
+  noteBox.addEventListener('input', () => {
+    const s = SAMPLES[state.index];
+    state.notes[s.sample_id] = noteBox.value;
+    saveState();
+  });
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    if (!profile) { alert('请先选择身份。'); return; }
+    const missing = SAMPLES.length - doneCount();
+    if (missing > 0) {
+      if (!confirm('还有 ' + missing + ' 条未填。导出的 CSV 会被队长脚本拒绝，不能作为完成证据。仍要导出草稿吗？')) return;
+    }
+    download('model-leak-20261021-标注表-' + profile + '.csv', buildCsv(), 'text/csv;charset=utf-8');
+    exportStatus.textContent = missing ? '已导出草稿：仍有 ' + missing + ' 条空白，不能算完成。' : '已导出完成版 CSV。请只把 CSV 发给队长。';
+  });
+  document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+  document.getElementById('importFile').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file || !profile) return;
+    const rows = parseCsv(await file.text());
+    const known = new Set(SAMPLES.map(s => s.sample_id));
+    let imported = 0;
+    rows.forEach(r => {
+      const id = String(r.sample_id || '').trim();
+      if (!known.has(id)) return;
+      if (r.label) { state.labels[id] = String(r.label).trim().toUpperCase(); state.dates[id] = r.date || state.dates[id] || ''; }
+      if (r.note) state.notes[id] = r.note;
+      if (r.annotator) state.nickname = r.annotator;
+      imported++;
+    });
+    document.getElementById('nickname').value = state.nickname || '';
+    saveState(); renderSample();
+    exportStatus.textContent = '已导入 ' + imported + ' 行。';
+  });
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    if (!profile) return;
+    if (!confirm('确定清空“' + profile + '”的本地记录？导出 CSV 不会自动删除。')) return;
+    state = {labels:{}, notes:{}, dates:{}, index:0, nickname:state.nickname || ''};
+    saveState(); renderSample();
+    exportStatus.textContent = '本地记录已清空。';
+  });
+  document.getElementById('mergeBtn').addEventListener('click', mergeFromFiles);
+  document.getElementById('useLocalBtn').addEventListener('click', mergeFromLocal);
+  document.getElementById('copyReportBtn').addEventListener('click', () => {
+    if (!summary) { summaryStatus.textContent = '请先计算汇总。'; return; }
+    copyText(reportSentence(summary), summaryStatus);
+  });
+  document.getElementById('downloadSummaryBtn').addEventListener('click', () => {
+    if (!summary) { summaryStatus.textContent = '请先计算汇总。'; return; }
+    download('model-leak-20261021-标注汇总.md', summaryMarkdown(summary), 'text/markdown;charset=utf-8');
+  });
+  document.getElementById('downloadAdjBtn').addEventListener('click', () => {
+    if (!summary || !summary.disagreements.length) { summaryStatus.textContent = '没有可导出的分歧。'; return; }
+    const lines = ['sample_id,final_label,final_note,adjudicator,date'];
+    summary.disagreements.forEach(r => {
+      const adj = (summary.adjudication || {})[r.sample_id] || {};
+      lines.push([r.sample_id, adj.label || '', csvCell(adj.note || ''), csvCell(adj.adjudicator || '第三人'), adj.date || ''].join(','));
+    });
+    download('model-leak-20261021-复核.csv', '\uFEFF' + lines.join('\r\n') + '\r\n', 'text/csv;charset=utf-8');
+  });
+  document.getElementById('buildTrialBtn').addEventListener('click', () => { buildTrialMarkdown(); });
+  document.getElementById('copyTrialBtn').addEventListener('click', () => {
+    const md = document.getElementById('trialMarkdown').textContent || buildTrialMarkdown();
+    if (md) copyText(md, trialStatus);
+  });
+  document.getElementById('downloadTrialBtn').addEventListener('click', () => {
+    const md = document.getElementById('trialMarkdown').textContent || buildTrialMarkdown();
+    if (md) download('12-用户试用反馈汇总.md', md, 'text/markdown;charset=utf-8');
+  });
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('page-annotate').classList.contains('active')) return;
+    if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+    const key = e.key.toUpperCase();
+    if (LABELS.includes(key)) { e.preventDefault(); setLabel(key); }
+    if (e.key === 'ArrowLeft') { state.index = Math.max(0, state.index - 1); saveState(); renderSample(); }
+    if (e.key === 'ArrowRight') { state.index = Math.min(SAMPLES.length - 1, state.index + 1); saveState(); renderSample(); }
+  });
+
+  buildTrialForms();
+  updateHeader();
+  window.__CodeGuardKit = {buildCsv, parseCsv, computeSummary, reportSentence, summaryMarkdown};
+})();
+</script>
+</body>
+</html>

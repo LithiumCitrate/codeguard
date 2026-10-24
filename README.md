@@ -119,7 +119,9 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 唯一候选是 HumanEval/81 的长 `if/elif` 链命中 `snowballstemmer` 的词干处理文件：
 形状相似但语义无关，风险 S1，未阻断。**0/164 只能写成“0 观测 + 上限”，不能写成“零误报”。**
-HumanEval 是独立编写的算法实现，不是真实模型输出；真实模型泄漏样本仍是下一阶段工作。
+HumanEval 是独立编写的算法实现，不是真实模型输出；真实模型泄漏正例已由 LiCoEval（ICSE 2025）
+47 条 GPT-4o 真实输出补齐：47/47 命中、copyleft 子集阻断 6/6，并经双人独立标注与队长复核
+（一致 44/47，最终确认 A 47/47），见 `submission/evidence/model-leak-20261021-标注汇总.md`。
 方法与复现见 [docs/EVALUATION.md](docs/EVALUATION.md)，原始结果见
 `submission/evidence/humaneval-20261020.json`。
 

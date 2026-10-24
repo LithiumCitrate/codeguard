@@ -1,0 +1,4 @@
+﻿sample_id,final_label,final_note,adjudicator,date
+e0d296846255ddca,A,复核：逐字38 token、覆盖0.50；除通用TFRecord模板外还复制了读取与shape/标签处理实现，构成实质复现,艾倏然,2026-10-25
+cbe2f672e4f4ad03,A,复核：逐字24 token、覆盖0.50、CodeGuard S4 且归因正确；GPL原文的版本/分支逻辑被成段复现,艾倏然,2026-10-25
+a57913f7c63c9ad5,A,复核：逐字43 token，超出模型冻结标准API调用范围，构成实质复现,艾倏然,2026-10-25
