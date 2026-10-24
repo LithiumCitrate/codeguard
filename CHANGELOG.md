@@ -17,6 +17,12 @@ abides by semantic versioning.
   Verified at 390 / 768 / 1024 / 1440 px in light and dark themes, including
   demo copy and clean scans, licence reasoning, AI setup dialog, and the 130
   offline tests.
+- **Semantic palette beyond ink and yellow**: cyan for information and AI,
+  mint for pass and corpus, magenta for high-risk and export, and red for
+  blocking; applied to nav indices, the reticle readout, fact values,
+  capability cards, panel classification accents, workflow steps, dial ticks
+  and labels, licence/about indexes, and a four-colour footer band.
+  Dark-theme variants are tuned separately for contrast.
 
 ## [0.5.1] - 2026-10-24
 

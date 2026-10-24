@@ -271,7 +271,7 @@
         <div class="panel-head">
           <h2><span class="eyebrow">01 / INPUT BUFFER</span>待审查代码</h2>
           <div class="head-actions">
-            <button id="interpret" class="btn small" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
+            <button id="interpret" class="btn small cyan" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
             <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
             <label class="btn small file" title="上传整个文件夹，建立目录树；默认分析整个文件夹的风险">导入文件夹<input id="folder" type="file" webkitdirectory multiple></label>
           </div>
@@ -313,7 +313,7 @@
         <div class="panel-head">
           <h2><span class="eyebrow">02 / VERDICT</span>审查结果</h2>
           <div class="head-actions">
-            <button id="assistSummary" class="btn small" type="button" disabled title="生成/刷新本次审查的 AI 执行摘要">AI 摘要</button>
+            <button id="assistSummary" class="btn small cyan" type="button" disabled title="生成/刷新本次审查的 AI 执行摘要">AI 摘要</button>
             <span id="resultBadge" class="state">等待输入</span>
           </div>
         </div>
@@ -363,7 +363,7 @@
         </div>
         <div class="btn-row">
           <button id="reason" class="btn go" type="button">分析义务与冲突<small>RUN RULES</small></button>
-          <button id="licenceExplain" class="btn" type="button" disabled>AI 通俗解释</button>
+          <button id="licenceExplain" class="btn cyan" type="button" disabled>AI 通俗解释</button>
         </div>
         <div id="licenseResult" class="licence-result" aria-live="polite"></div>
       </section>
@@ -448,7 +448,7 @@
         <label class="field" for="aiModel"><span>模型 / MODEL</span>
           <select id="aiModel" disabled><option value="">先拉取模型列表</option></select></label>
         <div class="ai-actions">
-          <button id="aiFetch" class="btn small" type="button">拉取模型列表</button>
+          <button id="aiFetch" class="btn small cyan" type="button">拉取模型列表</button>
           <button id="aiSave" class="btn go small" type="button" disabled>保存并启用</button>
         </div>
       </div>
