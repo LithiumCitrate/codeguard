@@ -1,17 +1,5 @@
 # CodeGuard · AI 生成代码的开源许可证污染溯源与合规门禁
 
-**2026-10-24 v0.5.1：工作台前端重构为明日方舟式平面控制台（黑 / 白 / 信号黄 + 青/薄荷/品红语义辅助色、切角、工业编号与战术读数盘），功能与 API 不变；v0.4.0 起支持可选大模型增强（首次运行配置 Base URL/API Key、自动拉取模型列表、AI 文件解读、审查摘要与追问、许可通俗解释）。**
-解压应用包后双击 `CodeGuard.exe`；源码运行可双击 `启动工作台.cmd` 或执行 `python launch.py`。
-本地网页工作台支持真实扫描、文件导入、命中代码对照、许可证推演和报告下载，见 [docs/WORKBENCH.md](docs/WORKBENCH.md)。
-新增 `codeguard eval` 外部评测命令：HumanEval 164 个独立实现中 **0 个阻断级误报**（95% 单侧上限 1.81%），
-方法与边界见 [docs/EVALUATION.md](docs/EVALUATION.md)；SARIF 2.1.0 与 GitHub Code Scanning 接入见
-[docs/INTEGRATIONS.md](docs/INTEGRATIONS.md)。
-本工具发现的是相似来源候选，不能证明大模型训练来源或自动裁定侵权。变异基准与真实 AI 生成代码不是同一种评测。
-下文历史测量的耗时以实际机器为准。v0.5.0 扩语料后的留出指标为 **AUC 0.892 / F1 0.839**
-（20 包时代的 0.9829 / 0.9756 仅作历史对照，回落原因与复测记录见 [docs/BENCHMARK.md](docs/BENCHMARK.md)）。
-本次新增的外部评测、真实仓库扫描、SARIF、网页、后端修复、打包与材料由 Codex 辅助开发，
-已由团队逐模块审核、复现并如实披露；AI 使用边界见 §6。
-
 > 大模型会把训练语料里的开源代码"背"出来。CodeGuard 负责回答三个问题：**这段代码来自哪个项目、哪个许可证、它能不能进入我们的产品**。
 >
 > 纯标准库实现，零第三方依赖，不需要 GPU、不需要 API Key，一条命令复现全部实验数据。
@@ -35,7 +23,7 @@ pip install .                      # 运行期零第三方依赖（构建 wheel 
 codeguard corpus                   # 下载许可证多样的真实开源包作为知识底座
                                    # 版本按 src/codeguard/data/corpus_pins.json 锁定，保证语料可复现
 PYTHONPATH=src python scripts/expand_corpus_github.py
-                                   # v0.5.0 可选：再浅克隆 13 个 GitHub 仓库（C/Go/JS/Rust，
+                                   # 可选：再浅克隆 13 个 GitHub 仓库（C/Go/JS/Rust，
                                    # GPL-2.0/AGPL-3.0/LGPL-3.0/BSD/Apache/MIT/MPL）扩充到 1717 文件
 codeguard index                    # 构建指纹索引（只存哈希与行号定位，不存源码）
 codeguard benchmark --files 24     # 复现变异基准 + 消融实验，并训练判定模型
@@ -78,7 +66,7 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 ## 4. 实测效果（`codeguard benchmark --files 24`）
 
-**v0.5.0 口径**：语料由 20 个 PyPI 包（585 文件）扩充为 **32 个来源 / 1717 个文件 / 138928 片段 / 11 种 SPDX**
+**当前口径**：语料由 20 个 PyPI 包（585 文件）扩充为 **32 个来源 / 1717 个文件 / 138928 片段 / 11 种 SPDX**
 （新增 13 个浅克隆的 GitHub 仓库：fastapi、django、git、nginx、minio、jquery 等，覆盖 C/Go/JS/Rust；
 复现见 `scripts/expand_corpus_github.py`）。语料：24 个真实开源文件 / 18 个包 / 9 种 SPDX；192 个变异用例 + 9 个全新实现负例。
 
@@ -165,7 +153,9 @@ paramiko 小文件片段、pandas 的 re-export 名单、localstack 的惯用 mi
 
 ## 6. AI 使用声明
 
-系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式配置大模型（命令行用环境变量 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL`，工作台在首次运行的设置对话框里保存到本机 `.codeguard/llm_config.json`，密钥不返回浏览器、不写入任何导出物）时才会调用外部大模型，调用失败自动回退到离线模板。v0.4.0 起工作台的大模型还可用于文件解读、审查执行摘要、基于证据摘要的追问与许可证通俗解释——每次调用均为用户主动触发并标注模型名。任何模式下，**风险等级与合规结论都不由大模型决定**，AI 只做证据的"翻译官"。该声明同时写入每份报告的"AI 使用声明"区块。
+系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式配置大模型（命令行用环境变量 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL`，工作台在首次运行的设置对话框里保存到本机 `.codeguard/llm_config.json`，密钥不返回浏览器、不写入任何导出物）时才会调用外部大模型，调用失败自动回退到离线模板。工作台的大模型还可用于文件解读、审查执行摘要、基于证据摘要的追问与许可证通俗解释——每次调用均为用户主动触发并标注模型名。任何模式下，**风险等级与合规结论都不由大模型决定**，AI 只做证据的"翻译官"。该声明同时写入每份报告的"AI 使用声明"区块。
+
+本仓库部分代码与文档在开发过程中使用了 AI 编码助手，由团队成员逐模块审核、复现后合入；参与环节与审核记录见技术报告第四节。
 
 ## 7. 目录结构
 
@@ -216,4 +206,4 @@ sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 
 
 ## 9. 免责
 
-CodeGuard 提供的是**工程性风险提示，不构成法律意见**。许可证判定基于 SPDX 标识与义务模型的保守推理；无法解析的许可证一律标记为 `unknown` 而非默认放行。
+CodeGuard 提供的是**工程性风险提示，不构成法律意见**。它输出的是相似来源候选，不能证明某个模型的训练来源，也不能自动裁定侵权。许可证判定基于 SPDX 标识与义务模型的保守推理；无法解析的许可证一律标记为 `unknown` 而非默认放行。
