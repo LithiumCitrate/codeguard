@@ -402,6 +402,93 @@ def write_outputs(scan, index, out_dir: str, explanations: dict | None = None,
     return written
 
 
+def merge_sarif(docs: list) -> dict:
+    """Fold per-file SARIF documents into a single run.
+
+    ``scan`` writes one report per source file, but GitHub Code Scanning rejects
+    several runs sharing one category, so the directory has to be collapsed
+    before upload.  Rule tables are merged by id and every ``ruleIndex`` is
+    remapped, which keeps the result correct even if an input came from a
+    different rule set; conflicting definitions are refused rather than guessed
+    at.
+    """
+    if not docs:
+        raise ValueError("没有可合并的 SARIF 文档")
+    rules, order = {}, []
+    results, seen = [], set()
+    targets = []
+    shared = {}
+    base_run = None
+    base_schema = None
+    for doc in docs:
+        if doc.get("version") != "2.1.0":
+            raise ValueError("只支持 SARIF 2.1.0，实际为 %r" % doc.get("version"))
+        runs = doc.get("runs") or []
+        if len(runs) != 1:
+            raise ValueError("每个输入文档必须只含一个 run，实际 %d 个" % len(runs))
+        run = runs[0]
+        if base_run is None:
+            base_run, base_schema = run, doc.get("$schema")
+        driver = (run.get("tool") or {}).get("driver") or {}
+        for rule in driver.get("rules") or []:
+            rid = rule.get("id")
+            if not rid:
+                raise ValueError("规则缺少 id")
+            if rid in rules and rules[rid] != rule:
+                raise ValueError("规则 %s 在输入文档之间定义不一致" % rid)
+            if rid not in rules:
+                rules[rid] = rule
+                order.append(rid)
+        props = run.get("properties") or {}
+        if props.get("target"):
+            targets.append(props["target"])
+        for key in ("targetLicense", "usage", "indexFingerprint", "disclaimer"):
+            if key in props and shared.setdefault(key, props[key]) != props[key]:
+                raise ValueError("字段 %s 在输入文档之间不一致" % key)
+        source_ids = [r.get("id") for r in driver.get("rules") or []]
+        for result in run.get("results") or []:
+            result = json.loads(json.dumps(result, ensure_ascii=False))
+            rid = result.get("ruleId")
+            if rid is None and result.get("ruleIndex") is not None:
+                index = result["ruleIndex"]
+                if index < len(source_ids):
+                    rid = source_ids[index]
+            if rid in rules:
+                result["ruleId"] = rid
+                result["ruleIndex"] = order.index(rid)
+            key = json.dumps([rid, result.get("locations"),
+                              result.get("partialFingerprints")], sort_keys=True,
+                             ensure_ascii=False)
+            if key in seen:
+                continue
+            seen.add(key)
+            results.append(result)
+
+    driver = json.loads(json.dumps((base_run.get("tool") or {}).get("driver") or {},
+                                   ensure_ascii=False))
+    driver["rules"] = [rules[rid] for rid in order]
+    properties = json.loads(json.dumps(base_run.get("properties") or {}, ensure_ascii=False))
+    properties.pop("target", None)
+    properties["scannedTargets"] = sorted(set(targets))
+    properties["mergedDocuments"] = len(docs)
+    results.sort(key=lambda r: (
+        ((r.get("locations") or [{}])[0].get("physicalLocation") or {})
+        .get("artifactLocation", {}).get("uri", ""),
+        ((r.get("locations") or [{}])[0].get("physicalLocation") or {})
+        .get("region", {}).get("startLine", 0),
+        r.get("ruleId") or ""))
+    return {
+        "$schema": base_schema or "https://json.schemastore.org/sarif-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [{
+            "tool": {"driver": driver},
+            "columnKind": base_run.get("columnKind", "utf16CodeUnits"),
+            "results": results,
+            "properties": properties,
+        }],
+    }
+
+
 def _dump(path: str, payload: dict):
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(payload, fh, ensure_ascii=False, indent=1)

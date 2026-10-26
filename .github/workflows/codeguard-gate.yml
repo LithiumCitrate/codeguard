@@ -40,11 +40,23 @@ jobs:
         with:
           name: codeguard-reports
           path: .codeguard/reports/
-      - name: Upload SARIF to GitHub Code Scanning
+      # `scan` writes one SARIF per source file, but Code Scanning rejects several
+      # runs sharing one category, so the directory is folded into a single run.
+      - name: Merge per-file SARIF into a single run
         if: always() && github.event.repository.private == false
+        run: |
+          if ls .codeguard/reports/scan/*.sarif >/dev/null 2>&1; then
+            python scripts/merge_sarif.py .codeguard/reports/scan \
+              --out .codeguard/reports/codeguard-self-scan.sarif
+          else
+            echo "the scan step produced no SARIF; skipping the Code Scanning upload"
+            echo "CG_SARIF_MERGED=0" >> "$GITHUB_ENV"
+          fi
+      - name: Upload SARIF to GitHub Code Scanning
+        if: always() && github.event.repository.private == false && env.CG_SARIF_MERGED != '0'
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: .codeguard/reports/scan
+          sarif_file: .codeguard/reports/codeguard-self-scan.sarif
           category: codeguard-self-scan
 
   license-gate:
