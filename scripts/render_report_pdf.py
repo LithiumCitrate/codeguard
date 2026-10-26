@@ -210,7 +210,7 @@ def main() -> int:
     doc = SimpleDocTemplate(str(args.out), pagesize=A4,
                             leftMargin=18 * mm, rightMargin=18 * mm,
                             topMargin=16 * mm, bottomMargin=19 * mm,
-                            title="CodeGuard：许可证污染溯源门禁", author="千里IT队")
+                            title="CodeGuard：许可证污染溯源门禁", author="析构万理的发条公主")
     doc.build(story, onFirstPage=footer_factory(args.date), onLaterPages=footer_factory(args.date))
 
     import fitz  # noqa: WPS433 - only used for the build-time self check
