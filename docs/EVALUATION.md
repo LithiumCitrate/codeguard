@@ -2,7 +2,8 @@
 
 变异基准回答的是“已知来源的代码被改写后还能不能抓到”。它回答不了另一个同样重要的问题：
 **一段没有从语料库复制而来的代码，会不会被误判为污染？** 本页说明后者的评测方法、
-结果和边界。原始数据见 `submission/evidence/humaneval-20261020.json` 与同名 Markdown。
+结果和边界。原始数据见 `submission/evidence/humaneval-20261024.json` 与同名 Markdown
+（2026-10-20 首轮 20 包语料口径保留作历史对照）。
 
 ## 1. 为什么要单独测干净样本
 
@@ -54,7 +55,7 @@ codeguard eval --manifest my-samples.jsonl --out .codeguard/eval
 - `copied`：指定 `source_package` / `source_path` 时统计归因率、阻断率与 top-1 来源正确率；
 - 未指定来源的 `copied` 样本只统计阻断。
 
-## 4. 结果（2026-10-20）
+## 4. 结果（2026-10-24）
 
 设置：目标许可证按最坏的 `LicenseRef-Proprietary` 假设，使用方式 `distribution`，
 默认判定阈值与佐证规则。
@@ -64,15 +65,15 @@ codeguard eval --manifest my-samples.jsonl --out .codeguard/eval
 | 干净样本 | 164 |
 | 阻断级误报（S3/S4） | **0 / 164（0.00%）** |
 | 误阻断率 95% 单侧 Clopper-Pearson 上限 | **1.81%** |
-| 出现任意来源候选 | 1 / 164 |
+| 出现任意来源候选 | 2 / 164 |
 | 出现 S2 及以上 | 0 / 164 |
-| 片段总数 / 命中片段 | 320 / 3 |
-| 单样本耗时 p50 / p95 / max | 约 20 / 170 / 340 ms |
+| 片段总数 / 命中片段 | 320 / 4 |
+| 单样本耗时 p50 / p95 / max | 约 37 / 411 / 1164 ms |
 
-唯一出现候选的是 `HumanEval/81`（GPA→字母等级的长 `if/elif` 链），命中
-`snowballstemmer` 的两个词干处理文件。该样本与来源在“连续条件分支 + 字符串常量”
-这一通用形状上相似，但语义无关；风险被定为 S1/S0（来源 BSD-3-Clause，进入
-proprietary 目标仍属兼容），没有阻断。这个案例说明：
+两个候选都未阻断：`HumanEval/45` 命中 `django`（BSD-3-Clause，S0，conf 0.734）；
+`HumanEval/81`（GPA→字母等级的长 `if/elif` 链）命中 `snowballstemmer` 的词干处理文件
+（BSD-3-Clause，S1，conf 0.9823）。后者与来源在“连续条件分支 + 字符串常量”这一通用形状上
+相似，但语义无关；来源 BSD-3-Clause 进入 proprietary 目标仍属兼容，没有阻断。这个案例说明：
 **相似 ≠ 复制，更 ≠ 许可冲突；门禁把“观察”和“阻断”分开是必要的。**
 
 ## 5. 统计解释与局限
@@ -82,9 +83,10 @@ proprietary 目标仍属兼容），没有阻断。这个案例说明：
 - 样本是 HumanEval 的独立实现，主要覆盖短函数、算法题和 Python；不代表真实仓库、
   长文件、JavaScript/TypeScript、生成式模型的完整输出分布。
 - 目标许可证固定为 proprietary 是最坏假设；换成其他目标许可证，风险等级会变化。
-- 语料只有 20 个包 / 585 个索引文件；未收录的来源无法被归因。
-- 本评测不含真实模型泄漏正例；正例方向仍由受控变异基准覆盖。下一阶段应补充真实模型
-  输出、人工双标注和跨项目留出。
+- 语料为 32 个来源 / 1717 个索引文件；未收录的来源无法被归因。
+- 本评测（HumanEval）只覆盖干净负例方向；真实模型泄漏正例已由 LiCoEval（ICSE 2025）47 条
+  GPT-4o 真实输出补齐（any-hit 47/47、归因 36/47、top-1 21/47、copyleft 子集阻断 6/6），
+  并经双人独立标注与第三人复核，见 `submission/evidence/model-leak-20261021-标注汇总.md`。
 
 ## 6. 真实 GitHub 项目扫描（2026-10-24，25 高星项目）
 
@@ -97,10 +99,10 @@ openai-python、freqtrade、airflow、keras、pandas、numpy、aiohttp），加�
 | 指标 | 结果 |
 |---|---|
 | 采样/成功扫描 | 1119 / 1119 个生产文件 |
-| 候选发现 | 2098（S0 1590 / S1 59 / S2 417 / S3 0 / S4 0，修复后复测） |
+| 候选发现 | 2098（S0 1616 / S1 59 / S2 423 / S3 0 / S4 0，修复后复测） |
 | 阻断级发现 | **0**（修复后复测） |
 | 真实 vendoring 命中 | **56**（pip-vendor 30、setuptools-vendor 26） |
-| 单文件耗时 p50 / p95 | 约 40 / 1400 ms |
+| 单文件耗时 p50 / p95 | 约 240 / 1671 ms |
 
 方法：每个仓库按相对路径的 SHA-256 排序取前 N 个 900 B–90 KB 的 `.py` 文件，排除
 tests/docs/examples；目标许可证取仓库 LICENSE，使用方式 `distribution`；vendor 目录只在

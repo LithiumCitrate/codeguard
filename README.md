@@ -83,18 +83,23 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 | 多层 + IDF（规则打分） | 97% | 0.02 | 0/9 |
 | **多层 + IDF + 判定模型（本产品）** | **97%**（8 类变异中 7 类 100%，仅截取部分定义 79%） | 0.02 | **0/9** |
 
-判定模型（12 维特征逻辑回归，按来源文件分组留出 11 个文件）：留出集 **AUC 0.892 / precision 1.000 / recall 0.722 / F1 0.839**。
+判定模型（12 维特征逻辑回归，按来源文件分组留出 11 个文件）：留出集 **AUC 0.870 / precision 1.000 / recall 0.722 / F1 0.839**，
+判定阈值与生产门禁对齐为 **0.55**（Youden 最优 0.556，二者一致）。为杜绝候选侧泄漏，训练时剔除引用了留出来源文件的
+候选对（本次剔除 15 行）；5 个随机种子分组交叉验证 **AUC 0.911±0.048 / F1 0.869±0.046**，200 次百分位 bootstrap
+95% 置信区间 **AUC [0.773, 0.957] / F1 [0.717, 0.941]**，期望校准误差 **ECE 0.074**。
 语料扩大 3.8 倍后跨包样板候选对显著变难，留出指标较 20 包时代（AUC 0.983 / F1 0.976）如实回落；
 检索与验证层不受影响——文件级检出 97%、误匹配 0.02、负例 0/9，且门禁决策由佐证规则兜底而非模型置信度单独决定。
 完整表格（含逐变异衰减曲线与特征权重）见 [docs/BENCHMARK.md](docs/BENCHMARK.md)。
 
 门禁决策质量（`--fp-study 200`）：检出的变异用例中 **100%** 满足阻断佐证条件（阻断召回 = 检出率），而在 200 个互不相关的真实语料文件上跨包抽查的 **误阻断率 0%**（同批数据在没有佐证要求时为 3.5%）。
 
+**全语料生产口径复测（`--full-corpus`）**：上表默认索引只含 24 个来源文件，检索几乎没有干扰项，可能高估召回。改用全语料生产索引（**1906 文档 / 127929 片段**）重跑同一批变异，多层检出仍为 **97.4%**（+IDF 规则打分 96.9%）——97% 不是小索引刷出来的。代价是跨包噪声真实暴露：误匹配来源/例从 0.02 升到 **0.18**（候选对 20159→27238），单层 L4 从 97% 回落到 94%、L1 从 86% 到 85%。生产噪声下误匹配更高，门禁仍由佐证规则兜底；判定模型层在仅来源留出集评估（见上），全语料口径用规则打分。原始结果见 `submission/evidence/benchmark-fullcorpus-20261115.*`。
+
 外部干净负例在扩语料后复测：HumanEval 164 个独立实现 **0/164 阻断（95% 单侧上限 1.81%）**，任意命中仅 2，扫描 p50 37.4 ms。
 
 工程指标：1717 文档 / 138928 片段索引 34.4 MB（约 243 B/片段），buckets 2.94 M；50 k 字符真实文件扫描秒级。
 
-### 4.1 外部干净负例（2026-10-20）
+### 4.1 外部干净负例（2026-10-24）
 
 变异基准只覆盖“已知来源被改写”。为测误阻断，项目用 **HumanEval 164 个独立实现**作为
 干净负例，走产品原路径（目标许可证按最坏的 `LicenseRef-Proprietary` 假设）：
@@ -103,17 +108,20 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 |---|---|
 | 阻断级误报（S3/S4） | **0 / 164（0.00%）** |
 | 误阻断率 95% 单侧 Clopper-Pearson 上限 | **1.81%** |
-| 出现任意来源候选 | 1 / 164（S1/S0，未阻断） |
-| 片段总数 / 命中片段 | 320 / 3 |
-| 单样本耗时 p50 / p95 | 约 20 / 170 ms |
+| 出现任意来源候选 | 2 / 164（S0/S1，未阻断） |
+| 片段总数 / 命中片段 | 320 / 4 |
+| 单样本耗时 p50 / p95 | 约 37 / 411 ms |
 
-唯一候选是 HumanEval/81 的长 `if/elif` 链命中 `snowballstemmer` 的词干处理文件：
-形状相似但语义无关，风险 S1，未阻断。**0/164 只能写成“0 观测 + 上限”，不能写成“零误报”。**
+两个候选都未阻断：HumanEval/45 命中 `django`（BSD-3-Clause，S0，conf 0.734），
+HumanEval/81 的长 `if/elif` 链命中 `snowballstemmer` 的词干处理文件（BSD-3-Clause，S1，conf 0.9823）——
+形状相似但语义无关。**0/164 只能写成“0 观测 + 上限”，不能写成“零误报”。**
 HumanEval 是独立编写的算法实现，不是真实模型输出；真实模型泄漏正例已由 LiCoEval（ICSE 2025）
-47 条 GPT-4o 真实输出补齐：47/47 命中、copyleft 子集阻断 6/6，并经双人独立标注与队长复核
-（一致 44/47，最终确认 A 47/47），见 `submission/evidence/model-leak-20261021-标注汇总.md`。
+47 条 GPT-4o 真实输出补齐：**47/47 命中来源候选（any-hit）**，其中**归因到正确来源 36/47（76.6%）**、
+**top-1 定位 21/47（44.7%）**、阻断级归因 6/47（恰为 6 条 copyleft 子集，6/6）；双人独立标注一致 44/47、
+复核后确认实质复现 A 47/47，见 `submission/evidence/model-leak-20261021-标注汇总.md`。
+"命中"指出现来源候选，不等于归因正确，两个口径分开报告。
 方法与复现见 [docs/EVALUATION.md](docs/EVALUATION.md)，原始结果见
-`submission/evidence/humaneval-20261020.json`。
+`submission/evidence/humaneval-20261024.json`。
 
 ### 4.2 真实高星项目扫描（2026-10-24，25 项目 / 1119 文件）
 
@@ -128,7 +136,7 @@ datasets、openai-python、freqtrade、airflow、keras、pandas、numpy、aiohtt
 | 发现（S0–S2） | 2098（全部转人工复核提示） |
 | 阻断级发现（S3/S4） | **0**（修复后复测） |
 | 真实 vendoring 命中 | **56**（pip-vendor 30 + setuptools-vendor 26，含 1191 行 urllib3 匹配 conf 0.9954 正确评级 S1） |
-| 单文件耗时 p50 / p95 | 约 40 / 1400 ms |
+| 单文件耗时 p50 / p95 | 约 240 / 1671 ms |
 
 **这轮扫描发现并修复了产品的一个真实缺陷**：首次运行产生 **11 条假阻断**（pip/_vendor 的
 import 名单、sqlmap 的 argparse 链、mitmproxy 的 0x 常量表、ansible/localstack/freqtrade 命中的
@@ -183,7 +191,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    false_block_control.py（误阻断对照组实验，佐证规则的证据）
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
-tests/             130 个用例，全部离线跑在 fixture 上
+tests/             148 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -193,7 +201,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 130 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 148 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

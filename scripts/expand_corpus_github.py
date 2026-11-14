@@ -40,6 +40,7 @@ WORKSPACE = ROOT / ".codeguard"
 CLONE_DIR = WORKSPACE / "github-clone"
 CORPUS_ROOT = WORKSPACE / "corpus"
 MANIFEST = CORPUS_ROOT / "corpus.json"
+GITHUB_PINS = ROOT / "src" / "codeguard" / "data" / "github_pins.json"
 
 MAX_FILE_BYTES = 180_000
 MIN_FILE_BYTES = 120
@@ -146,7 +147,23 @@ def collect_files(repo_dir: Path) -> list:
     return picked[:MAX_FILES_PER_REPO]
 
 
-def expand_repo(name: str, url: str, expected: str | None, note: str, log=print) -> list:
+def load_github_pins() -> dict:
+    """Commit locks recorded by previous runs (repo -> {url, commit, license})."""
+    if GITHUB_PINS.exists():
+        return json.loads(GITHUB_PINS.read_text(encoding="utf-8"))
+    return {}
+
+
+def save_github_pins(pins: dict) -> None:
+    GITHUB_PINS.parent.mkdir(parents=True, exist_ok=True)
+    tmp = GITHUB_PINS.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(pins, ensure_ascii=False, indent=1, sort_keys=True),
+                   encoding="utf-8")
+    os.replace(tmp, GITHUB_PINS)
+
+
+def expand_repo(name: str, url: str, expected: str | None, note: str,
+                pin: dict | None = None, log=print) -> list:
     repo_dir = CLONE_DIR / name
     if (repo_dir / ".git").exists():
         log("  复用已有克隆：%s" % repo_dir)
@@ -154,7 +171,20 @@ def expand_repo(name: str, url: str, expected: str | None, note: str, log=print)
         log("  浅克隆 %s …" % url)
         shutil.rmtree(repo_dir, ignore_errors=True)
         run_git(["clone", "--depth", "1", "--quiet", url, str(repo_dir)])
+    # Lock to the recorded commit so re-runs reproduce the published corpus
+    # instead of drifting with upstream HEAD. First run (no pin) records HEAD.
+    locked = (pin or {}).get("commit")
+    if locked:
+        try:
+            run_git(["fetch", "--depth", "1", "--quiet", "origin", locked],
+                    cwd=str(repo_dir))
+            run_git(["checkout", "--quiet", locked], cwd=str(repo_dir))
+        except Exception as exc:
+            log("  警告：无法锁定到提交 %s（%s），按当前 HEAD 收录" % (locked[:10], exc))
+            locked = None
     sha = run_git(["rev-parse", "HEAD"], cwd=str(repo_dir))
+    if locked and sha != locked:
+        log("  警告：HEAD %s 与锁定提交 %s 不一致" % (sha[:10], locked[:10]))
     short = sha[:10]
 
     spdx, lic_source = detect_license(repo_dir)
@@ -213,17 +243,23 @@ def main():
                           if not (e["package"] in names and e["sdist_sha256"].startswith("git:"))]
     have = {(e["package"], e["version"], e["path"]) for e in payload["entries"]}
     added = []
+    pins = load_github_pins()
     for name, url, expected, note in repos:
         print("== %s" % name, flush=True)
         try:
-            for entry in expand_repo(name, url, expected, note):
+            entries = expand_repo(name, url, expected, note, pin=pins.get(name))
+            for entry in entries:
                 key = (entry.package, entry.version, entry.path)
                 if key not in have:
                     payload["entries"].append(entry.__dict__)
                     have.add(key)
                     added.append(entry)
+            if entries:
+                pins[name] = {"url": url, "commit": entries[0].sdist_sha256[4:],
+                              "license": entries[0].license_spdx}
         except Exception as exc:  # 单仓失败不拖垮整体
             print("FAIL %s: %s: %s" % (name, type(exc).__name__, exc), flush=True)
+    save_github_pins(pins)
 
     payload["github_repos"] = {n: {"url": u, "expected": e} for n, u, e, _ in REPOS}
     payload["github_note"] = ("浅克隆的 GitHub 仓库语料：许可证按仓库根目录许可文件检出，"

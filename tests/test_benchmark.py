@@ -11,8 +11,8 @@ import os
 import shutil
 import unittest
 
-from codeguard.benchmark import (Case, Trace, run_benchmark,
-                                 threshold_sensitivity)
+from codeguard.benchmark import (Case, Trace, build_training_rows, run_benchmark,
+                                 threshold_sensitivity, train_judge)
 from codeguard.corpus import CorpusEntry, write_manifest
 from codeguard.normalize import tokenize_source
 from codeguard.score import FEATURE_NAMES
@@ -107,6 +107,37 @@ class BenchmarkRunTests(unittest.TestCase):
             md = fh.read()
         self.assertIn("阈值敏感性", md)
         self.assertIn("检出率与消融", md)
+
+
+class JudgeRigorTests(unittest.TestCase):
+    def _synthetic(self):
+        cases, traces = [], {}
+        for d in range(4):
+            c = case(d, d, mutation="identity", spans=1)
+            c.origin_path = "pkg/f%d.py" % d
+            cases.append(c)
+            strong = feat(wc=0.9, j_role=0.9, max_sim=0.9, verbatim_run=40)
+            weak = feat(wc=0.1, j_role=0.1, max_sim=0.1)
+            traces[d] = [Trace(0, 0, d, strong, strong, {"role": 30}),
+                         Trace(0, 1, (d + 1) % 4, weak, weak, {"role": 1})]
+        return cases, traces
+
+    def test_training_rows_carry_candidate_docs(self):
+        cases, traces = self._synthetic()
+        rows, labels, groups, cand_docs = build_training_rows(cases, traces)
+        self.assertEqual(len(rows), len(cand_docs))
+        self.assertEqual(len(rows), 8)
+        self.assertEqual(sum(labels), 4)
+
+    def test_judge_reports_leakage_guard_cv_ci_and_production_threshold(self):
+        cases, traces = self._synthetic()
+        j = train_judge(cases, traces, seed=7, n_splits=2, n_boot=10)
+        for key in ("leakage_guard", "cv_summary", "bootstrap_ci", "calibration",
+                    "youden_threshold", "test_at_youden"):
+            self.assertIn(key, j)
+        self.assertEqual(j["threshold"], 0.55)
+        self.assertGreaterEqual(j["leakage_guard"]["dropped_train_rows"], 0)
+        self.assertEqual(j["cv_summary"]["n_splits"], 2)
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ import sys
 import time
 
 from . import __version__
-from .adjudicate import Scanner, iter_sources
+from .adjudicate import Scanner, iter_sources, language_for
 from .corpus import build_package, load_pins, read_manifest, write_manifest
 from .evaluate import load_manifest, run_eval, write_eval
 from .index import DocRecord, FingerprintIndex, Params
@@ -225,7 +225,8 @@ def cmd_scan(args):
         text = open(path, encoding="utf-8", errors="replace").read()
         scan = scanner.scan_text(strip_diff_markers(text), target=path.replace(os.sep, "/"),
                                  target_license=args.license,
-                                 package_hint=os.path.basename(path).split(".")[0])
+                                 package_hint=os.path.basename(path).split(".")[0],
+                                 language=language_for(path))
         if caveat:
             scan.notes.append(caveat)
         explanations = {f.key: provider.describe(f) for f in scan.findings}
@@ -382,7 +383,8 @@ def cmd_benchmark(args):
     run_benchmark(root, out=args.out, train=not args.no_train,
                   per_package=args.per_package, seed=args.seed,
                   mutations=args.mutations, files=args.files, chars=args.chars,
-                  fp_sample=args.fp_study, min_chars=args.min_chars)
+                  fp_sample=args.fp_study, min_chars=args.min_chars,
+                  full_corpus=args.full_corpus)
 
 
 def cmd_eval(args):
@@ -538,6 +540,8 @@ def build_parser():
                    help="来源文件的最小字节数（小样本自检时可降低）")
     p.add_argument("--fp-study", type=int, default=0,
                    help="额外用生产索引抽查 N 个语料文件，统计跨包误报")
+    p.add_argument("--full-corpus", action="store_true",
+                   help="用全语料建检索索引（生产口径），而非仅来源文件；召回更真实但更慢")
     p.add_argument("--no-train", action="store_true")
     p.set_defaults(func=cmd_benchmark)
 

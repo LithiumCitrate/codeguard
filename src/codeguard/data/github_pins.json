@@ -1,0 +1,67 @@
+{
+ "cobra": {
+  "commit": "adbc8813901bba65827259daa8e22ff94ec1f30e",
+  "license": "Apache-2.0",
+  "url": "https://github.com/spf13/cobra"
+ },
+ "django": {
+  "commit": "1b40abab06d248ee409fa8b7a8dfb6312de6ca08",
+  "license": "BSD-3-Clause",
+  "url": "https://github.com/django/django"
+ },
+ "fastapi": {
+  "commit": "69ddc2badf9da1123bba4d360225ae6b085985f6",
+  "license": "MIT",
+  "url": "https://github.com/tiangolo/fastapi"
+ },
+ "flask": {
+  "commit": "d086db856be187255b8ec61ef409357393020f32",
+  "license": "BSD-3-Clause",
+  "url": "https://github.com/pallets/flask"
+ },
+ "git": {
+  "commit": "7e34d8174dcda3435d1404c9a30bef46afe6c13e",
+  "license": "GPL-2.0-only",
+  "url": "https://github.com/git/git"
+ },
+ "html5ever": {
+  "commit": "7760920edff08e6dfd4b62affee39d8084e9dc45",
+  "license": "Apache-2.0",
+  "url": "https://github.com/servo/html5ever"
+ },
+ "httpx": {
+  "commit": "b5addb64f0161ff6bfe94c124ef76f6a1fba5254",
+  "license": "BSD-3-Clause",
+  "url": "https://github.com/encode/httpx"
+ },
+ "jquery": {
+  "commit": "c2f27864e4ffc2d1409c289fcb9a42b6165dfeaf",
+  "license": "MIT",
+  "url": "https://github.com/jquery/jquery"
+ },
+ "minio": {
+  "commit": "7aac2a2c5b7c882e68c1ce017d8256be2feea27f",
+  "license": "AGPL-3.0-only",
+  "url": "https://github.com/minio/minio"
+ },
+ "nginx": {
+  "commit": "9a7439fd79076de03c408de136ba1772347030c2",
+  "license": "BSD-2-Clause",
+  "url": "https://github.com/nginx/nginx"
+ },
+ "pydantic": {
+  "commit": "37dc34b4f001191b4f3db707cc52bac95baf17f0",
+  "license": "MIT",
+  "url": "https://github.com/pydantic/pydantic"
+ },
+ "radare2": {
+  "commit": "7987c26b937987404dfd72bfc3c7592abd5fd776",
+  "license": "LGPL-3.0-only",
+  "url": "https://github.com/radareorg/radare2"
+ },
+ "requests": {
+  "commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+  "license": "Apache-2.0",
+  "url": "https://github.com/psf/requests"
+ }
+}

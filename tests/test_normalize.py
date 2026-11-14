@@ -94,5 +94,38 @@ class InvarianceTests(unittest.TestCase):
         self.assertTrue(build_spans(src, "python", 48, 24))
 
 
+class MultilingualFallbackTests(unittest.TestCase):
+    """The corpus also carries C/Go/JS/Rust (indexed as ``generic``)."""
+
+    def test_c_style_comments_are_dropped(self):
+        src = ("int add(int a, int b) {\n"
+               "    // line comment must vanish\n"
+               "    /* block comment\n"
+               "       spanning lines */\n"
+               "    return a + b;\n"
+               "}\n")
+        joined = " ".join(t.text for t in tokenize_source(src, language="generic"))
+        self.assertNotIn("vanish", joined)
+        self.assertNotIn("spanning", joined)
+        self.assertIn("return", joined)
+
+    def test_c_preprocessor_is_not_swallowed_as_a_comment(self):
+        src = "#include <stdio.h>\nint main(void) { return 0; }\n"
+        texts = [t.text for t in tokenize_source(src, language="generic")]
+        self.assertIn("#", texts)
+        self.assertIn("include", texts)
+        self.assertIn("stdio", texts)
+
+    def test_python_floor_division_stays_an_operator(self):
+        toks = tokenize_source("x = a // b\n", language="python")
+        self.assertIn("//", [t.text for t in toks])
+
+    def test_block_comment_preserves_line_numbers(self):
+        src = "int a;\n/* one\ntwo\nthree */\nint b;\n"
+        b_tok = [t for t in tokenize_source(src, language="generic")
+                 if t.text == "b"][0]
+        self.assertEqual(b_tok.line, 5)
+
+
 if __name__ == "__main__":
     unittest.main()

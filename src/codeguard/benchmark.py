@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import random
 import time
@@ -41,8 +42,9 @@ from .index import ALL_LAYERS, BAND_PLAN, DocRecord, FingerprintIndex, Params
 from .minhash import band_keys
 from .mutations import MUTATIONS, apply_mutation, describe, parses
 from .normalize import build_spans, tokenize_source
-from .score import (FEATURE_NAMES, LogisticRegression, best_threshold, evaluate,
-                    group_split)
+from .score import (FEATURE_NAMES, LogisticRegression, best_threshold,
+                    bootstrap_ci, confusion, evaluate,
+                    expected_calibration_error, group_split, rank_auc, std)
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 NEGATIVE_DIR = os.path.join(DATA_DIR, "negatives")
@@ -124,18 +126,20 @@ def build_bench_index(corpus_root: str, entries) -> FingerprintIndex:
         text = open(os.path.join(corpus_root, e.path.replace("/", os.sep)),
                     encoding="utf-8", errors="replace").read()
         index.add_document(DocRecord(doc_id, e.package, e.version, e.path,
-                                     e.license_spdx, e.license_source, "python",
-                                     text.count("\n") + 1, len(tokenize_source(text)),
-                                     e.sha256, len(text)), text)
+                                     e.license_spdx, e.license_source, e.language,
+                                     text.count("\n") + 1,
+                                     len(tokenize_source(text, e.language)),
+                                     e.sha256, len(text)), text, language=e.language)
     return index.finalize()
 
 
 # ------------------------------------------------------------------- case build
 
 def make_cases(corpus_root: str, entries, chars: int, seed: int,
-               mutations=MUTATIONS) -> list:
+               mutations=MUTATIONS, doc_ids=None) -> list:
     cases, cid = [], 0
-    for doc_id, e in enumerate(entries):
+    for pos, e in enumerate(entries):
+        doc_id = doc_ids[pos] if doc_ids is not None else pos
         path = os.path.join(corpus_root, e.path.replace("/", os.sep))
         origin = open(path, encoding="utf-8", errors="replace").read()
         if len(origin) > chars:
@@ -319,30 +323,93 @@ def _baseline_row(case, hit, coverage):
 # ------------------------------------------------------------------- model fit
 
 def build_training_rows(cases, traces_all):
-    rows, labels, groups = [], [], []
+    """One row per verified (span, candidate chunk) pair.
+
+    ``cand_docs`` records which corpus document each row's candidate chunk comes
+    from. The hold-out needs it to drop training rows that reference a held-out
+    source file (candidate-side leakage): the held-out files stay in the retrieval
+    index, so without this guard their chunks enter training as negatives and the
+    judge memorises the fingerprints of the very files it is later tested on.
+    """
+    rows, labels, groups, cand_docs = [], [], [], []
     for case in cases:
         groups.append("neg:" + case.origin_path if case.origin_doc < 0
                       else case.origin_path)
         for tr in traces_all[case.cid]:
             rows.append([tr.feats_idf[n] for n in FEATURE_NAMES])
             labels.append(1 if tr.doc == case.origin_doc else 0)
-    return rows, labels, groups
+            cand_docs.append(tr.doc)
+    return rows, labels, groups, cand_docs
 
 
-def train_judge(cases, traces_all, seed: int) -> dict:
-    rows, labels, groups = build_training_rows(cases, traces_all)
-    train, test, held = group_split(rows, labels, groups, frac=0.35,
-                                    seed=seed % 9973)
-    model = LogisticRegression().fit([rows[i] for i in train],
-                                     [labels[i] for i in train])
-    scores = [model.score_row(r) for r in rows]
-    thr = best_threshold([scores[i] for i in train], [labels[i] for i in train])
-    return {"model": model, "threshold": thr, "held_out_files": held,
+def train_judge(cases, traces_all, seed: int, n_splits: int = 5,
+                n_boot: int = 200,
+                prod_threshold: float = DEFAULT_MIN_SPAN_PROB) -> dict:
+    """Grouped hold-out with a candidate-side leakage guard, repeated over seeds.
+
+    The headline metrics are reported at the *production* span threshold (0.55),
+    not at a threshold re-optimised on the hold-out, so the number a reviewer
+    reads is the number the shipped gate actually uses. Youden's optimal threshold
+    is kept alongside for reference. Multi-seed splits + a pair bootstrap give the
+    hold-out estimate an error bar instead of a single over-precise point.
+    """
+    rows, labels, groups, cand_docs = build_training_rows(cases, traces_all)
+    origin_doc_by_path = {c.origin_path: c.origin_doc for c in cases
+                          if c.origin_doc >= 0}
+
+    def fit_split(split_seed):
+        train, test, held = group_split(rows, labels, groups, frac=0.35,
+                                        seed=split_seed % 9973)
+        held_docs = {origin_doc_by_path[g] for g in held
+                     if g in origin_doc_by_path}
+        clean = [i for i in train if cand_docs[i] not in held_docs]
+        model = LogisticRegression().fit([rows[i] for i in clean],
+                                         [labels[i] for i in clean])
+        return model, clean, test, held, held_docs, len(train) - len(clean)
+
+    model, train, test, held, held_docs, dropped = fit_split(seed)
+    train_labels = [labels[i] for i in train]
+    test_labels = [labels[i] for i in test]
+    train_scores = [model.score_row(rows[i]) for i in train]
+    test_scores = [model.score_row(rows[i]) for i in test]
+    youden = best_threshold(train_scores, train_labels)
+
+    cv = []
+    for s in range(n_splits):
+        split_seed = (seed + s * 101) % 9973
+        m_s, _, te_s, held_s, _, drop_s = fit_split(split_seed)
+        te_scores = [m_s.score_row(rows[i]) for i in te_s]
+        te_labels = [labels[i] for i in te_s]
+        cm = confusion(te_scores, te_labels, prod_threshold)
+        cv.append({"seed": split_seed, "held_out_files": len(held_s),
+                   "dropped_train_rows": drop_s,
+                   "test_auc": round(rank_auc(te_scores, te_labels), 4),
+                   "test_f1": cm["f1"], "test_recall": cm["recall"],
+                   "test_precision": cm["precision"]})
+    auc_vals = [r["test_auc"] for r in cv if not math.isnan(r["test_auc"])]
+    f1_vals = [r["test_f1"] for r in cv]
+    cv_summary = {
+        "n_splits": n_splits,
+        "test_auc_mean": round(sum(auc_vals) / len(auc_vals), 4) if auc_vals else None,
+        "test_auc_std": round(std(auc_vals), 4) if auc_vals else None,
+        "test_f1_mean": round(sum(f1_vals) / len(f1_vals), 4) if f1_vals else None,
+        "test_f1_std": round(std(f1_vals), 4) if f1_vals else None}
+
+    return {"model": model, "threshold": prod_threshold,
+            "youden_threshold": youden, "held_out_files": held,
             "pairs": len(rows), "positives": sum(labels),
-            "train": evaluate(model, [rows[i] for i in train],
-                              [labels[i] for i in train], thr),
-            "test": evaluate(model, [rows[i] for i in test],
-                             [labels[i] for i in test], thr),
+            "train": evaluate(model, [rows[i] for i in train], train_labels,
+                              prod_threshold),
+            "test": evaluate(model, [rows[i] for i in test], test_labels,
+                             prod_threshold),
+            "test_at_youden": evaluate(model, [rows[i] for i in test],
+                                       test_labels, youden),
+            "leakage_guard": {"dropped_train_rows": dropped,
+                              "held_out_docs": sorted(held_docs)},
+            "cv": cv, "cv_summary": cv_summary,
+            "bootstrap_ci": bootstrap_ci(test_scores, test_labels, prod_threshold,
+                                         n_boot=n_boot, seed=seed % 9973),
+            "calibration": expected_calibration_error(test_scores, test_labels),
             "weights": model.top_features(8)}
 
 
@@ -377,7 +444,7 @@ def false_positive_study(prod_index, corpus_root: str, entries, sample: int,
         # so the blocking count below is an upper bound on real-world noise
         scan = scanner.scan_text(text, target=e.path,
                                  target_license="LicenseRef-Proprietary",
-                                 package_hint=e.package)
+                                 package_hint=e.package, language=e.language)
         for f in scan.findings:
             by_risk[f.risk] = by_risk.get(f.risk, 0) + 1
             row = {"query": e.path, "query_license": e.license_spdx,
@@ -450,7 +517,7 @@ def run_benchmark(root: str, out: str = "", train: bool = True,
                   per_package: int = 2, seed: int = 20260101, mutations: str = "",
                   files: int = 0, chars: int = 5000,
                   min_span_prob: float = None, fp_sample: int = 0,
-                  min_chars: int = 1500, log=print) -> dict:
+                  min_chars: int = 1500, full_corpus: bool = False, log=print) -> dict:
     corpus_root = os.path.join(root, "corpus")
     manifest = os.path.join(corpus_root, "corpus.json")
     if not os.path.exists(manifest):
@@ -464,13 +531,24 @@ def run_benchmark(root: str, out: str = "", train: bool = True,
     log("基准语料：%d 个来源文件 × %d 类变异 = %d 个用例"
         % (len(origins), len(kinds), len(origins) * len(kinds)))
 
+    # The default index holds only the sampled origins, which makes retrieval
+    # easy. full_corpus indexes the whole corpus instead, so the same mutants
+    # must be found among every other file - the production retrieval setting.
+    if full_corpus:
+        index_entries = [e for e in entries if os.path.exists(
+            os.path.join(corpus_root, e.path.replace("/", os.sep)))]
+    else:
+        index_entries = origins
+    doc_id_by_path = {e.path: i for i, e in enumerate(index_entries)}
     t0 = time.time()
-    index = build_bench_index(corpus_root, origins)
+    index = build_bench_index(corpus_root, index_entries)
     st = index.stats()
-    log("索引：documents=%d chunks=%d 构建 %.1fs"
-        % (st["documents"], st["chunks"], time.time() - t0))
+    log("索引：%s documents=%d chunks=%d 构建 %.1fs"
+        % ("全语料" if full_corpus else "仅来源", st["documents"], st["chunks"],
+           time.time() - t0))
 
-    cases = make_cases(corpus_root, origins, chars, seed, kinds)
+    cases = make_cases(corpus_root, origins, chars, seed, kinds,
+                       doc_ids=[doc_id_by_path[e.path] for e in origins])
     cases += negative_cases(chars, len(origins) * len(kinds) + 1000)
     collected = collect_traces(index, cases, CandidateReader(index))
     traces_all = collected["traces"]
@@ -512,6 +590,8 @@ def run_benchmark(root: str, out: str = "", train: bool = True,
                    "packages": len({e.package for e in origins}),
                    "licenses": sorted({e.license_spdx for e in origins}),
                    "mutations": list(kinds), "chars_cap": chars,
+                   "index_mode": "full_corpus" if full_corpus else "origins_only",
+                   "index_documents": st["documents"],
                    "index_chunks": st["chunks"],
                    "payload_bytes_per_chunk": st["payload_bytes_per_chunk"],
                    "sketch_bytes_per_chunk": st["sketch_bytes_per_chunk"]},
@@ -521,8 +601,14 @@ def run_benchmark(root: str, out: str = "", train: bool = True,
         "judge": None if not judge else {
             "pairs": judge["pairs"], "positives": judge["positives"],
             "threshold": judge["threshold"],
+            "youden_threshold": judge["youden_threshold"],
             "held_out_files": judge["held_out_files"],
             "train": judge["train"], "test": judge["test"],
+            "test_at_youden": judge["test_at_youden"],
+            "leakage_guard": judge["leakage_guard"],
+            "cv": judge["cv"], "cv_summary": judge["cv_summary"],
+            "bootstrap_ci": judge["bootstrap_ci"],
+            "calibration": judge["calibration"],
             "weights": judge["weights"]},
         "results": results,
         "threshold_sensitivity": sensitivity,
@@ -605,8 +691,10 @@ def render_markdown(payload: dict, kinds) -> str:
              "- 语料：%d 个真实开源文件 / %d 个包 / 许可证 %s"
              % (corpus["files"], corpus["packages"], ", ".join(corpus["licenses"])),
              "- 变异：%s（每类 %d 例）" % ("、".join(kinds), corpus["files"]),
-             "- 索引：%d 个片段，每片段 %d 字节指纹载荷 + %d 字节草图"
-             % (corpus["index_chunks"], corpus["payload_bytes_per_chunk"],
+             "- 索引：%s，%d 个文档 / %d 个片段，每片段 %d 字节指纹载荷 + %d 字节草图"
+             % ("全语料（生产口径）" if corpus.get("index_mode") == "full_corpus"
+                else "仅来源文件", corpus.get("index_documents", corpus["files"]),
+                corpus["index_chunks"], corpus["payload_bytes_per_chunk"],
                 corpus["sketch_bytes_per_chunk"]),
              "- 精确验证候选对：%d，耗时 %.1fs；判定阈值 span ≥ %s"
              % (payload["pairs_verified"], payload["collect_seconds"],
@@ -664,11 +752,30 @@ def render_markdown(payload: dict, kinds) -> str:
         lines += ["", "## 判定模型（逻辑回归，按来源文件分组留出）", "",
                   "- 候选对 %d（正例 %d），留出来源：%d 个文件"
                   % (j["pairs"], j["positives"], len(j["held_out_files"])),
-                  "- 留出集：AUC %.3f ｜ precision %.3f ｜ recall %.3f ｜ F1 %.3f ｜ 阈值 %.3f"
-                  % (s["auc"], s["precision"], s["recall"], s["f1"], j["threshold"]),
-                  "- 训练集：AUC %.3f ｜ F1 %.3f" % (j["train"]["auc"],
-                                                    j["train"]["f1"]),
-                  "", "| 特征 | 权重 |", "|---|---|"]
+                  "- 留出集（生产阈值 %.2f）：AUC %.3f ｜ precision %.3f ｜ recall %.3f ｜ F1 %.3f"
+                  % (j["threshold"], s["auc"], s["precision"], s["recall"], s["f1"]),
+                  "- 训练集：AUC %.3f ｜ F1 %.3f；Youden 最优阈值 %.3f（仅参考，门禁仍用 %.2f）"
+                  % (j["train"]["auc"], j["train"]["f1"],
+                     j.get("youden_threshold", j["threshold"]), j["threshold"])]
+        lg = j.get("leakage_guard")
+        if lg:
+            lines.append("- 候选侧泄漏防护：从训练集剔除 %d 条指向留出文件的候选对，"
+                         "确保判定模型没见过被测试文件的指纹" % lg["dropped_train_rows"])
+        cv = j.get("cv_summary")
+        if cv and cv.get("test_auc_mean") is not None:
+            lines.append("- %d 次分组留出：AUC %.3f ± %.3f ｜ F1 %.3f ± %.3f（均值 ± 样本标准差）"
+                         % (cv["n_splits"], cv["test_auc_mean"], cv["test_auc_std"],
+                            cv["test_f1_mean"], cv["test_f1_std"]))
+        ci = j.get("bootstrap_ci")
+        if ci and ci.get("auc"):
+            lines.append("- 配对 bootstrap（%d 次，95%%）：AUC [%.3f, %.3f] ｜ F1 [%.3f, %.3f]"
+                         % (ci["n_boot"], ci["auc"][0], ci["auc"][1],
+                            ci["f1"][0], ci["f1"][1]))
+        cal = j.get("calibration")
+        if cal:
+            lines.append("- 概率校准 ECE %.3f（越接近 0 置信度越可信；门禁按此概率阻断）"
+                         % cal["ece"])
+        lines += ["", "| 特征 | 权重 |", "|---|---|"]
         for w in j["weights"]:
             lines.append("| %s | %+.3f |" % (w["feature"], w["weight"]))
     fp = payload.get("false_positive_study")

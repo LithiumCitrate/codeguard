@@ -37,13 +37,20 @@ _FALLBACK_OPS = ("**=", "//=", "<<=", ">>=", "...", "**", "//", "<<", ">>",
                  "%=", "@=", "&=", "|=", "^=", "~=")
 
 
-def _fallback_tokens(text):
+def _fallback_tokens(text, language="python"):
     """Syntax-independent lexer used when ``tokenize`` cannot parse the input.
 
     Diff hunks, file fragments and non-Python sources are never parseable as a
     module, so the fallback still has to track strings, comments, numbers and
     line numbers correctly - otherwise every span it produces would be junk.
+
+    Comment syntax is language-aware. Python drops ``#`` to end of line; the
+    C-family sources the corpus also carries (C/Go/JS/Rust, indexed as
+    ``generic``) drop ``//`` and ``/* */`` instead and keep a leading ``#`` as a
+    preprocessor token rather than swallowing the whole directive. Treating a C
+    ``#include`` as a comment used to delete real code from the fingerprint.
     """
+    c_style = language != "python"
     out = []
     i, line, n = 0, 1, len(text)
     while i < n:
@@ -55,9 +62,23 @@ def _fallback_tokens(text):
         if ch in " \t\r\f\v":
             i += 1
             continue
-        if ch == "#":
+        if not c_style and ch == "#":
             j = text.find("\n", i)
             i = n if j < 0 else j
+            continue
+        if c_style and ch == "/" and i + 1 < n and text[i + 1] == "/":
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+            continue
+        if c_style and ch == "/" and i + 1 < n and text[i + 1] == "*":
+            j = text.find("*/", i + 2)
+            end = n if j < 0 else j + 2
+            line += text[i:end].count("\n")
+            i = end
+            continue
+        if c_style and ch == "#":
+            out.append(Token("#", line, "op"))
+            i += 1
             continue
         if text.startswith('"""', i) or text.startswith("'''", i):
             quote = text[i:i + 3]
@@ -142,11 +163,11 @@ class Span:
 def tokenize_source(text: str, language: str = "python") -> list:
     """Meaningful tokens, never raising on malformed or partial input."""
     if language != "python":
-        return _fallback_tokens(text)
+        return _fallback_tokens(text, language)
     try:
         raw = list(tokenize.generate_tokens(io.StringIO(text).readline))
     except (tokenize.TokenError, IndentationError, SyntaxError, ValueError):
-        return _fallback_tokens(text)
+        return _fallback_tokens(text, "python")
     out = []
     for tok in raw:
         if tok.type in (tokenize.NEWLINE, tokenize.NL, tokenize.INDENT,

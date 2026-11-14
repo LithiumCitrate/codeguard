@@ -10,8 +10,9 @@ import unittest
 from codeguard.mutations import (MUTATIONS, apply_mutation, defined_names,
                                  describe, parses, rename)
 from codeguard.score import (FEATURE_NAMES, LogisticRegression, Standardizer,
-                             best_threshold, confusion, evaluate, group_split,
-                             rank_auc)
+                             best_threshold, bootstrap_ci, confusion, evaluate,
+                             expected_calibration_error, group_split, rank_auc,
+                             std)
 
 SRC = '''"""Docstring."""
 
@@ -191,6 +192,32 @@ class ScoreTests(unittest.TestCase):
         model = LogisticRegression()
         model.weights = [0.5] + [0.0] * (len(FEATURE_NAMES) - 1)
         self.assertEqual(model.top_features(1)[0]["feature"], FEATURE_NAMES[0])
+
+
+class CalibrationAndCITests(unittest.TestCase):
+    def test_ece_is_zero_when_perfectly_calibrated(self):
+        cal = expected_calibration_error([0.8] * 10, [1] * 8 + [0] * 2, n_bins=10)
+        self.assertAlmostEqual(cal["ece"], 0.0, places=6)
+
+    def test_ece_detects_overconfidence(self):
+        cal = expected_calibration_error([0.9] * 10, [1] * 5 + [0] * 5, n_bins=10)
+        self.assertAlmostEqual(cal["ece"], 0.4, places=6)
+
+    def test_bootstrap_ci_is_an_ordered_interval(self):
+        rng = random.Random(1)
+        scores, labels = [], []
+        for _ in range(200):
+            y = rng.random() < 0.5
+            scores.append(min(1.0, max(0.0, (0.8 if y else 0.2) + rng.gauss(0, 0.1))))
+            labels.append(int(y))
+        ci = bootstrap_ci(scores, labels, 0.5, n_boot=50, seed=3)
+        self.assertEqual(len(ci["auc"]), 2)
+        self.assertLessEqual(ci["auc"][0], ci["auc"][1])
+        self.assertLessEqual(ci["f1"][0], ci["f1"][1])
+
+    def test_std_is_sample_standard_deviation(self):
+        self.assertAlmostEqual(std([2, 4, 4, 4, 5, 5, 7, 9]), 2.13809, places=4)
+        self.assertEqual(std([5]), 0.0)
 
 
 if __name__ == "__main__":

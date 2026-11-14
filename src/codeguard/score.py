@@ -178,3 +178,73 @@ def evaluate(model, rows, labels, threshold: float) -> dict:
     out["auc"] = round(rank_auc(scores, labels), 4)
     out["n"] = len(labels)
     return out
+
+
+def std(values) -> float:
+    """Sample standard deviation (n-1); 0 for fewer than two points."""
+    n = len(values)
+    if n < 2:
+        return 0.0
+    mean = sum(values) / n
+    return math.sqrt(sum((v - mean) ** 2 for v in values) / (n - 1))
+
+
+def expected_calibration_error(scores, labels, n_bins: int = 10) -> dict:
+    """Reliability diagram + ECE: does a predicted 0.8 really mean ~80% positive?
+
+    The gate blocks a build on this probability, so calibration matters as much
+    as ranking. Bins are equal-width over [0, 1]; ECE is the sample-weighted mean
+    absolute gap between mean predicted probability and observed positive rate.
+    A well-calibrated judge has ECE near 0; a large ECE means the confidence
+    column in a report over- or under-states the true match rate.
+    """
+    n = len(scores)
+    bins, ece = [], 0.0
+    for b in range(n_bins):
+        lo, hi = b / n_bins, (b + 1) / n_bins
+        idx = [i for i, s in enumerate(scores)
+               if s >= lo and (s < hi or (b == n_bins - 1 and s <= hi))]
+        if not idx:
+            bins.append({"bin": [round(lo, 2), round(hi, 2)], "n": 0,
+                         "mean_pred": None, "observed": None})
+            continue
+        mean_pred = sum(scores[i] for i in idx) / len(idx)
+        observed = sum(labels[i] for i in idx) / len(idx)
+        ece += len(idx) / max(1, n) * abs(mean_pred - observed)
+        bins.append({"bin": [round(lo, 2), round(hi, 2)], "n": len(idx),
+                     "mean_pred": round(mean_pred, 4),
+                     "observed": round(observed, 4)})
+    return {"ece": round(ece, 4), "n_bins": n_bins, "bins": bins}
+
+
+def bootstrap_ci(scores, labels, threshold: float, n_boot: int = 200,
+                 seed: int = 7, alpha: float = 0.05) -> dict:
+    """Percentile bootstrap CI for hold-out AUC and F1, resampling pairs.
+
+    A single hold-out split gives one number with no error bar; this quantifies
+    how much that number would move on a different draw of the same size, so the
+    report can state a range instead of implying false precision.
+    """
+    n = len(scores)
+    if n == 0:
+        return {"n_boot": n_boot, "alpha": alpha, "auc": None, "f1": None}
+    rng = random.Random(seed)
+    aucs, f1s = [], []
+    for _ in range(n_boot):
+        sample = [rng.randrange(n) for _ in range(n)]
+        s = [scores[i] for i in sample]
+        y = [labels[i] for i in sample]
+        auc = rank_auc(s, y)
+        if not math.isnan(auc):
+            aucs.append(auc)
+        f1s.append(confusion(s, y, threshold)["f1"])
+
+    def pct(vals):
+        if not vals:
+            return None
+        vals = sorted(vals)
+        lo = vals[int((alpha / 2) * (len(vals) - 1))]
+        hi = vals[int((1 - alpha / 2) * (len(vals) - 1))]
+        return [round(lo, 4), round(hi, 4)]
+
+    return {"n_boot": n_boot, "alpha": alpha, "auc": pct(aucs), "f1": pct(f1s)}
