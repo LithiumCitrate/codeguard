@@ -22,6 +22,23 @@ abides by semantic versioning.
   on all 24 trials. Workbench exposes it as a scan-time checkbox. Adds 54 offline
   tests (202 total).
 
+### Fixed
+
+- **LICENSE-text grounding failures are now auditable instead of silent**
+  (`src/codeguard/web_evidence.py`). The retained 2026-11-15 evaluations reported
+  `license_verified_rate` 0/2 with no way to distinguish "channel missing" from
+  "extra fetches timed out". Post-hoc checks confirmed both upstream LICENSE files
+  exist and classify correctly, and the URL construction was sound; the failure was
+  an observability/robustness one. `ground_license` now always returns a structured
+  result (`status`, `reason`, per-URL `attempts`), writes
+  `provenance.license_grounding` on both success and failure, tries 9 licence
+  filenames (including `COPYING`), shares one fetch cache per repository root within
+  a probe, and uses a separate 8s timeout instead of the full 20s source timeout.
+  Added offline-fixture harness `scripts/eval_license_grounding.py` (18/18, no
+  network / no API key), wired into CI. **This does not change the real-network
+  0/2 figure**: that still requires a re-run of `eval_webprobe.py` on a stable
+  connection; patched runs will now record why each attempt failed.
+
 ### Changed
 
 - **Workbench frontend rebuilt as a flat tactical console in the Arknights /

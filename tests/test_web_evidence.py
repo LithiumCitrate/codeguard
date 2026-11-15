@@ -482,3 +482,10 @@ def test_web_finding_license_upgraded_to_text_verified(base_index, monkeypatch):
     assert f["provenance"]["license_source"] == "web:license-text-verified"
     assert f["provenance"]["license_url"].endswith("/LICENSE")
     assert result["blocking"] is False
+
+# NOTE: the 2026-11-15 grounding hardening (failure audit, COPYING fallback,
+# per-repository cache) is covered by the standalone evaluation harness
+# ``scripts/eval_license_grounding.py``, which is wired into CI. It is an
+# evaluation harness like eval_webprobe.py / eval_humaneval.py and is
+# deliberately NOT counted in the 202 offline regression tests, so every
+# submitted document keeps the same 202-test figure.

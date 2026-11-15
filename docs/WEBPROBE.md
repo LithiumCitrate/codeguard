@@ -51,13 +51,20 @@
 | 拉取面收敛 | 仅 `raw.githubusercontent.com` / `gist.githubusercontent.com` / GitLab `/-/raw/` / Gitee `/raw/`；https；≤200KB；超时；重定向逐跳校验不出白名单 |
 | 不污染离线 | 临时索引 + 临时目录，用完即删；共享只读生产 CMS；语料/索引/`last_digest` 均不写 |
 | 不越权阻断 | 联网命中 `blocking=False`，风险封顶 S3；许可证未经核验时按 unknown→S2 复核 |
-| 许可证可核验（通道已实现） | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认。**本轮评测未触发成功**（`license_verified_rate` 0/2，成功检出均为模型推断），见第 5 节 |
-| 可审计 | 每条发现附 `provenance{url, sha256, fetched_at, license_source, license_url, license_sha256}`；检索轨迹逐条留痕 |
+| 许可证可核验（通道已实现） | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认。**真实联网评测本轮未触发成功**（`license_verified_rate` 0/2，成功检出均为模型推断），根因与修补见第 5.1 节 |
+| 核验失败可解释（2026-11-15 修补） | 无论成功失败，`provenance.license_grounding` 都记录 `status` / `reason` / `cache_hit` / 逐 URL `attempts`，不再静默返回空字典 |
+| 可审计 | 每条发现附 `provenance{url, sha256, fetched_at, license_source, license_url, license_sha256, license_grounding}`；检索轨迹逐条留痕 |
 | 密钥不外泄 | 仅存本机 gitignored `.codeguard/llm_config.json`；不返回浏览器、不写入导出 |
 
 ## 4. 复现
 
 ```bash
+# A. 核验通道的离线可复现验证：无需网络、无需任何密钥
+python scripts/eval_license_grounding.py
+# 输出 submission/evidence/license-grounding-eval-<date>.{json,md}
+# 注意：mode=offline-fixture，只证明通道逻辑/审计/端到端链路，不代表真实联网成功率
+
+# B. 真实联网边际收益评测（需要稳定网络）
 # 需要环境变量：CODEGUARD_LLM_BASE_URL / CODEGUARD_LLM_API_KEY / CODEGUARD_LLM_MODEL
 #              CODEGUARD_TAVILY_API_KEY
 python scripts/eval_webprobe.py --trials 3
@@ -88,13 +95,41 @@ python scripts/eval_webprobe.py --trials 3
 - toml 0/5、synapse 1/5 属**未稳定检出**，原因是查询拉取失败/提案未命中，**优雅降级**并记录
   fetch/search 错误、不产生误报；不能写成 0.99+ 置信度命中。早期版本本表格曾列出
   toml 0.994、synapse 0.992 两个置信度，无对应留存证据，2026-11-15 已删除。
-- LICENSE 文本核验通道（`web:license-text-verified`）已在 `web_evidence.py` 实现，但**本轮评测
-  未触发成功**：webprobe 轮 `license_verified_rate` 为 0/2、成功检出试验的 `license_source` 均为
+- LICENSE 文本核验通道（`web:license-text-verified`）已在 `web_evidence.py` 实现，但**本轮真实联网
+  评测未触发成功**：webprobe 轮 `license_verified_rate` 为 0/2、成功检出试验的 `license_source` 均为
   `web:llm-inferred`；round2 JSON 未记录 `license_source` 字段，同样无 `license-text-verified`
   标记。因此本节只主张"通道已实现、失败回退模型推断并标注、待补跑成功用例"，
   **不主张**"许可证已由 LICENSE 原文核验确认"或"减少了 unknown→S2 的保守降级"。
+  该口径不因下述 5.1 的修补而改变。
 - webprobe 一轮仅 2 次试验/例且 2 例跳过，样本量小，**不足以单独支撑 AI 必要性结论**，
   须与 round2 合并阅读。
+
+### 5.1 为什么 0/2：根因诊断与 2026-11-15 修补
+
+事后核查排除了"逻辑写错"这一类原因：两个上游 LICENSE 文件
+（`ranger/master/LICENSE`、`pallets/itsdangerous/main/LICENSE.txt`）都存在，
+`classify_license_text` 对 GPL-3.0 与 BSD-3-Clause 的标题/条款签名均能正确分类，
+`ground_license` 的 URL 拼接也正确。真实失败是**运行时的可观测性与健壮性缺陷**：
+
+| 旧版问题 | 后果 |
+|---|---|
+| 任何失败一律 `return {}`，不记录原因 | 证据里只剩 `web:llm-inferred`，无法区分"通道没实现""网络超时""文本识别不了"，评委无法核验 |
+| 每条 finding 各拉一次同一仓库的 LICENSE（最多 3 次），无缓存 | probe 本身已耗时 30–170 秒，叠加重复请求后 20 秒超时频发 |
+| 候选文件名只试 `LICENSE`/`LICENSE.txt`/`LICENSE.md` | `COPYING`（常见于 GPL 项目）、`LICENSE.rst`、`LICENCE`、`docs/LICENSE` 全部漏掉 |
+| LICENSE 拉取复用 20 秒完整超时 | 一次核验最坏可额外占用 60 秒 |
+
+本次修补（`src/codeguard/web_evidence.py`）：失败也返回可审计字典、
+`provenance.license_grounding` 记录 status / reason / 逐 URL attempts、
+同仓库一次 probe 内共享缓存、候选文件名扩到 9 个、LICENSE 拉取独立 8 秒超时。
+新增 `scripts/eval_license_grounding.py` 以固定离线夹具跑通
+11 个 SPDX 分类用例 + 5 个核验行为用例 + 2 条端到端路径，共 **18/18 通过**，
+证据见 `license-grounding-eval-20261115.{json,md}`。
+
+> **口径边界（务必保持）**：该评测 `mode=offline-fixture`，`fetch_source` 由夹具注入，
+> 未发起真实网络请求、未使用密钥。它证明的是"通道逻辑正确、可复现、失败可解释"，
+> **不能**换算成真实联网的 `license_verified_rate`。真实联网成功率仍是 **0/2**，
+> 需要在稳定网络下重跑 `eval_webprobe.py` 才能更新； patched 版本的失败原因会写进
+> `license_grounding`，使下一次补跑可定位、可归因。
 
 ## 6. 局限（如实披露）
 

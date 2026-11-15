@@ -161,7 +161,12 @@ _LIC_SIGNATURES = (
     ("BSD-3-Clause", r"redistribution and use in source and binary forms[\s\S]{0,2000}?neither the name"),
     ("BSD-2-Clause", r"redistribution and use in source and binary forms"),
 )
-_LIC_NAMES = ("LICENSE", "LICENSE.txt", "LICENSE.md", "COPYING")
+_LIC_NAMES = ("LICENSE", "LICENSE.txt", "LICENSE.md", "COPYING",
+              "COPYING.txt", "LICENSE.rst", "LICENCE", "LICENCE.txt",
+              "docs/LICENSE")
+# A licence fetch is best-effort and must not be allowed to stall the probe:
+# the source fetch has already consumed most of the network budget.
+GROUNDING_TIMEOUT = 8
 
 
 def classify_license_text(text: str) -> str:
@@ -172,23 +177,63 @@ def classify_license_text(text: str) -> str:
     return ""
 
 
-def ground_license(source_url: str, max_tries: int = 3) -> dict:
-    """Fetch the upstream LICENSE and classify it deterministically, upgrading
-    a model-inferred licence to a text-verified one. Bounded and graceful: any
-    failure leaves the caller on the model-inferred licence."""
+def _grounding_failure(reason: str, attempts: list, root: str = "") -> dict:
+    return {"status": "unavailable", "reason": reason, "spdx": "", "url": "",
+            "sha256": "", "root": root, "attempts": attempts, "cache_hit": False}
+
+
+def ground_license(source_url: str, max_tries: int | None = None,
+                   _cache: dict | None = None) -> dict:
+    """Fetch the upstream LICENSE and classify it deterministically.
+
+    Always returns an *auditable* result. ``status`` is ``verified`` only when
+    an upstream licence text was both fetched and recognised; otherwise it is
+    ``unavailable`` with a machine-readable ``reason`` and one ``attempts``
+    entry per candidate URL. Callers must key off ``spdx`` rather than the
+    truthiness of the dict: an empty return used to make every failure
+    indistinguishable from "the channel does not exist", which is exactly why
+    the 2026-11-15 runs could not explain their 0/2 verification rate.
+
+    ``_cache`` lets a single probe share one set of fetches across all its
+    findings. Previously every finding refetched the same repository LICENSE
+    up to three times, so a slow network could turn a successful source fetch
+    into a string of silent grounding timeouts.
+    """
+    attempts: list = []
     m = _RAW_REF.match(source_url or "")
     if not m:
-        return {}
+        return _grounding_failure("unsupported-host-or-url", attempts)
     root = m.group(1) + m.group(2) + "/"
-    for name in _LIC_NAMES[:max_tries]:
+    cache = {} if _cache is None else _cache
+    if root in cache:
+        cached = dict(cache[root])
+        cached["cache_hit"] = True
+        return cached
+    names = _LIC_NAMES if max_tries is None else _LIC_NAMES[:max_tries]
+    for name in names:
+        url = root + name
         try:
-            src = fetch_source(root + name)
-        except ValueError:
+            src = fetch_source(url, timeout=GROUNDING_TIMEOUT)
+        except ValueError as exc:
+            attempts.append({"url": url, "outcome": "fetch_failed",
+                             "reason": str(exc)[:160]})
             continue
         spdx = classify_license_text(src["text"])
+        attempts.append({"url": url,
+                         "outcome": "classified" if spdx else "unrecognised_text",
+                         "spdx": spdx, "sha256": src["sha256"]})
         if spdx:
-            return {"spdx": spdx, "url": src["url"], "sha256": src["sha256"]}
-    return {}
+            result = {"status": "verified", "reason": "license-text-classified",
+                      "spdx": spdx, "url": src["url"], "sha256": src["sha256"],
+                      "root": root, "attempts": attempts, "cache_hit": False}
+            cache[root] = result
+            return result
+    reason = ("all-candidates-unavailable" if
+              all(a["outcome"] == "fetch_failed" for a in attempts)
+              else "no-recognised-license-text")
+    result = _grounding_failure(reason, attempts, root)
+    cache[root] = result
+    return result
 
 
 _GITHUB_BLOB = re.compile(r"^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$")
@@ -385,10 +430,22 @@ def verify_web_candidates(base_index, model, code: str, name: str, candidates: l
         # Upgrade model-inferred licences to text-verified ones where the upstream
         # LICENSE can be fetched and deterministically classified. Bounded to the
         # matched findings; failure leaves the advisory model-inferred licence.
+        grounding_cache: dict = {}
         for item in findings:
             prov = item["provenance"]
-            grounded = ground_license(prov["url"]) if prov.get("url") else {}
-            if not grounded:
+            grounded = (ground_license(prov["url"], _cache=grounding_cache)
+                        if prov.get("url") else
+                        _grounding_failure("missing-provenance-url", []))
+            # Record the outcome either way. A failed grounding must never look
+            # like a channel that was never implemented: reviewers can now see
+            # which URLs were tried and why each one did not yield an SPDX id.
+            prov["license_grounding"] = {
+                "status": grounded["status"],
+                "reason": grounded["reason"],
+                "cache_hit": grounded.get("cache_hit", False),
+                "attempts": grounded.get("attempts", []),
+            }
+            if not grounded.get("spdx"):
                 continue
             verdict = analyze(grounded["spdx"], target_license, usage)
             risk = risk_level(verdict.status, item["confidence"], usage)
@@ -404,7 +461,8 @@ def verify_web_candidates(base_index, model, code: str, name: str, candidates: l
         notes = ["联网溯源为独立补充通道：候选上游由大模型联网推断，拉取原文后走与本地语料"
                  "完全相同的确定性验证（检索→精确验证→判定→义务推演→佐证门槛）。",
                  "命中后会尝试拉取上游 LICENSE 原文做确定性 SPDX 核验；核验成功的许可证标注"
-                 "web:license-text-verified，失败则保留模型推断（web:llm-inferred）。",
+                 "web:license-text-verified，失败则保留模型推断（web:llm-inferred），"
+                 "并在 provenance.license_grounding 记录失败原因与逐 URL 尝试轨迹，供评审核验。",
                  "联网命中最高按 S3 提示，不直接阻断；请人工确认上游许可证后再决定处置。",
                  "本通道不修改本地语料、索引与离线审查结论。"]
         return {"findings": findings, "fetched": fetched, "blocking": False,
