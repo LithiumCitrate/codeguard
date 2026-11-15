@@ -17,6 +17,7 @@ import threading
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+from . import web_evidence
 from .adjudicate import Scanner
 from .cli import load_model
 from .index import FingerprintIndex
@@ -57,15 +58,20 @@ class Workbench:
         self.token = secrets.token_urlsafe(32)
         self.lock = threading.Lock()
         self.last_digest = None
+        self.last_findings = None
 
     # ------------------------------------------------------------------- llm
 
     def llm_status(self):
         data = load_llm_settings(self.root)
         if data:
+            tavily = data.get('tavily_api_key', '')
             return {'configured': True, 'base_url': data['base_url'],
-                    'model': data['model'], 'key_masked': mask_key(data['api_key'])}
-        return {'configured': False, 'base_url': '', 'model': '', 'key_masked': ''}
+                    'model': data['model'], 'key_masked': mask_key(data['api_key']),
+                    'tavily_configured': bool(tavily),
+                    'tavily_key_masked': mask_key(tavily) if tavily else ''}
+        return {'configured': False, 'base_url': '', 'model': '', 'key_masked': '',
+                'tavily_configured': False, 'tavily_key_masked': ''}
 
     def llm_models(self, data):
         return {'models': list_models(data.get('base_url'), data.get('api_key'))}
@@ -75,7 +81,11 @@ class Workbench:
         api_key = data.get('api_key')
         if not api_key and existing and data.get('base_url', '').strip().rstrip('/') == existing['base_url']:
             api_key = existing['api_key']  # 只改模型/不改密钥时沿用已保存密钥
-        save_llm_settings(self.root, data.get('base_url'), api_key, data.get('model'))
+        tavily = data.get('tavily_api_key')
+        if not tavily and existing:
+            tavily = existing.get('tavily_api_key', '')  # Tavily 密钥独立沿用
+        save_llm_settings(self.root, data.get('base_url'), api_key, data.get('model'),
+                          tavily_api_key=tavily or '')
         return self.llm_status()
 
     def llm_clear(self):
@@ -93,7 +103,11 @@ class Workbench:
         llm = None
         if provider is not None:
             try:
-                llm = {'model': provider.model, 'text': provider.interpret_file(code, name, markers)}
+                if provider.tavily_api_key:
+                    text, searches = provider.interpret_file_with_search(code, name, markers)
+                    llm = {'model': provider.model, 'text': text, 'searches': searches}
+                else:
+                    llm = {'model': provider.model, 'text': provider.interpret_file(code, name, markers)}
             except ValueError as exc:
                 llm = {'model': provider.model, 'error': '解读失败：%s' % exc}
         return {'markers': markers, 'llm': llm,
@@ -101,6 +115,8 @@ class Workbench:
 
     def assist(self, data):
         action = data.get('action', 'summary')
+        if action == 'deep':
+            return self._deep_dive(data)
         if self.last_digest is None:
             raise ValueError('请先完成一次来源审查，再使用 AI 摘要或提问')
         provider = provider_from_settings(self.root)
@@ -119,9 +135,54 @@ class Workbench:
                 raise ValueError('问题长度需在 2–1000 字之间')
             if provider is None:
                 raise ValueError('追问需要大模型支持；请先在右上角配置大模型')
+            if data.get('search'):
+                if not provider.tavily_api_key:
+                    raise ValueError('联网追问需要先在 AI 设置中配置 Tavily API Key')
+                text, searches = provider.answer_question_with_search(question.strip(), self.last_digest)
+                return {'offline': False, 'model': provider.model, 'text': text, 'searches': searches}
             return {'offline': False, 'model': provider.model,
                     'text': provider.answer_question(question.strip(), self.last_digest)}
         raise ValueError('无效的 assist 动作')
+
+    def webprobe(self, data):
+        """Aggressive channel: LLM-proposed upstream, fetched and verified by
+        the same deterministic pipeline. Advisory only — the offline verdict,
+        corpus and index are never touched."""
+        code = data.get('code')
+        if not isinstance(code, str) or not code.strip():
+            raise ValueError('请输入需要审查的源代码')
+        if len(code.encode('utf-8')) > 200_000:
+            raise ValueError('单次代码上限为 200 KB，请拆分文件')
+        usage = data.get('usage', 'distribution')
+        license_id = data.get('license', 'MIT')
+        if usage not in USAGES or not isinstance(license_id, str) or len(license_id) > 100:
+            raise ValueError('许可证或使用方式无效')
+        provider = provider_from_settings(self.root)
+        if provider is None:
+            raise ValueError('联网溯源需要大模型支持；请先在右上角配置大模型')
+        if not provider.tavily_api_key:
+            raise ValueError('联网溯源需要先在 AI 设置中配置 Tavily API Key')
+        name = str(data.get('name', 'review.py'))[:120].replace('\\', '/').split('/')[-1]
+        markers = extract_license_markers(code)
+        return web_evidence.run_web_probe(self.index, self.model, provider, code, name,
+                                          markers, usage, license_id)
+
+    def _deep_dive(self, data):
+        """On-demand, per-finding web corroboration. Verdicts are never touched."""
+        if not self.last_findings:
+            raise ValueError('请先完成一次来源审查，再对命中做联网深挖')
+        index = data.get('index')
+        if not isinstance(index, int) or not (0 <= index < len(self.last_findings)):
+            raise ValueError('深挖对象无效')
+        finding = self.last_findings[index]
+        provider = provider_from_settings(self.root)
+        if provider is None:
+            raise ValueError('联网深挖需要大模型支持；请先在右上角配置大模型')
+        if not provider.tavily_api_key:
+            raise ValueError('联网深挖需要先在 AI 设置中配置 Tavily API Key')
+        text, searches = provider.describe_with_search(finding)
+        return {'offline': False, 'model': provider.model, 'text': text, 'searches': searches,
+                'subject': finding.key, 'risk': finding.risk}
 
     @staticmethod
     def _offline_summary(digest):
@@ -241,8 +302,9 @@ class Workbench:
         return {'stats': self.index.stats(), 'corpus': {'total': total, 'readable': readable, 'mismatched': mismatched},
                 'ready': total > 0 and total == readable and mismatched == 0,
                 'model': '12维逻辑回归' if self.model else '规则回退（未加载模型）',
-                'llm': {'configured': llm['configured'], 'model': llm['model'], 'base_url': llm['base_url']},
-                'privacy': '本机离线分析；代码不执行、不上传、不持久保存；仅在你主动点击 AI 功能时才调用你配置的大模型接口',
+                'llm': {'configured': llm['configured'], 'model': llm['model'], 'base_url': llm['base_url'],
+                        'tavily_configured': llm['tavily_configured']},
+                'privacy': '本机离线分析；代码不执行、不上传、不持久保存；仅在你主动点击 AI 功能时才调用你配置的大模型接口；配置 Tavily 后 AI 可联网检索公开资料，查询词仅含项目名/许可证等公开元数据，不含你的源代码',
                 'token': self.token}
 
     def scan(self, data):
@@ -288,6 +350,7 @@ class Workbench:
                     item['snippets'].append({'query_start': a, 'source_start': c,
                         'query': '\n'.join(query[a-1:b]), 'source': '\n'.join(source[c-1:d])})
                 details.append(item)
+            self.last_findings = list(result.findings)
             self.last_digest = {
                 'target': result.target, 'target_license': result.target_license,
                 'usage': result.usage, 'blocking': result.blocking,
@@ -374,7 +437,8 @@ def handler_for(app):
                       '/api/scan_tree': app.scan_tree,
                       '/api/llm/models': app.llm_models, '/api/llm/config': app.llm_save,
                       '/api/llm/clear': app.llm_clear, '/api/interpret': app.interpret,
-                      '/api/assist': app.assist, '/api/license/explain': app.license_explain}
+                      '/api/assist': app.assist, '/api/webprobe': app.webprobe,
+                      '/api/license/explain': app.license_explain}
             if self.path not in routes:
                 return self.send(404, {'error': '接口不存在'})
             try:

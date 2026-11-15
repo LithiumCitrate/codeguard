@@ -209,6 +209,24 @@ function render(data) {
       });
       card.append(details);
     }
+    if (llm.configured && llm.tavily) {
+      const deep = node('button', '联网深挖', 'btn small cyan deep-btn');
+      deep.type = 'button';
+      deep.title = '调用大模型联网检索公开资料，佐证该命中的来源与许可证背景（不改变风险结论）';
+      deep.addEventListener('click', async () => {
+        if (busy) return;
+        deep.disabled = true;
+        deep.textContent = '深挖中…';
+        try {
+          const data = await api('/api/assist', { action: 'deep', index });
+          renderAiCard('deep', Object.assign({ note: '对象：' + finding.package + '@' + finding.version + ' · ' + finding.path }, data));
+        } catch (error) { toast(error.message); } finally {
+          deep.disabled = false;
+          deep.textContent = '联网深挖';
+        }
+      });
+      card.append(deep);
+    }
     root.append(card);
   });
 
@@ -258,7 +276,7 @@ function count() {
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll('[data-demo],#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
+  document.querySelectorAll('[data-demo],#scan,#webprobe,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
   const scan = $('scan');
   const label = scan.querySelector('span');
   if (label) label.textContent = value ? '正在检索和验证来源…' : '开始来源审查';
@@ -553,13 +571,35 @@ $('reason').addEventListener('click', async () => {
 });
 
 /* ------------------------------------------------------------------ AI layer */
-const llm = { configured: false, model: '', baseUrl: '', fetched: [] };
+const llm = { configured: false, model: '', baseUrl: '', tavily: false, fetched: [] };
 
 function aiCardTitle(kind) {
-  return ({ interpret: 'AI 文件解读', summary: 'AI 审查摘要', ask: '追问', licence: 'AI 许可通俗解释' })[kind] || 'AI 输出';
+  return ({ interpret: 'AI 文件解读', summary: 'AI 审查摘要', ask: '追问', deep: '联网深挖', webprobe: '联网溯源', licence: 'AI 许可通俗解释' })[kind] || 'AI 输出';
 }
 
-function renderAiCard(kind, { model = '', text = '', offline = false, note = '' }) {
+function renderSearchTrace(card, searches) {
+  if (!searches || !searches.length) return;
+  const trace = node('details', undefined, 'search-trace');
+  trace.append(node('summary', `联网检索轨迹 · ${searches.length} 次`));
+  searches.forEach((s) => {
+    trace.append(node('p', '检索词：' + s.query + (s.error ? '（失败：' + s.error + '）' : ''), 'note'));
+    const ul = node('ul');
+    (s.results || []).forEach((r) => {
+      if (!/^https?:\/\//.test(r.url || '')) return;
+      const li = node('li');
+      const a = node('a', r.title || r.url);
+      a.href = r.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      li.append(a);
+      ul.append(li);
+    });
+    if (ul.childNodes.length) trace.append(ul);
+  });
+  card.append(trace);
+}
+
+function renderAiCard(kind, { model = '', text = '', offline = false, note = '', searches = null }) {
   const wrap = $('aiCards');
   wrap.hidden = false;
   const card = node('article', undefined, 'ai-card k-' + kind);
@@ -569,16 +609,71 @@ function renderAiCard(kind, { model = '', text = '', offline = false, note = '' 
   card.append(head);
   const body = node('p', text, 'ai-text');
   card.append(body);
+  renderSearchTrace(card, searches);
   if (note) card.append(node('p', note, 'note'));
   card.append(node('p', '内容为解读参考，不构成法律意见；风险结论以确定性引擎为准。', 'note'));
   wrap.append(card);
   card.scrollIntoView({ block: 'nearest' });
 }
 
+function renderWebprobe(data) {
+  const wrap = $('aiCards');
+  wrap.hidden = false;
+  const card = node('article', undefined, 'ai-card k-webprobe');
+  const head = node('div', undefined, 'ai-head');
+  head.append(node('b', '联网溯源 · 语料外验证'),
+    node('span', 'AI 候选 + 确定性验证 · ' + (data.model || '外部模型'), 'tag ai'));
+  card.append(head);
+  const findings = data.findings || [];
+  const top = [...findings].sort((a, b) => RISK_ORDER.indexOf(b.risk) - RISK_ORDER.indexOf(a.risk))[0];
+  const fetchedOk = (data.fetched || []).filter((f) => !f.error).length;
+  card.append(node('p', findings.length
+    ? `在本地语料之外核验 ${fetchedOk} 个上游原文，命中 ${findings.length} 个来源（最高 ${top.risk}）；片段 ${data.matched_spans}/${data.total_spans}。以下为补充提示，不改变离线审查结论。`
+    : `已联网核验 ${fetchedOk} 个候选上游原文，未发现足够来源证据；未命中不代表没有来源。`, 'ai-text'));
+  findings.forEach((f) => {
+    const block = node('details', undefined, 'webprobe-finding');
+    const summary = node('summary');
+    summary.append(node('span', `${f.package} @ ${f.version} · ${f.license_spdx} `), riskTag(f.risk));
+    block.append(summary);
+    block.append(node('div', f.path, 'source-path'));
+    block.append(node('div', `证据评分 ${(f.confidence * 100).toFixed(1)}% │ 覆盖 ${(f.coverage * 100).toFixed(1)}% │ 最长逐字 ${f.max_verbatim_run} token`, 'evidence-stats'));
+    const prov = f.provenance || {};
+    if (prov.url) {
+      const line = node('p', undefined, 'webprobe-prov');
+      const a = node('a', prov.url);
+      a.href = prov.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      line.append(document.createTextNode('上游原文：'), a);
+      if (prov.sha256) line.append(document.createTextNode(' │ sha256 ' + prov.sha256.slice(0, 16) + '…'));
+      block.append(line);
+    }
+    if (prov.reason) block.append(node('p', '候选依据：' + prov.reason, 'note'));
+    list(block, '待满足的许可义务', f.verdict && f.verdict.obligations);
+    list(block, '冲突', f.verdict && f.verdict.conflicts);
+    card.append(block);
+  });
+  const failed = (data.fetched || []).filter((f) => f.error);
+  if (failed.length) {
+    const trace = node('details', undefined, 'search-trace');
+    trace.append(node('summary', `拉取失败 · ${failed.length} 个`));
+    const ul = node('ul');
+    failed.forEach((f) => ul.append(node('li', `${f.url}（${f.error}）`)));
+    trace.append(ul);
+    card.append(trace);
+  }
+  renderSearchTrace(card, data.searches);
+  (data.notes || []).forEach((n) => card.append(node('p', n, 'note')));
+  card.append(node('p', '内容为解读参考，不构成法律意见；风险结论以确定性引擎为准。', 'note'));
+  wrap.append(card);
+  card.scrollIntoView({ block: 'nearest' });
+}
+
 function refreshAiButton() {
-  $('aiBtn').textContent = llm.configured ? 'AI · ' + llm.model : 'AI 未配置';
-  $('aiBtn').title = llm.configured ? '已配置大模型：' + llm.model + '（点击修改）' : '配置大模型（可选）';
+  $('aiBtn').textContent = llm.configured ? 'AI · ' + llm.model + (llm.tavily ? ' · WEB' : '') : 'AI 未配置';
+  $('aiBtn').title = llm.configured ? '已配置大模型：' + llm.model + (llm.tavily ? '（已启用联网检索）' : '') + '（点击修改）' : '配置大模型（可选）';
   $('aiBtn').classList.toggle('armed', llm.configured);
+  $('askWebWrap').hidden = !llm.tavily;
 }
 
 function openAiSetup(prefill = true) {
@@ -596,6 +691,8 @@ function openAiSetup(prefill = true) {
     $('aiKey').value = '';
     $('aiKey').placeholder = '已保存，留空沿用';
   }
+  $('aiTavily').value = '';
+  $('aiTavily').placeholder = llm.tavily ? '已保存，留空沿用' : 'tvly-…（可选）';
   dialog.showModal();
 }
 
@@ -638,13 +735,16 @@ $('aiSave').addEventListener('click', async () => {
   if (!model) { $('aiStatus').textContent = '请先拉取并选择模型。'; return; }
   const payload = { base_url: $('aiBase').value.trim(), model };
   if ($('aiKey').value.trim()) payload.api_key = $('aiKey').value.trim();
+  if ($('aiTavily').value.trim()) payload.tavily_api_key = $('aiTavily').value.trim();
   $('aiStatus').textContent = '正在保存…';
   try {
     const data = await api('/api/llm/config', payload);
     llm.configured = true;
     llm.model = data.model;
+    llm.tavily = !!data.tavily_configured;
     refreshAiButton();
-    $('aiStatus').textContent = '已启用 ' + data.model + '（密钥 ' + data.key_masked + '）。';
+    $('aiStatus').textContent = '已启用 ' + data.model + '（密钥 ' + data.key_masked + '）' +
+      (data.tavily_configured ? '，联网检索已启用（Tavily 密钥 ' + data.tavily_key_masked + '）。' : '。');
     setTimeout(() => $('aiSetup').close(), 700);
   } catch (error) {
     $('aiStatus').textContent = error.message;
@@ -656,6 +756,7 @@ $('aiClear').addEventListener('click', async () => {
     await api('/api/llm/clear', {});
     llm.configured = false;
     llm.model = '';
+    llm.tavily = false;
     refreshAiButton();
     $('aiStatus').textContent = '已清除本机配置；所有功能恢复纯离线。';
     $('aiClear').hidden = true;
@@ -672,7 +773,7 @@ $('interpret').addEventListener('click', async () => {
   try {
     const data = await api('/api/interpret', { code: $('code').value, name: $('name').value });
     if (data.llm && data.llm.text) {
-      renderAiCard('interpret', { model: data.llm.model, text: data.llm.text });
+      renderAiCard('interpret', { model: data.llm.model, text: data.llm.text, searches: data.llm.searches });
     } else if (data.llm && data.llm.error) {
       renderAiCard('interpret', { text: data.markers.summary, offline: true, note: data.llm.error });
     } else {
@@ -681,6 +782,22 @@ $('interpret').addEventListener('click', async () => {
   } catch (error) { toast(error.message); } finally {
     button.disabled = false;
     button.textContent = 'AI 解读';
+  }
+});
+
+$('webprobe').addEventListener('click', async () => {
+  if (busy) return;
+  if (!$('code').value.trim()) { toast('请先输入或导入代码，再使用联网溯源'); return; }
+  const button = $('webprobe');
+  button.disabled = true;
+  button.textContent = '溯源中…';
+  try {
+    const data = await api('/api/webprobe', { code: $('code').value, name: $('name').value,
+      license: $('targetLicense').value, usage: $('usage').value });
+    renderWebprobe(data);
+  } catch (error) { toast(error.message); } finally {
+    button.disabled = false;
+    button.textContent = '联网溯源';
   }
 });
 
@@ -706,7 +823,8 @@ $('askForm').addEventListener('submit', async (event) => {
   const input = $('askInput');
   input.disabled = true;
   try {
-    const data = await api('/api/assist', { action: 'ask', question });
+    const data = await api('/api/assist', { action: 'ask', question,
+      search: $('askWeb').checked && llm.tavily });
     renderAiCard('ask', Object.assign({ note: '问题：' + question }, data));
     $('askInput').value = '';
   } catch (error) { toast(error.message); } finally { input.disabled = false; input.focus(); }
@@ -737,6 +855,7 @@ function initAi(health) {
   llm.configured = !!(health.llm && health.llm.configured);
   llm.model = (health.llm && health.llm.model) || '';
   llm.baseUrl = (health.llm && health.llm.base_url) || '';
+  llm.tavily = !!(health.llm && health.llm.tavily_configured);
   refreshAiButton();
   $('licenceExplain').disabled = false;
   if (!llm.configured && !localStorage.getItem('cg-ai-setup-seen')) {
