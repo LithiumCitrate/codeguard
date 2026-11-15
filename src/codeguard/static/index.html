@@ -271,10 +271,13 @@
         <div class="panel-head">
           <h2><span class="eyebrow">01 / INPUT BUFFER</span>待审查代码</h2>
           <div class="head-actions">
-            <button id="interpret" class="btn small cyan" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
-            <button id="webprobe" class="btn small cyan" type="button" title="大模型联网推断候选上游，拉取公开 raw 原文后走同一套确定性验证；补充提示，不改变离线结论">联网溯源</button>
-            <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
-            <label class="btn small file" title="上传整个文件夹，建立目录树；默认分析整个文件夹的风险">导入文件夹<input id="folder" type="file" webkitdirectory multiple></label>
+            <details class="btn-menu">
+              <summary class="btn small" title="导入文件或文件夹">导入</summary>
+              <div class="menu">
+                <label class="menu-item">选择文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
+                <label class="menu-item">选择文件夹<input id="folder" type="file" webkitdirectory multiple></label>
+              </div>
+            </details>
           </div>
         </div>
         <div id="treeBox" class="tree-box" hidden>
@@ -285,12 +288,6 @@
           </div>
           <div id="tree" class="tree" role="tree"></div>
           <p class="note" id="treeNote"></p>
-        </div>
-        <div class="demo-bar" role="group" aria-label="体验案例">
-          <span class="field-label">体验案例 / DEMO</span>
-          <button class="chip" data-demo="copy">原文复制</button>
-          <button class="chip" data-demo="rename">变量改名</button>
-          <button class="chip" data-demo="clean">独立实现</button>
         </div>
         <p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p>
         <label class="field" for="name"><span>文件名称 / SUBJECT</span><input id="name" value="review.py" maxlength="120"></label>
@@ -306,7 +303,11 @@
         <div class="scan-actions">
           <button id="scan" class="btn go scan-btn" type="button"><span>开始来源审查</span><small>RUN TRACE</small></button>
         </div>
-        <label class="check"><input id="assistScan" type="checkbox"> 审查中用大模型重写处置建议（需已配置；风险结论仍由确定性引擎给出）</label>
+        <div class="scan-opts">
+          <label class="check" title="需已配置大模型；风险结论仍由确定性引擎给出"><input id="assistScan" type="checkbox"> 大模型重写处置建议</label>
+          <label class="check" title="扫描后附 AI 文件解读；未配置大模型时回退本机确定性标记提取"><input id="aiInterpret" type="checkbox"> AI 解读</label>
+          <label class="check" title="需已配置大模型与 Tavily；扫描后附语料外联网溯源补充提示，不改变离线结论"><input id="webProbe" type="checkbox"> 联网溯源</label>
+        </div>
         <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
       </section>
 
@@ -429,7 +430,7 @@
 <footer class="site-foot">
   <div class="foot-inner">
     <span class="foot-brand">CODEGUARD<small>ORIGIN TRACE SYSTEM</small></span>
-    <span>本机离线 │ 不执行提交代码 │ 工程风险提示，不构成法律意见</span>
+    <span>不执行提交代码 │ 工程风险提示，不构成法律意见</span>
     <span class="eyebrow">TERMINAL 04 / OFFLINE</span>
   </div>
 </footer>

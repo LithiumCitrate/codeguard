@@ -276,10 +276,11 @@ function count() {
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll('[data-demo],#scan,#webprobe,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#interpret,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
+  document.querySelectorAll('#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#assistScan,#aiInterpret,#webProbe,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
   const scan = $('scan');
   const label = scan.querySelector('span');
-  if (label) label.textContent = value ? '正在检索和验证来源…' : '开始来源审查';
+  const ai = $('aiInterpret').checked || $('webProbe').checked || $('assistScan').checked;
+  if (label) label.textContent = value ? (ai ? '正在检索验证＋AI 增强…' : '正在检索和验证来源…') : '开始来源审查';
   scan.classList.toggle('is-busy', value);
 }
 
@@ -317,16 +318,22 @@ $('themeToggle').addEventListener('click', () => {
   localStorage.setItem('cg-theme', next);
 });
 
-document.querySelectorAll('[data-demo]').forEach((button) => button.addEventListener('click', async () => {
-  try {
-    const data = await api('/api/demo/' + button.dataset.demo);
-    $('code').value = data.code;
-    $('name').value = data.name;
-    $('demoNote').textContent = data.note;
-    count();
-    invalidate();
-  } catch (error) { toast(error.message); }
-}));
+/* 合并入口菜单：选中即收起；点击外部或 Escape 收起 */
+document.querySelectorAll('.btn-menu').forEach((menu) => {
+  menu.addEventListener('click', (event) => {
+    if (event.target.closest('.menu')) menu.open = false;
+  });
+});
+document.addEventListener('click', (event) => {
+  document.querySelectorAll('.btn-menu[open]').forEach((menu) => {
+    if (!menu.contains(event.target)) menu.open = false;
+  });
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    document.querySelectorAll('.btn-menu[open]').forEach((menu) => { menu.open = false; });
+  }
+});
 
 $('code').addEventListener('input', () => { count(); invalidate(); });
 ['name', 'targetLicense', 'usage'].forEach((id) => $(id).addEventListener('change', invalidate));
@@ -453,7 +460,7 @@ $('scan').addEventListener('click', async () => {
   if (busy) return;
   const useTree = tree.files.size > 0;
   const singleFile = useTree && tree.selectedIsFile;
-  if (!useTree && !$('code').value.trim()) { toast('请先输入代码或选择体验案例'); return; }
+  if (!useTree && !$('code').value.trim()) { toast('请先输入或导入代码'); return; }
   setBusy(true);
   latest = null;
   $('exports').hidden = true;
@@ -479,6 +486,15 @@ $('scan').addEventListener('click', async () => {
         license: $('targetLicense').value, usage: $('usage').value,
         assist: $('assistScan').checked && llm.configured });
       render(data);
+      // 勾选的 AI 增强随本次审查一并执行；各自失败只提示，不影响已出的离线结论
+      const code = $('code').value, name = $('name').value;
+      if ($('aiInterpret').checked) {
+        try { await runInterpret(code, name); } catch (error) { toast(error.message); }
+      }
+      if ($('webProbe').checked) {
+        try { await runWebprobe(code, name, $('targetLicense').value, $('usage').value); }
+        catch (error) { toast(error.message); }
+      }
     }
     latest = data;
   } catch (error) {
@@ -688,6 +704,10 @@ function refreshAiButton() {
   $('aiBtn').title = llm.configured ? '已配置大模型：' + llm.model + (llm.tavily ? '（已启用联网检索）' : '') + '（点击修改）' : '配置大模型（可选）';
   $('aiBtn').classList.toggle('armed', llm.configured);
   $('askWebWrap').hidden = !llm.tavily;
+  $('webProbe').disabled = !llm.tavily;
+  $('webProbe').title = llm.tavily
+    ? '扫描后附语料外联网溯源补充提示，不改变离线结论'
+    : '需先在右上角 AI 设置中配置 Tavily API Key';
 }
 
 function openAiSetup(prefill = true) {
@@ -778,42 +798,22 @@ $('aiClear').addEventListener('click', async () => {
   } catch (error) { $('aiStatus').textContent = error.message; }
 });
 
-$('interpret').addEventListener('click', async () => {
-  if (busy) return;
-  if (!$('code').value.trim()) { toast('请先输入或导入代码，再使用 AI 解读'); return; }
-  const button = $('interpret');
-  button.disabled = true;
-  button.textContent = '解读中…';
-  try {
-    const data = await api('/api/interpret', { code: $('code').value, name: $('name').value });
-    if (data.llm && data.llm.text) {
-      renderAiCard('interpret', { model: data.llm.model, text: data.llm.text, searches: data.llm.searches });
-    } else if (data.llm && data.llm.error) {
-      renderAiCard('interpret', { text: data.markers.summary, offline: true, note: data.llm.error });
-    } else {
-      renderAiCard('interpret', { text: data.markers.summary, offline: true, note: '未配置大模型：以上为本机确定性许可证标记提取。' });
-    }
-  } catch (error) { toast(error.message); } finally {
-    button.disabled = false;
-    button.textContent = 'AI 解读';
+/* AI 解读 / 联网溯源改为勾选项，随「开始来源审查」一并执行 */
+async function runInterpret(code, name) {
+  const data = await api('/api/interpret', { code, name });
+  if (data.llm && data.llm.text) {
+    renderAiCard('interpret', { model: data.llm.model, text: data.llm.text, searches: data.llm.searches });
+  } else if (data.llm && data.llm.error) {
+    renderAiCard('interpret', { text: data.markers.summary, offline: true, note: data.llm.error });
+  } else {
+    renderAiCard('interpret', { text: data.markers.summary, offline: true, note: '未配置大模型：以上为本机确定性许可证标记提取。' });
   }
-});
+}
 
-$('webprobe').addEventListener('click', async () => {
-  if (busy) return;
-  if (!$('code').value.trim()) { toast('请先输入或导入代码，再使用联网溯源'); return; }
-  const button = $('webprobe');
-  button.disabled = true;
-  button.textContent = '溯源中…';
-  try {
-    const data = await api('/api/webprobe', { code: $('code').value, name: $('name').value,
-      license: $('targetLicense').value, usage: $('usage').value });
-    renderWebprobe(data);
-  } catch (error) { toast(error.message); } finally {
-    button.disabled = false;
-    button.textContent = '联网溯源';
-  }
-});
+async function runWebprobe(code, name, license, usage) {
+  const data = await api('/api/webprobe', { code, name, license, usage });
+  renderWebprobe(data);
+}
 
 $('assistSummary').addEventListener('click', async () => {
   if (busy || !latest) return;
