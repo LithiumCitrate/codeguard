@@ -238,7 +238,8 @@ def test_ask_with_search_and_interpret_search(app, stub):
     answer = app.assist({'action': 'ask', 'question': '这个项目换过许可证吗？', 'search': True})
     assert answer['text'] == 'STUB-SEARCH-PROSE' and answer['searches']
     plain = app.assist({'action': 'ask', 'question': '为何阻断？'})
-    assert 'searches' not in plain
+    # 开启联网搜索后默认把检索结果融入回复，无需显式勾选
+    assert plain['text'] == 'STUB-SEARCH-PROSE' and plain['searches']
     data = app.interpret({'code': '# SPDX-License-Identifier: MIT\nx = 1\n', 'name': 'f.py'})
     assert data['llm']['text'] == 'STUB-SEARCH-PROSE' and data['llm']['searches']
     app.llm_save({'base_url': stub, 'api_key': KEY, 'model': 'model-a', 'tavily_api_key': ''})

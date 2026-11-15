@@ -124,6 +124,9 @@ class Workbench:
             if provider is None:
                 return {'offline': True, 'model': '', 'text': self._offline_summary(self.last_digest)}
             try:
+                if provider.tavily_api_key:
+                    text, searches = provider.summarize_with_search(self.last_digest)
+                    return {'offline': False, 'model': provider.model, 'text': text, 'searches': searches}
                 return {'offline': False, 'model': provider.model,
                         'text': provider.summarize_scan(self.last_digest)}
             except ValueError as exc:
@@ -135,9 +138,9 @@ class Workbench:
                 raise ValueError('问题长度需在 2–1000 字之间')
             if provider is None:
                 raise ValueError('追问需要大模型支持；请先在右上角配置大模型')
-            if data.get('search'):
-                if not provider.tavily_api_key:
-                    raise ValueError('联网追问需要先在 AI 设置中配置 Tavily API Key')
+            if data.get('search') and not provider.tavily_api_key:
+                raise ValueError('联网追问需要先在 AI 设置中配置 Tavily API Key')
+            if provider.tavily_api_key:
                 text, searches = provider.answer_question_with_search(question.strip(), self.last_digest)
                 return {'offline': False, 'model': provider.model, 'text': text, 'searches': searches}
             return {'offline': False, 'model': provider.model,
@@ -323,9 +326,21 @@ class Workbench:
         with self.lock:
             result = Scanner(self.index, model=self.model, usage=usage).scan_text(
                 code, target=name, target_license=license_id)
-            llm_provider = provider_from_settings(self.root) if data.get('assist') else None
+            configured = provider_from_settings(self.root)
+            use_llm = bool(data.get('assist')) or bool(configured and configured.tavily_api_key)
+            llm_provider = configured if use_llm else None
             provider = llm_provider or get_provider('offline')
-            explanations = {f.key: provider.describe(f) for f in result.findings}
+            explanations, finding_searches = {}, {}
+            for f in result.findings:
+                if llm_provider is not None and llm_provider.tavily_api_key:
+                    try:
+                        text, searches = llm_provider.describe_with_search(f)
+                        explanations[f.key] = text
+                        finding_searches[f.key] = searches
+                        continue
+                    except ValueError:
+                        pass  # 检索失败回退到不带联网的解读，不影响扫描
+                explanations[f.key] = provider.describe(f)
             receipt = provenance_receipt(result, self.index, explanations)
             receipt['metadata']['ai_usage'].update(
                 provider=provider.name, external_calls=bool(llm_provider),
@@ -340,6 +355,7 @@ class Workbench:
             for finding in result.findings:
                 item = finding.as_dict()
                 item['explanation'] = explanations[finding.key]
+                item['searches'] = finding_searches.get(finding.key, [])
                 item['snippets'] = []
                 doc = next(d for d in self.index.docs if d.path == finding.path and d.package == finding.package)
                 source = Path(self.index.corpus_file(doc)).read_text(encoding='utf-8', errors='replace').splitlines()

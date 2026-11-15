@@ -209,24 +209,7 @@ function render(data) {
       });
       card.append(details);
     }
-    if (llm.configured && llm.tavily) {
-      const deep = node('button', '联网深挖', 'btn small cyan deep-btn');
-      deep.type = 'button';
-      deep.title = '调用大模型联网检索公开资料，佐证该命中的来源与许可证背景（不改变风险结论）';
-      deep.addEventListener('click', async () => {
-        if (busy) return;
-        deep.disabled = true;
-        deep.textContent = '深挖中…';
-        try {
-          const data = await api('/api/assist', { action: 'deep', index });
-          renderAiCard('deep', Object.assign({ note: '对象：' + finding.package + '@' + finding.version + ' · ' + finding.path }, data));
-        } catch (error) { toast(error.message); } finally {
-          deep.disabled = false;
-          deep.textContent = '联网深挖';
-        }
-      });
-      card.append(deep);
-    }
+    renderSearchTrace(card, finding.searches);
     root.append(card);
   });
 
@@ -703,7 +686,6 @@ function refreshAiButton() {
   $('aiBtn').textContent = llm.configured ? 'AI · ' + llm.model + (llm.tavily ? ' · WEB' : '') : 'AI 未配置';
   $('aiBtn').title = llm.configured ? '已配置大模型：' + llm.model + (llm.tavily ? '（已启用联网检索）' : '') + '（点击修改）' : '配置大模型（可选）';
   $('aiBtn').classList.toggle('armed', llm.configured);
-  $('askWebWrap').hidden = !llm.tavily;
   $('webProbe').disabled = !llm.tavily;
   $('webProbe').title = llm.tavily
     ? '扫描后附语料外联网溯源补充提示，不改变离线结论'
@@ -837,8 +819,7 @@ $('askForm').addEventListener('submit', async (event) => {
   const input = $('askInput');
   input.disabled = true;
   try {
-    const data = await api('/api/assist', { action: 'ask', question,
-      search: $('askWeb').checked && llm.tavily });
+    const data = await api('/api/assist', { action: 'ask', question, search: llm.tavily });
     renderAiCard('ask', Object.assign({ note: '问题：' + question }, data));
     $('askInput').value = '';
   } catch (error) { toast(error.message); } finally { input.disabled = false; input.focus(); }

@@ -483,6 +483,17 @@ class OpenAICompatProvider:
             % (json.dumps(digest, ensure_ascii=False)[:8000], self._GUARD))
         return self.chat(prompt, timeout=60)
 
+    def summarize_with_search(self, digest: dict):
+        prompt = (
+            "你是开源合规助手。以下是一次代码来源审查的结构化结果摘要，"
+            "请面向开发者写一份 200 字左右的执行摘要：整体风险、最重要的 1-3 个命中、"
+            "下一步动作；可联网核实来源项目的许可证与重新授权公告作佐证，引用处给出 URL。"
+            "不得新增摘要与检索之外的事实。\n摘要数据：\n%s\n%s\n%s"
+            % (json.dumps(digest, ensure_ascii=False)[:8000], self._GUARD, self._SEARCH_GUARD))
+        seeds = ["%s %s license" % (f.get("package", ""), f.get("license_spdx", ""))
+                 for f in (digest.get("findings") or [])[:2] if f.get("package")]
+        return self.chat_with_search(prompt, seeds)
+
     def answer_question(self, question: str, digest: dict) -> str:
         prompt = (
             "你是开源合规助手。开发者就刚才的审查结果提问，请只依据审查摘要回答；"

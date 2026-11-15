@@ -1796,14 +1796,6 @@ img, svg { display: block; }
 .search-trace li { font-size: 10.5px; line-height: 1.7; }
 .search-trace a { color: var(--cyan); text-decoration: none; border-bottom: 1px solid var(--line); }
 .search-trace a:hover { border-bottom-color: var(--cyan); }
-.deep-btn { margin-top: 9px; }
-.ask-row .check.ask-web {
-  flex: 0 0 auto;
-  align-items: center;
-  margin-top: 0;
-  white-space: nowrap;
-}
-.ask-row .check.ask-web input { flex: none; min-height: 0; width: auto; padding: 0; }
 .ask-row {
   display: flex;
   align-items: center;
