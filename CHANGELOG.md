@@ -6,6 +6,8 @@ abides by semantic versioning.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-15
+
 ### Added
 
 - **llmFusion optional web-provenance layer** (`src/codeguard/web_evidence.py`,
