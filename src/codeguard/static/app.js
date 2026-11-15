@@ -649,6 +649,20 @@ function renderWebprobe(data) {
       block.append(line);
     }
     if (prov.reason) block.append(node('p', '候选依据：' + prov.reason, 'note'));
+    if (prov.license_source === 'web:license-text-verified') {
+      const lic = node('p', undefined, 'webprobe-prov');
+      lic.append(document.createTextNode('许可证已文本核验：' + (prov.license_spdx_verified || f.license_spdx) + ' '));
+      if (prov.license_url) {
+        const la = node('a', 'LICENSE 原文');
+        la.href = prov.license_url;
+        la.target = '_blank';
+        la.rel = 'noopener noreferrer';
+        lic.append(la);
+      }
+      block.append(lic);
+    } else {
+      block.append(node('p', '许可证为模型推断，未经文本核验，请人工确认上游授权。', 'note'));
+    }
     list(block, '待满足的许可义务', f.verdict && f.verdict.obligations);
     list(block, '冲突', f.verdict && f.verdict.conflicts);
     card.append(block);

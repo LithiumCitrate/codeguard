@@ -417,3 +417,68 @@ def test_webprobe_requires_configuration(app):
         app.webprobe({"code": "x = 1\n"})
     with pytest.raises(ValueError, match="源代码"):
         app.webprobe({"code": "  "})
+
+
+# ------------------------------------------------------- licence-text grounding
+
+GPL3_TEXT = "                    GNU GENERAL PUBLIC LICENSE\n" \
+            "                       Version 3, 29 June 2007\n" \
+            "...\n" \
+            "  13. Use with the GNU Affero General Public License.\n" \
+            "  Notwithstanding any other provision of this License, you have\n" \
+            "permission to link or combine any covered work with a work licensed\n" \
+            "under version 3 of the GNU Affero General Public License into a single\n" \
+            "combined work, and to convey the resulting work.\n"
+AGPL_TEXT = "                    GNU AFFERO GENERAL PUBLIC LICENSE\n" \
+            "                       Version 3, 19 November 2007\n"
+MIT_TEXT = "MIT License\n\nPermission is hereby granted, free of charge, to any person\n"
+APACHE_TEXT = "                                 Apache License\n" \
+              "                           Version 2.0, January 2004\n"
+BSD3_TEXT = "Redistribution and use in source and binary forms, with or without\n" \
+            "modification, are permitted provided that the following conditions are met:\n" \
+            "...\nNeither the name of the copyright holder nor the names of its\n" \
+            "contributors may be used to endorse or promote products derived from\n"
+
+
+@pytest.mark.parametrize("text,spdx", [
+    (GPL3_TEXT, "GPL-3.0-only"), (AGPL_TEXT, "AGPL-3.0-only"),
+    (MIT_TEXT, "MIT"), (APACHE_TEXT, "Apache-2.0"), (BSD3_TEXT, "BSD-3-Clause"),
+    ("Some bespoke proprietary terms.", ""),
+])
+def test_classify_license_text(text, spdx):
+    assert web_evidence.classify_license_text(text) == spdx
+
+
+def test_ground_license_fetches_and_classifies(monkeypatch):
+    def fetch(url, timeout=web_evidence.FETCH_TIMEOUT):
+        if url.endswith("/LICENSE"):
+            return {"url": url, "text": GPL3_TEXT, "bytes": len(GPL3_TEXT),
+                    "sha256": "l" * 64, "fetched_at": 1}
+        raise ValueError("404")
+    monkeypatch.setattr(web_evidence, "fetch_source", fetch)
+    out = web_evidence.ground_license(RAW)
+    assert out["spdx"] == "GPL-3.0-only" and out["url"].endswith("/LICENSE")
+
+
+def test_web_finding_license_upgraded_to_text_verified(base_index, monkeypatch):
+    web_text = read_negative("word_tally.py")
+
+    def fetch(url, timeout=web_evidence.FETCH_TIMEOUT):
+        if url == RAW:
+            return {"url": url, "text": web_text, "bytes": len(web_text.encode()),
+                    "sha256": hashlib.sha256(web_text.encode()).hexdigest(), "fetched_at": 1}
+        if url.endswith("/LICENSE"):
+            return {"url": url, "text": GPL3_TEXT, "bytes": len(GPL3_TEXT),
+                    "sha256": "l" * 64, "fetched_at": 1}
+        raise ValueError("404")
+    monkeypatch.setattr(web_evidence, "fetch_source", fetch)
+    result = web_evidence.run_web_probe(
+        base_index, None, FakeProvider("UNKNOWN"), web_text, "review.py", {},
+        "distribution", "MIT")
+    f = result["findings"][0]
+    # model said UNKNOWN (would be S2); LICENSE text proves GPL -> incompatible,
+    # capped at S3 on the advisory web channel
+    assert f["license_spdx"] == "GPL-3.0-only" and f["risk"] == "S3"
+    assert f["provenance"]["license_source"] == "web:license-text-verified"
+    assert f["provenance"]["license_url"].endswith("/LICENSE")
+    assert result["blocking"] is False

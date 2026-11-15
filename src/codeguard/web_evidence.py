@@ -32,7 +32,7 @@ import urllib.request
 
 from .adjudicate import Scanner, language_for
 from .index import DocRecord, FingerprintIndex
-from .license_intel import RISK_LABELS
+from .license_intel import RISK_LABELS, analyze, risk_level
 from .normalize import tokenize_source
 
 MAX_FETCH_BYTES = 200_000
@@ -138,6 +138,57 @@ def fetch_with_fallback(url: str, timeout: int = FETCH_TIMEOUT) -> dict:
         except ValueError:
             continue
     raise ValueError("拉取失败：HTTP 404（%s，已尝试常见默认分支）" % url)
+
+
+# ------------------------------------------------- licence-text grounding
+
+# Characteristic TITLE signatures, ordered so the more specific copyleft family
+# wins (AGPL > LGPL > GPL) and BSD-3's extra clause beats BSD-2. Anchored to a
+# line-start title immediately followed by its version: GPL-3.0 §13 *mentions*
+# the Affero/Lesser licences mid-sentence, so an unanchored match would
+# misread a plain GPL licence as AGPL/LGPL. Deterministic: same LICENSE text
+# always yields the same SPDX id, or "" when unrecognised.
+_LIC_SIGNATURES = (
+    ("AGPL-3.0-only", r"^\s*gnu affero general public license[\s\S]{0,40}?version 3"),
+    ("LGPL-3.0", r"^\s*gnu lesser general public license[\s\S]{0,40}?version 3"),
+    ("LGPL-2.1", r"^\s*gnu (lesser|library) general public license[\s\S]{0,40}?version 2"),
+    ("GPL-3.0-only", r"^\s*gnu general public license[\s\S]{0,40}?version 3"),
+    ("GPL-2.0-only", r"^\s*gnu general public license[\s\S]{0,40}?version 2"),
+    ("Apache-2.0", r"apache license[\s\S]{0,40}?version 2\.0"),
+    ("MPL-2.0", r"mozilla public license[\s\S]{0,40}?version 2\.0"),
+    ("Unlicense", r"this is free and unencumbered software released into the public domain"),
+    ("MIT", r"permission is hereby granted, free of charge"),
+    ("BSD-3-Clause", r"redistribution and use in source and binary forms[\s\S]{0,2000}?neither the name"),
+    ("BSD-2-Clause", r"redistribution and use in source and binary forms"),
+)
+_LIC_NAMES = ("LICENSE", "LICENSE.txt", "LICENSE.md", "COPYING")
+
+
+def classify_license_text(text: str) -> str:
+    low = (text or "").lower()
+    for spdx, pattern in _LIC_SIGNATURES:
+        if re.search(pattern, low, re.M):
+            return spdx
+    return ""
+
+
+def ground_license(source_url: str, max_tries: int = 3) -> dict:
+    """Fetch the upstream LICENSE and classify it deterministically, upgrading
+    a model-inferred licence to a text-verified one. Bounded and graceful: any
+    failure leaves the caller on the model-inferred licence."""
+    m = _RAW_REF.match(source_url or "")
+    if not m:
+        return {}
+    root = m.group(1) + m.group(2) + "/"
+    for name in _LIC_NAMES[:max_tries]:
+        try:
+            src = fetch_source(root + name)
+        except ValueError:
+            continue
+        spdx = classify_license_text(src["text"])
+        if spdx:
+            return {"spdx": spdx, "url": src["url"], "sha256": src["sha256"]}
+    return {}
 
 
 _GITHUB_BLOB = re.compile(r"^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$")
@@ -331,10 +382,30 @@ def verify_web_candidates(base_index, model, code: str, name: str, candidates: l
                                   "license_source": "web:llm-inferred",
                                   "reason": prov.get("reason", "")}
             findings.append(item)
+        # Upgrade model-inferred licences to text-verified ones where the upstream
+        # LICENSE can be fetched and deterministically classified. Bounded to the
+        # matched findings; failure leaves the advisory model-inferred licence.
+        for item in findings:
+            prov = item["provenance"]
+            grounded = ground_license(prov["url"]) if prov.get("url") else {}
+            if not grounded:
+                continue
+            verdict = analyze(grounded["spdx"], target_license, usage)
+            risk = risk_level(verdict.status, item["confidence"], usage)
+            risk = "S3" if risk == "S4" else risk
+            item["license_spdx"] = grounded["spdx"]
+            item["verdict"] = verdict.as_dict()
+            item["risk"] = risk
+            item["risk_label"] = RISK_LABELS[risk]
+            prov["license_source"] = "web:license-text-verified"
+            prov["license_spdx_verified"] = grounded["spdx"]
+            prov["license_url"] = grounded["url"]
+            prov["license_sha256"] = grounded["sha256"]
         notes = ["联网溯源为独立补充通道：候选上游由大模型联网推断，拉取原文后走与本地语料"
                  "完全相同的确定性验证（检索→精确验证→判定→义务推演→佐证门槛）。",
-                 "来源许可证为模型推断、未经语料级核验，联网命中最高按 S3 提示，不直接阻断；"
-                 "请人工确认上游许可证后再决定处置。",
+                 "命中后会尝试拉取上游 LICENSE 原文做确定性 SPDX 核验；核验成功的许可证标注"
+                 "web:license-text-verified，失败则保留模型推断（web:llm-inferred）。",
+                 "联网命中最高按 S3 提示，不直接阻断；请人工确认上游许可证后再决定处置。",
                  "本通道不修改本地语料、索引与离线审查结论。"]
         return {"findings": findings, "fetched": fetched, "blocking": False,
                 "total_spans": result.total_spans, "matched_spans": result.matched_spans,
