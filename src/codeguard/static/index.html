@@ -271,9 +271,13 @@
         <div class="panel-head">
           <h2><span class="eyebrow">01 / INPUT BUFFER</span>待审查代码</h2>
           <div class="head-actions">
-            <button id="interpret" class="btn small cyan" type="button" title="调用所配置的大模型解读当前代码">AI 解读</button>
-            <label class="btn small file">导入文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
-            <label class="btn small file" title="上传整个文件夹，建立目录树；默认分析整个文件夹的风险">导入文件夹<input id="folder" type="file" webkitdirectory multiple></label>
+            <details class="btn-menu">
+              <summary class="btn small" title="导入文件或文件夹">导入</summary>
+              <div class="menu">
+                <label class="menu-item">选择文件<input id="file" type="file" accept=".py,.js,.ts,.java,.c,.cpp,.h,.go,.rs,.txt"></label>
+                <label class="menu-item">选择文件夹<input id="folder" type="file" webkitdirectory multiple></label>
+              </div>
+            </details>
           </div>
         </div>
         <div id="treeBox" class="tree-box" hidden>
@@ -284,12 +288,6 @@
           </div>
           <div id="tree" class="tree" role="tree"></div>
           <p class="note" id="treeNote"></p>
-        </div>
-        <div class="demo-bar" role="group" aria-label="体验案例">
-          <span class="field-label">体验案例 / DEMO</span>
-          <button class="chip" data-demo="copy">原文复制</button>
-          <button class="chip" data-demo="rename">变量改名</button>
-          <button class="chip" data-demo="clean">独立实现</button>
         </div>
         <p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p>
         <label class="field" for="name"><span>文件名称 / SUBJECT</span><input id="name" value="review.py" maxlength="120"></label>
@@ -305,7 +303,11 @@
         <div class="scan-actions">
           <button id="scan" class="btn go scan-btn" type="button"><span>开始来源审查</span><small>RUN TRACE</small></button>
         </div>
-        <label class="check"><input id="assistScan" type="checkbox"> 审查中用大模型重写处置建议（需已配置；风险结论仍由确定性引擎给出）</label>
+        <div class="scan-opts">
+          <label class="check" title="需已配置大模型；风险结论仍由确定性引擎给出"><input id="assistScan" type="checkbox"> 大模型重写处置建议</label>
+          <label class="check" title="扫描后附 AI 文件解读；未配置大模型时回退本机确定性标记提取"><input id="aiInterpret" type="checkbox"> AI 解读</label>
+          <label class="check" title="需已配置大模型与 Tavily；扫描后附语料外联网溯源补充提示，不改变离线结论"><input id="webProbe" type="checkbox"> 联网溯源</label>
+        </div>
         <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
       </section>
 
@@ -416,7 +418,7 @@
         <p>检测的是与本地语料的相似关系，不能证明大模型训练来源，也不能自动裁定侵权。未发现命中代表当前索引内没有足够证据，不能视为所有开源代码都已排查。演示案例由已知开源来源复制或改名生成，用于验证抗改写能力，不能代替真实 AI 生成样本评测。</p>
         <p>自研程序以 Apache-2.0 开放；第三方语料保留原许可，按资源清单与下载脚本复现。语料版本已锁定，索引与判定权重随发布包一同提供。</p>
         <h2 id="about-llm">大模型增强（可选）</h2>
-        <p>风险分级、证据评分与许可冲突判定始终由本机确定性算法给出，断网也完全可用。大模型只在显式配置后作为解读层参与：文件速读、审查执行摘要、基于证据摘要的追问与许可条款通俗解释。每次调用的模型与用途写入报告的 ai_usage 字段；密钥仅保存在本机工作目录，不出现在任何导出物中。</p>
+        <p>风险分级、证据评分与许可冲突判定始终由本机确定性算法给出，断网也完全可用。大模型只在显式配置后作为解读层参与：文件速读、审查执行摘要、基于证据摘要的追问与许可条款通俗解释。再配置 Tavily 检索密钥后，解读与追问可联网检索公开资料佐证——核实来源项目的官方仓库、许可证是否重新授权、相关公告，引用附来源链接；查询词仅含项目名、版本、许可证等公开元数据，不含你的源代码，检索结果作为不可信参考材料，不改变任何风险结论。「联网溯源」进一步突破本地语料覆盖：大模型推断候选上游，仅从公开 raw 地址拉取原文，仍由同一套确定性管线验证；上游许可证未经语料核验，故只作补充提示（最高 S3、不阻断），不写回语料与离线结论。每次调用的模型与用途写入报告的 ai_usage 字段；密钥仅保存在本机工作目录，不出现在任何导出物中。</p>
         <div class="caution">检测的是相似关系，不是法律侵权结论；未命中不等于安全。</div>
       </article>
     </div>
@@ -427,7 +429,7 @@
 <footer class="site-foot">
   <div class="foot-inner">
     <span class="foot-brand">CODEGUARD<small>ORIGIN TRACE SYSTEM</small></span>
-    <span>本机离线 │ 不执行提交代码 │ 工程风险提示，不构成法律意见</span>
+    <span>不执行提交代码 │ 工程风险提示，不构成法律意见</span>
     <span class="eyebrow">TERMINAL 04 / OFFLINE</span>
   </div>
 </footer>
@@ -452,6 +454,9 @@
           <button id="aiSave" class="btn go small" type="button" disabled>保存并启用</button>
         </div>
       </div>
+      <label class="field" for="aiTavily"><span>Tavily API Key / WEB SEARCH（可选）</span>
+        <input id="aiTavily" type="password" autocomplete="off" placeholder="tvly-…"></label>
+      <p class="note">配置后 AI 解读、追问与联网溯源可联网检索公开资料佐证；查询词仅含项目名/许可证等公开元数据，不含你的源代码，检索结果不改变风险结论。</p>
       <p id="aiStatus" class="note" aria-live="polite">未配置时所有功能仍可离线使用；AI 摘要将退化为确定性文字。</p>
     </div>
     <footer class="ai-foot">

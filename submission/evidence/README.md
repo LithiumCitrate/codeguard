@@ -1,5 +1,10 @@
 # 佐证材料（可直接附在提交里）
 
+> **口径分区（请先读）**：本目录同时保留**当前口径**与**历史口径**证据，避免把两代数字读成两个结论。
+> - 当前口径（2026-11-15 复测）：`benchmark-20261115.*`、`benchmark-fullcorpus-20261115.*` → 8 类变异 **97%**、全语料 **97.4%**、AUC 0.870、离线回归 **202 项**。
+> - 历史口径（2026-10-20/24）：`benchmark-20261020.*`、`realworld-github-20261020.*` 等 → 当时的 99% 检出、447 文件扫描等，仅作版本迭代对照，**不作为当前效果结论**。
+> - 联网层：`webprobe-eval-20261115.*`、`llmfusion-round1/2-*.json` 为真实联网评测；`license-grounding-eval-20261115.*` 为**离线夹具**评测，两者不可混用（见文末口径说明）。
+
 | 文件 | 说明 |
 |---|---|
 | `feature_flags.provenance.json` | 出处证书实例：取 mercurial（GPL-2.0-or-later）`contrib/automation/automation.py` 的前 2 个顶层定义（57 行）做**全局标识符重命名**后，被 `codeguard scan` 判定 8/10 片段命中、置信度 0.994、覆盖率 0.80、风险 S4（incompatible）；含逐片段行号区间、最长逐字 token 命中（32）、四层精确 Jaccard 与 12 维特征 |
@@ -72,6 +77,56 @@ sh scripts/record_demo.sh                                           # 录屏用�
 > 若最终只有 1 人完成，报告写“1 人小规模试用”，不要写成 2 人；不要把课程/社团同学写成企业试点。
 > 两份原始表、匿名化截图和计时记录是最低配套；只有汇总表而没有原始表，评委会追问证据链。
 
+## llmFusion 增量证据（本包新增，main 包没有）
+
+> 离线核心未改动，上文 41 个离线证据仍然有效；以下 8 个文件证明**可选联网层**的边际收益与安全边界。
+
+| 文件 | 说明 |
+|---|---|
+| `webprobe-eval-20261115.json` / `.md` | **边际收益评测**：对语料外真实 GitHub 文件做 2 次试验/例，每次"离线基线→联网溯源→离线复核"。硬断言离线判定前后逐字节一致、联网不阻断、封顶 S3、审计字段齐全、宽松许可不过度定级。表格如实给出：ranger 1/2、itsdangerous 1/2 检出，toml、synapse 因查询拉取失败跳过，`license_verified_rate` 均为 0/2；单点拉取失败记为跳过不中断。注意本评测样本量小且有 2 例跳过，**不足以单独支撑"AI 必要性"结论**，需与 round2 合并阅读 |
+| `llmfusion-round1-realgithub.json` | 第一轮真实 GitHub 用例：minio(AGPL 原文复制→S4 阻断)、git(GPL 改名→S4)、itsdangerous(语料外→不阻断)、pip(vendored urllib3→S1 署名)；含联网深挖与联网追问的检索轨迹 |
+| `llmfusion-round2-realprojects.json` | 第二轮真实**浅克隆**项目（ranger/itsdangerous/toml/synapse，非内置 demo），5 次试验/例：离线检出上游均为 0；联网检出 ranger 5/5、itsdangerous 5/5（itsdangerous 0.995；ranger 4/5 次 0.997、1 次 0.3805，48 逐字为主），**toml 0/5、synapse 1/5 未稳定检出**；ranger 有 3/5 次 `top.package` 记为 `web-source/UNKNOWN`（按拉取 URL 归属上游，非模型给出的包名）。20 次试验安全不变量全部成立；密钥零泄漏。本文件记录中**没有** `web:license-text-verified` 成功样本 |
+| `eval_llmfusion_round1.py` / `eval_llmfusion_round2.py` | 上述两轮的可复现脚本（密钥经环境变量传入，不写盘）；round2 为多试验比率口径 |
+| `workbench-webprobe.png` | 工作台"联网溯源"卡片截图：语料外命中、上游原文 sha256、许可证文本核验/模型推断标注、检索轨迹（风格与 main 一致） |
+| `workbench-deeptrace.png` | 逐命中"联网深挖"卡片截图：检索轨迹与来源链接 |
+| `license-grounding-eval-20261115.json` / `.md` | **核验通道离线可复现评测（2026-11-15 新增）**：`mode=offline-fixture`，无需网络/密钥。11 个 SPDX 签名分类 + 5 个 `ground_license` 行为（LICENSE 成功、仅 COPYING 存在、全部拉取失败、文本无法识别、同仓库缓存复用）+ 2 条端到端 webprobe 路径，共 **18/18 通过**。用于证明修补后的核验通道逻辑、失败审计与端到端链路可复现；**不代表真实联网核验成功率** |
+| `eval_license_grounding.py` | 上述评测的可复现脚本（`python 佐证材料/eval_license_grounding.py`），纯标准库、离线、无密钥 |
+
+复现联网层评测（需环境变量 `CODEGUARD_LLM_BASE_URL/API_KEY/MODEL` + `CODEGUARD_TAVILY_API_KEY`）：
+
+```bash
+python scripts/eval_webprobe.py --trials 3        # 仓库内固化评测 -> submission/evidence/webprobe-eval-<date>.{json,md}
+python 佐证材料/eval_llmfusion_round2.py           # 多试验真实克隆项目基准（需先 git clone 对应仓库）
+```
+
+复现核验通道（**无需网络、无需任何密钥**，评委可直接跑）：
+
+```bash
+python scripts/eval_license_grounding.py
+# 或直接用提交包内脚本：python 佐证材料/eval_license_grounding.py --out-dir /tmp/cg-eval
+```
+
+> 联网溯源只增加召回、不引入误报：拉取原文仍须通过与本地语料相同的精确验证才成为发现；
+> 命中仅作补充提示（封顶 S3、不阻断），许可证优先用上游 LICENSE 文本确定性核验
+> （`web:license-text-verified`），失败回退模型推断（`web:llm-inferred`）并提示人工确认。
+>
+> **口径说明（2026-11-15 修订）**：上述核验通道已在 `web_evidence.py` 实现，但在本目录留存的
+> 全部评测 JSON 中**从未触发成功**——`web:license-text-verified` 字样 0 次出现；webprobe 轮成功检出
+> 试验的 `license_source` 均为 `web:llm-inferred`（round2 JSON 未记录该字段）。因此本包只主张"通道已实现、失败可回退并标注"，
+> **不主张**"许可证已由 LICENSE 原文核验确认"。同理，联网召回按多次试验比率如实报告
+> （ranger/itsdangerous 稳定，toml/synapse 不稳定），不写成 4 例全部 0.99+ 命中。
+> 架构、安全保证与局限见仓库 `docs/WEBPROBE.md`。
+>
+> **2026-11-15 修补（不改变上述 0/2 口径）**：事后核查确认两个上游 LICENSE 文件均存在、
+> 分类逻辑与 URL 拼接均正确，0/2 的根因是旧版 `ground_license` 任何失败都静默返回 `{}`，
+> 且每条 finding 重复拉取同一 LICENSE、候选文件名只试 3 个、复用 20 秒完整超时。
+> 已修补为：失败也返回可审计字典并把 `status`/`reason`/逐 URL `attempts` 写入
+> `provenance.license_grounding`；候选文件名扩至 9 个（含 `COPYING`）；一次 probe 内按仓库共享缓存；
+> LICENSE 拉取独立 8 秒超时。新增离线夹具评测 `license-grounding-eval-20261115.*`（18/18）验证通道逻辑。
+> **该评测为 offline-fixture，不能换算成真实联网 `license_verified_rate`；真实联网仍为 0/2，
+> 需在稳定网络下重跑 `eval_webprobe.py` 才能更新。** patched 版本会把每次失败原因写入证据，
+> 使下一次补跑可定位、可归因。
+
 
 ---
 
@@ -96,3 +151,13 @@ sh scripts/record_demo.sh                                           # 录屏用�
 正确性仍由逐字命中、覆盖率与第三人复核支撑。κ = -0.0292 属高一致率 / 低 κ 悖论
 （47 条为预筛正例，A 类边际 0.968，Cohen 期望一致率 0.938 > 实际 0.936），该系数在此不适用，
 不再单独引用。
+
+**llmFusion 额外证据**：
+
+| 证据 | 内容 | 复现脚本 |
+|---|---|---|
+| `license-grounding-realnetwork-20261115.json` / `.md` | 混合模式真实网络核验：提案为离线夹具，上游 LICENSE 原文走真实公网；真实拉取 `pallets/itsdangerous/main/LICENSE.txt`（SHA-256 已留存），确定性识别 BSD-3-Clause，`run_web_probe` 端到端触发 `web:license-text-verified`，安全不变量全成立 | `scripts/eval_license_grounding_realnetwork.py` |
+
+> 该用例样本量为 1，**不改写** `webprobe-eval-20261115.json` 与 `llmfusion-round2-realprojects.json`
+> 中真实联网 `license_verified_rate 0/2` 的历史口径，也不代表完整联网 webprobe 的成功率。
+> 与 18/18 的纯离线夹具评测 `license-grounding-eval-20261115.*` 三者口径不同，不得合并成一个成功率。

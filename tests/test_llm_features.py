@@ -172,7 +172,8 @@ def configure(app, stub):
 
 def test_llm_status_never_leaks_key(app, stub):
     status = app.llm_status()
-    assert status == {'configured': False, 'base_url': '', 'model': '', 'key_masked': ''}
+    assert status == {'configured': False, 'base_url': '', 'model': '', 'key_masked': '',
+                      'tavily_configured': False, 'tavily_key_masked': ''}
     configure(app, stub)
     status = app.llm_status()
     assert status['configured'] and status['model'] == 'model-a'

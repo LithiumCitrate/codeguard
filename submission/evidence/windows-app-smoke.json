@@ -7,13 +7,15 @@
   "health": {
     "stats": {
       "index_version": "1.2",
-      "documents": 585,
-      "chunks": 36193,
-      "packages": 20,
+      "documents": 1717,
+      "chunks": 138928,
+      "packages": 32,
       "licenses": [
+        "AGPL-3.0-only",
         "Apache-2.0",
         "BSD-2-Clause",
         "BSD-3-Clause",
+        "GPL-2.0-only",
         "GPL-2.0-or-later",
         "LGPL-2.1",
         "LGPL-3.0-only",
@@ -44,39 +46,44 @@
         "lit": 4
       },
       "sketch_bytes_per_chunk": 160,
-      "payload_bytes": 10134040,
+      "payload_bytes": 38899840,
       "payload_bytes_per_chunk": 280,
-      "buckets": 771597,
-      "built_at": 1792576513
+      "buckets": 2942081,
+      "built_at": 1794734316
     },
     "corpus": {
-      "total": 585,
-      "readable": 585,
+      "total": 1717,
+      "readable": 1717,
       "mismatched": 0
     },
     "ready": true,
     "model": "12维逻辑回归",
-    "privacy": "本机离线分析；代码不执行、不上传、不持久保存"
+    "llm": {
+      "configured": false,
+      "model": "",
+      "base_url": "",
+      "tavily_configured": false
+    },
+    "privacy": "本机离线分析；代码不执行、不上传、不持久保存；仅在你主动点击 AI 功能时才调用你配置的大模型接口；配置 Tavily 后 AI 可联网检索公开资料，查询词仅含项目名/许可证等公开元数据，不含你的源代码"
   },
   "cases": [
     {
       "case": "copy",
       "blocking": true,
-      "findings": 1,
-      "input_sha256": "0551018974d35d2a5487b67e20b799b19b4b92eb39d36c630a1bedc655f98b17"
+      "findings": 2
     },
     {
       "case": "rename",
       "blocking": true,
-      "findings": 1,
-      "input_sha256": "53e766df0c60c23dca87cb57b4d85a5d12b10871a244fb1736ae48cebaffbd53"
+      "findings": 2
     },
     {
       "case": "clean",
       "blocking": false,
-      "findings": 0,
-      "input_sha256": "c4348223fe03ea08ad3f3555064d8c8c8e2bd3aa3221a14e9d5f68b89af49004"
+      "findings": 0
     }
   ],
-  "status": "passed"
+  "status": "passed",
+  "note": "2026-11-15 重建便携包后复测：产品语料 readable=1717，离线判定，无外部调用",
+  "webprobe_endpoint": "present (HTTP 400, expected without keys)"
 }

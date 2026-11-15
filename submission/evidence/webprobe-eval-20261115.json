@@ -1,0 +1,127 @@
+{
+ "schema": "codeguard.webprobe-eval/v1",
+ "generated_at": "2026-11-15T01:17:10Z",
+ "metadata": {
+  "tool": "codeguard",
+  "version": "0.5.1",
+  "model": "dots3-note-prev"
+ },
+ "summary": {
+  "trials_per_case": 2,
+  "safety_invariants": "held on all 4 trials"
+ },
+ "cases": [
+  {
+   "name": "ranger",
+   "query": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py",
+   "upstream": "ranger",
+   "license": "LicenseRef-Proprietary",
+   "permissive": false,
+   "source_sha256": "817198459f317231163ac92262a4b0cf0dbb32421c3a68c76690d4ca6cea8620",
+   "trials": [
+    {
+     "seconds": 78.5,
+     "offline_blocking": false,
+     "offline_hits_upstream": false,
+     "detected": false,
+     "risk": null,
+     "confidence": null,
+     "verbatim": null,
+     "license": null,
+     "license_source": null,
+     "url": null,
+     "search_errors": 0,
+     "fetch_errors": [
+      "拉取超时或网络错误：https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+     ]
+    },
+    {
+     "seconds": 42.2,
+     "offline_blocking": false,
+     "offline_hits_upstream": false,
+     "detected": true,
+     "risk": "S3",
+     "confidence": 0.9973,
+     "verbatim": 48,
+     "license": "GPL-3.0-only",
+     "license_source": "web:llm-inferred",
+     "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py",
+     "search_errors": 0,
+     "fetch_errors": []
+    }
+   ],
+   "detection_rate": "1/2",
+   "offline_detection_rate": "0/2",
+   "license_verified_rate": "0/2"
+  },
+  {
+   "name": "itsdangerous",
+   "query": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py",
+   "upstream": "itsdangerous",
+   "license": "MIT",
+   "permissive": true,
+   "source_sha256": "6d6f1687897c7e3ac6eeff5bfd6794df90e299feedcc6aae3faa0e53ffe925e8",
+   "trials": [
+    {
+     "seconds": 262.4,
+     "offline_blocking": false,
+     "offline_hits_upstream": false,
+     "detected": true,
+     "risk": "S1",
+     "confidence": 0.9953,
+     "verbatim": 48,
+     "license": "BSD-3-Clause",
+     "license_source": "web:llm-inferred",
+     "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py",
+     "search_errors": 0,
+     "fetch_errors": []
+    },
+    {
+     "seconds": 37.6,
+     "offline_blocking": false,
+     "offline_hits_upstream": false,
+     "detected": false,
+     "risk": null,
+     "confidence": null,
+     "verbatim": null,
+     "license": null,
+     "license_source": null,
+     "url": null,
+     "search_errors": 0,
+     "fetch_errors": [
+      "拉取超时或网络错误：https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+     ]
+    }
+   ],
+   "detection_rate": "1/2",
+   "offline_detection_rate": "0/2",
+   "license_verified_rate": "0/2"
+  },
+  {
+   "name": "toml",
+   "query": "https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py",
+   "upstream": "toml",
+   "license": "MIT",
+   "permissive": true,
+   "source_sha256": "",
+   "trials": [],
+   "detection_rate": "0/0",
+   "offline_detection_rate": "0/0",
+   "license_verified_rate": "0/0",
+   "query_error": "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py"
+  },
+  {
+   "name": "synapse",
+   "query": "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/util/stringutils.py",
+   "upstream": "synapse",
+   "license": "LicenseRef-Proprietary",
+   "permissive": true,
+   "source_sha256": "",
+   "trials": [],
+   "detection_rate": "0/0",
+   "offline_detection_rate": "0/0",
+   "license_verified_rate": "0/0",
+   "query_error": "拉取超时或网络错误：https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/util/stringutils.py"
+  }
+ ]
+}

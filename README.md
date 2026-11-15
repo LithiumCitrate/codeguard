@@ -2,7 +2,8 @@
 
 > 大模型会把训练语料里的开源代码"背"出来。CodeGuard 负责回答三个问题：**这段代码来自哪个项目、哪个许可证、它能不能进入我们的产品**。
 >
-> 纯标准库实现，零第三方依赖，不需要 GPU、不需要 API Key，一条命令复现全部实验数据。
+> 离线核心纯标准库、零第三方依赖，不需要 GPU、不需要 API Key，一条命令复现全部离线实验数据。
+> 可选联网层（llmFusion）需用户自配 Tavily/大模型密钥，只提案不判定，见 [docs/WEBPROBE.md](docs/WEBPROBE.md)。
 
 ---
 
@@ -40,7 +41,7 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 未安装时可用 `PYTHONPATH=src python -m codeguard …` 等价调用。逐步讲解与真实输出见
 [docs/TUTORIAL.md](docs/TUTORIAL.md)，算法与取舍见 [docs/DESIGN.md](docs/DESIGN.md)，
-实验表格见 [docs/BENCHMARK.md](docs/BENCHMARK.md)。
+实验表格见 [docs/BENCHMARK.md](docs/BENCHMARK.md)，联网溯源见 [docs/WEBPROBE.md](docs/WEBPROBE.md)。
 
 ## 3. 技术路线
 
@@ -161,7 +162,7 @@ paramiko 小文件片段、pandas 的 re-export 名单、localstack 的惯用 mi
 
 ## 6. AI 使用声明
 
-系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式配置大模型（命令行用环境变量 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL`，工作台在首次运行的设置对话框里保存到本机 `.codeguard/llm_config.json`，密钥不返回浏览器、不写入任何导出物）时才会调用外部大模型，调用失败自动回退到离线模板。工作台的大模型还可用于文件解读、审查执行摘要、基于证据摘要的追问与许可证通俗解释——每次调用均为用户主动触发并标注模型名。任何模式下，**风险等级与合规结论都不由大模型决定**，AI 只做证据的"翻译官"。该声明同时写入每份报告的"AI 使用声明"区块。
+系统的**判定与检索完全由确定性算法与自训练轻量模型完成，可离线复现**。自然语言处置建议默认由内置离线模板生成；仅当显式配置大模型（命令行用环境变量 `CODEGUARD_LLM_BASE_URL` / `CODEGUARD_LLM_API_KEY` / `CODEGUARD_LLM_MODEL`，工作台在首次运行的设置对话框里保存到本机 `.codeguard/llm_config.json`，密钥不返回浏览器、不写入任何导出物）时才会调用外部大模型，调用失败自动回退到离线模板。工作台的大模型还可用于文件解读、审查执行摘要、基于证据摘要的追问与许可证通俗解释——每次调用均为用户主动触发并标注模型名。再配置 Tavily 检索密钥（`CODEGUARD_TAVILY_API_KEY`）后，解读与追问可联网检索公开资料佐证（查询词仅公开元数据，不含源码）；「联网溯源」进一步让大模型推断候选上游、拉取公开 raw 原文后交由**同一套确定性管线**验证，突破本地语料覆盖，命中仅作补充提示（封顶 S3、不阻断）并附许可证文本核验与审计字段。任何模式下，**风险等级与合规结论都不由大模型决定**。该声明同时写入每份报告的"AI 使用声明"区块。联网溯源的架构、安全保证、复现与边际收益评测见 [docs/WEBPROBE.md](docs/WEBPROBE.md)。
 
 本仓库部分代码与文档在开发过程中使用了 AI 编码助手，由团队成员逐模块审核、复现后合入；参与环节与审核记录见技术报告第四节。
 
@@ -183,6 +184,7 @@ src/codeguard/
   mutations.py     8 类确定性洗代码变异
   corpus.py        从 PyPI/源包构建带许可证标注的语料
   llm.py           离线模板撰写 + 可选外部大模型适配层（配置持久化、模型列表、解读/摘要/追问/许可解释四类提示词）
+  web_evidence.py  可选联网溯源：LLM 候选上游 → 白名单拉取 → 复用确定性管线验证 → 许可证文本核验（补充提示，不阻断）
   report.py        出处证书 / CycloneDX / 自包含 HTML / SARIF 2.1.0
   cli.py           corpus index scan gate licenses model benchmark eval doctor
   data/negatives/  9 个自研"干净实现"（基准负例 + 测试 fixture）
@@ -191,8 +193,9 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    false_block_control.py（误阻断对照组实验，佐证规则的证据）
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
-tests/             148 个用例，全部离线跑在 fixture 上
-docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  INTEGRATIONS.md  ROADMAP.md
+                   eval_webprobe.py（联网溯源边际收益评测，AI 必要性证据）
+tests/             202 个用例，全部离线跑在 fixture 上
+docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  WEBPROBE.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
 hooks/pre-commit · .github/workflows/codeguard-gate.yml
@@ -201,7 +204,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 148 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 202 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```
