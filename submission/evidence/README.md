@@ -77,12 +77,12 @@ sh scripts/record_demo.sh                                           # 录屏用�
 | 文件 | 说明 |
 |---|---|
 | `webprobe-eval-20261115.json` / `.md` | 语料外边际收益评测，2 次试验/例：ranger 1/2、itsdangerous 1/2 检出，toml/synapse 因查询拉取失败跳过，`license_verified_rate` 均为 0/2；样本量小且有 2 例跳过，**不足以单独支撑 AI 必要性结论** |
-| `llmfusion-round2-realprojects.json` | 5 次试验/例：ranger 5/5、itsdangerous 5/5 稳定检出（0.997 / 0.995、48 逐字 token），**toml 0/5、synapse 1/5 未稳定检出**；ranger 有 3/5 次 `top.package` 为 `web-source/UNKNOWN`（上游按拉取 URL 归属）；20 次试验安全不变量全部成立 |
+| `llmfusion-round2-realprojects.json` | 5 次试验/例：ranger 5/5、itsdangerous 5/5 稳定检出（itsdangerous 0.995；ranger 4/5 次 0.997、1 次 0.3805，48 逐字为主），**toml 0/5、synapse 1/5 未稳定检出**；ranger 有 3/5 次 `top.package` 为 `web-source/UNKNOWN`（上游按拉取 URL 归属）；20 次试验安全不变量全部成立 |
 | `llmfusion-round1-realgithub.json` | 第一轮真实 GitHub 用例（minio/git/itsdangerous/pip）及联网深挖检索轨迹 |
 | `eval_llmfusion_round1.py` / `eval_llmfusion_round2.py` | 两轮可复现脚本；密钥经环境变量传入、不写盘 |
 
 > 口径提醒（2026-11-15 修订）：联网召回按多次试验比率报告，不承诺单次必中，不写成
 > “4 例全部 0.99+ 命中”；`web:license-text-verified` 核验通道已在 `web_evidence.py` 实现，
-> 但**本轮评测未触发成功**（留存 JSON 中该标记 0 次出现，成功检出的 `license_source` 均为
-> `web:llm-inferred`），故不主张“许可证已由 LICENSE 原文核验确认”。
+> 但**本轮评测未触发成功**（留存 JSON 中该标记 0 次出现；webprobe 轮成功检出的 `license_source`
+> 均为 `web:llm-inferred`，round2 JSON 未记录该字段），故不主张“许可证已由 LICENSE 原文核验确认”。
 > 完整数据、局限与删除历史数字的记录见 `docs/WEBPROBE.md` 第 5 节。

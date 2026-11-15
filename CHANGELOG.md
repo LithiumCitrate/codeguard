@@ -6,6 +6,22 @@ abides by semantic versioning.
 
 ## [Unreleased]
 
+### Added
+
+- **llmFusion optional web-provenance layer** (`src/codeguard/web_evidence.py`,
+  `scripts/eval_webprobe.py`, `docs/WEBPROBE.md`): LLM + Tavily propose candidate
+  upstreams, whitelist-fetch public raw sources, and re-run the *same* deterministic
+  retrieve/verify/score/obligation pipeline; hits are supplementary only (capped S3,
+  never blocking) and leave the offline corpus/index/verdicts byte-identical. A
+  title-anchored SPDX LICENSE-text verification channel is implemented with fallback
+  to `web:llm-inferred`; in the retained 2026-11-15 evaluations it never triggered
+  successfully, so no "LICENSE-verified" claim is made. Marginal benefit measured on
+  4 out-of-corpus clones: offline 0 upstream hits; round2 ranger 5/5 (4 trials
+  0.997/48 verbatim, 1 trial 0.3805/4), itsdangerous 5/5, toml 0/5, synapse 1/5;
+  webprobe ranger/itsdangerous 1/2 each, toml/synapse skipped. Safety invariants held
+  on all 24 trials. Workbench exposes it as a scan-time checkbox. Adds 54 offline
+  tests (202 total).
+
 ### Changed
 
 - **Workbench frontend rebuilt as a flat tactical console in the Arknights /
@@ -15,7 +31,7 @@ abides by semantic versioning.
   and a black terminal footer. Every API and user-facing behaviour is
   unchanged; the optional AI layer and its disclosure strings are untouched.
   Verified at 390 / 768 / 1024 / 1440 px in light and dark themes, including
-  demo copy and clean scans, licence reasoning, AI setup dialog, and the 130
+  demo copy and clean scans, licence reasoning, AI setup dialog, and the 202
   offline tests.
 - **Semantic palette beyond ink and yellow**: cyan for information and AI,
   mint for pass and corpus, magenta for high-risk and export, and red for

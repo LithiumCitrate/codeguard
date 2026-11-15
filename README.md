@@ -203,7 +203,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 148 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 202 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

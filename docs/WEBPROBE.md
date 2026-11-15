@@ -77,7 +77,7 @@ python scripts/eval_webprobe.py --trials 3
 
 | 项目（语料外） | round2 联网检出（5 次/例） | webprobe 联网检出（2 次/例） | 离线检出上游 | 成功试验置信度 |
 |---|---|---|---|---|
-| ranger | 5/5 | 1/2 | 0 | 0.997（48 逐字 token） |
+| ranger | 5/5 | 1/2 | 0 | 4/5 次 0.997（48 逐字）；1 次 0.3805（4 逐字，top 为 web-source/UNKNOWN） |
 | itsdangerous | 5/5 | 1/2 | 0 | 0.995（48 逐字 token） |
 | toml | 0/5 | 跳过（查询拉取失败） | 0 | — |
 | synapse | 1/5 | 跳过（查询拉取失败） | 0 | 0.992（单次） |
@@ -89,8 +89,9 @@ python scripts/eval_webprobe.py --trials 3
   fetch/search 错误、不产生误报；不能写成 0.99+ 置信度命中。早期版本本表格曾列出
   toml 0.994、synapse 0.992 两个置信度，无对应留存证据，2026-11-15 已删除。
 - LICENSE 文本核验通道（`web:license-text-verified`）已在 `web_evidence.py` 实现，但**本轮评测
-  未触发成功**：`license_verified_rate` 为 0/2，成功检出试验的 `license_source` 均为
-  `web:llm-inferred`。因此本节只主张"通道已实现、失败回退模型推断并标注、待补跑成功用例"，
+  未触发成功**：webprobe 轮 `license_verified_rate` 为 0/2、成功检出试验的 `license_source` 均为
+  `web:llm-inferred`；round2 JSON 未记录 `license_source` 字段，同样无 `license-text-verified`
+  标记。因此本节只主张"通道已实现、失败回退模型推断并标注、待补跑成功用例"，
   **不主张**"许可证已由 LICENSE 原文核验确认"或"减少了 unknown→S2 的保守降级"。
 - webprobe 一轮仅 2 次试验/例且 2 例跳过，样本量小，**不足以单独支撑 AI 必要性结论**，
   须与 round2 合并阅读。
