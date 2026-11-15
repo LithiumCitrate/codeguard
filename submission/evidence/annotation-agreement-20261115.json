@@ -1,0 +1,79 @@
+{
+ "schema": "codeguard.annotation-agreement/v1",
+ "generated_at": "2026-11-15T06:30:42Z",
+ "mode": "recompute-from-raw-csv",
+ "seed": 20261115,
+ "n_boot": 2000,
+ "stats": {
+  "n": 47,
+  "a": 44,
+  "b": 1,
+  "c": 2,
+  "d": 0,
+  "po": 0.93617,
+  "pe": 0.937981,
+  "kappa": -0.029197,
+  "pabak": 0.87234,
+  "pe_gwet": 0.061793,
+  "ac1": 0.931966
+ },
+ "confusion_matrix": {
+  "a": 44,
+  "b": 1,
+  "c": 2,
+  "d": 0,
+  "rows": "annotator1",
+  "cols": "annotator2",
+  "categories": [
+   "A",
+   "non-A"
+  ]
+ },
+ "prevalence_A": 0.968085,
+ "distributions": {
+  "rater1": {
+   "A": 45,
+   "B": 2,
+   "C": 0
+  },
+  "rater2": {
+   "A": 46,
+   "B": 1,
+   "C": 0
+  }
+ },
+ "bootstrap": {
+  "po": {
+   "n_valid": 2000,
+   "ci95": [
+    0.8511,
+    1.0
+   ]
+  },
+  "kappa": {
+   "n_valid": 1897,
+   "ci95": [
+    -0.0682,
+    0.0
+   ]
+  },
+  "pabak": {
+   "n_valid": 2000,
+   "ci95": [
+    0.7021,
+    1.0
+   ]
+  },
+  "ac1": {
+   "n_valid": 2000,
+   "ci95": [
+    0.8273,
+    1.0
+   ]
+  }
+ },
+ "disagreements": 3,
+ "adjudicated_records": 3,
+ "final_A": 47,
+ "raw_labels_modified": false
+}
