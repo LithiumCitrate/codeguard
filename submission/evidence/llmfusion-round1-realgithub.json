@@ -1,0 +1,550 @@
+[
+  {
+    "id": "A-minio-agpl-copy",
+    "expect": "AGPL 原文复制，应命中 minio 且阻断级",
+    "source_sha256": "36017711076dc435173692a5fd581fc0449265a6fcfd867abb0f68c32b35f6cb",
+    "scan_seconds": 1.64,
+    "blocking": true,
+    "findings": [
+      {
+        "key": "minio@7aac2a2c5b:minio-7aac2a2c5b/cmd/api-resources.go",
+        "risk": "S4",
+        "confidence": 0.9909,
+        "coverage": 0.8605,
+        "verbatim": 48
+      }
+    ],
+    "deep": {
+      "seconds": 23.57,
+      "model": "dots3-note-prev",
+      "risk": "S4",
+      "text": "根据代码分析结果，您项目中的 minio-7aac2a2c5b/cmd/api-resources.go 文件使用了 AGPL-3.0-only 许可证，但目标许可证被标记为 LicenseRef-Proprietary，存在许可证不兼容风险（风险等级 S4：严重）。\n\n**背景核实**：\n- MinIO 官方仓库采用 GNU AGPL v3 和商业许可证双重许可（https://min-io.cn/compliance）\n- 2021 年 MinIO 从 Apache 许可证切换到 AGPL v3.0（https://www.linkedin.com/posts/peterzaitsev_github-miniominio-minio-is-a-high-performance-activity-7386750744395227137-OgwH）\n- 官方许可证文本确认为 AGPL-3.0-only（https://github.com/minio/minio/blob/master/LICENSE）\n\n**AGPL-3.0-only 核心义务**：\n- 保留版权声明和许可证声明\n- 对修改过的文件作出显著说明\n- 随分发提供对应源码（或书面要约）\n- 网络服务也需提供源码访问\n\n**处置建议**：\n1. **立即核实**：确认 api-resources.go 文件的许可证标记是否为 LicenseRef-Proprietary，避免误标。\n2. **统一许可证**：将该文件的许可证改为 AGPL-3.0-only，确保与 minio 主许可证一致。\n3. **商业许可替代**：如需使用专有许可证，应获取 MinIO 商业许可证（https://www.min.io/legal/customer-license-and-subscription-agreement），以消除 AGPL 义务。\n4. **合规改造**：若保留 AGPL-3.0-only，需确保：\n   - 在分发时附带完整源码\n   - 保留所有版权声明和许可证文本\n   - 对修改部分添加显著说明\n5. **架构隔离**：如无法满足 AGPL 要求，可考虑将 minio 组件隔离为独立服务，通过网络接口交互，避免形成衍生作品。\n\n以上建议基于给定证据和公开信息，仅供参考，不构成法律意见。",
+      "searches": [
+        {
+          "query": "minio 官方仓库 许可证 AGPL-3.0-only",
+          "results": [
+            {
+              "title": "MinIO | 合规性 - MinIO 文档",
+              "url": "https://min-io.cn/compliance"
+            },
+            {
+              "title": "MinIO changes license to AGPL, stops providing ready to use builds | Peter Zaitsev posted on the topic | LinkedIn",
+              "url": "https://www.linkedin.com/posts/peterzaitsev_github-miniominio-minio-is-a-high-performance-activity-7386750744395227137-OgwH"
+            },
+            {
+              "title": "minio/LICENSE at master · minio/minio · GitHub",
+              "url": "https://github.com/minio/minio/blob/master/LICENSE"
+            },
+            {
+              "title": "Customer License and Subscription Agreement",
+              "url": "https://www.min.io/legal/customer-license-and-subscription-agreement"
+            },
+            {
+              "title": "MinIO",
+              "url": "https://tavily.com/knowledge/company/pBIaBQ1xqvH4"
+            }
+          ]
+        },
+        {
+          "query": "minio 7aac2a2c5b 许可证 AGPL",
+          "results": [
+            {
+              "title": "MinIO | 合规性 - MinIO 文档",
+              "url": "https://min-io.cn/compliance"
+            },
+            {
+              "title": "MinIO also switched to AGPLv3 a while back, and they stated that “the AGPL licen... | Hacker News",
+              "url": "https://news.ycombinator.com/item?id=43861404"
+            },
+            {
+              "title": "minio/LICENSE at master · minio/minio · GitHub",
+              "url": "https://github.com/minio/minio/blob/master/LICENSE"
+            },
+            {
+              "title": "Customer License and Subscription Agreement",
+              "url": "https://www.min.io/legal/customer-license-and-subscription-agreement"
+            },
+            {
+              "title": "AGPL | AGP Ltd Stock Price - Investing.com PH",
+              "url": "https://ph.investing.com/equities/agp"
+            }
+          ]
+        }
+      ]
+    },
+    "ask": {
+      "seconds": 83.16,
+      "text": "- 合规风险：目标文件使用 AGPL-3.0-only 的 minio 代码，却以 LicenseRef-Proprietary 分发，直接冲突，风险等级 S4。  \n- 必须履行义务：保留版权/许可声明、显著说明修改、随分发提供源码或书面要约。  \n- minio 许可证近年变化：2021 年由 Apache 2.0 切换为 AGPL-3.0-only，此后未再变更。  \n- 参考来源：https://www.linkedin.com/posts/peterzaitsev_github_miniominio-minio-is-a-high-performance-activity-7386750744395227137-OgwH；https://news.ycombinator.com/item?id=26919510；https://github.com/minio/minio/discussions/12157",
+      "searches": [
+        {
+          "query": "minio project license history AGPL change",
+          "results": [
+            {
+              "title": "MinIO changes license to AGPL, stops providing ready to use builds | Peter Zaitsev posted on the topic | LinkedIn",
+              "url": "https://www.linkedin.com/posts/peterzaitsev_github-miniominio-minio-is-a-high-performance-activity-7386750744395227137-OgwH"
+            },
+            {
+              "title": "Minio Changes License to AGPL | Hacker News",
+              "url": "https://news.ycombinator.com/item?id=26919510"
+            },
+            {
+              "title": "Sudden, Silent License change? · minio/minio · Discussion #12157 · GitHub",
+              "url": "https://github.com/minio/minio/discussions/12157"
+            },
+            {
+              "title": "Customer License and Subscription Agreement",
+              "url": "https://www.min.io/legal/customer-license-and-subscription-agreement"
+            },
+            {
+              "title": "Server Side Public License FAQ | MongoDB",
+              "url": "https://www.mongodb.com/legal/licensing/server-side-public-license/faq"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "B-git-gpl-renamed",
+    "expect": "GPL 改名变异，应命中 git",
+    "source_sha256": "4f20db7cd7f0c1bc7552be4a40fae10baa428da6c68a111c09047420f532c6bd",
+    "scan_seconds": 3.87,
+    "blocking": true,
+    "findings": [
+      {
+        "key": "git@7e34d8174d:git-7e34d8174d/builtin/hash-object.c",
+        "risk": "S4",
+        "confidence": 0.9897,
+        "coverage": 0.9394,
+        "verbatim": 37
+      },
+      {
+        "key": "git@7e34d8174d:git-7e34d8174d/builtin/clone.c",
+        "risk": "S2",
+        "confidence": 0.676,
+        "coverage": 0.0303,
+        "verbatim": 7
+      },
+      {
+        "key": "git@7e34d8174d:git-7e34d8174d/apply.c",
+        "risk": "S2",
+        "confidence": 0.6484,
+        "coverage": 0.0303,
+        "verbatim": 7
+      }
+    ],
+    "deep": {
+      "seconds": 53.83,
+      "model": "dots3-note-prev",
+      "risk": "S4",
+      "text": "依据您提供的证据，并结合对 Git 官方仓库（https://github.com/git/git）及相关许可证背景的联网核实，以下为您整理的开发者处置建议。\n\n**重要提示：本建议仅基于现有证据和公开信息撰写，不构成正式的法律意见。在做出重大商业或技术决策前，建议咨询专业知识产权律师。**\n\n---\n\n### 一、 来源项目与许可证核实情况\n\n1. **官方仓库与版本**：\n   * 来源项目为 **Git**，官方仓库地址为：[https://github.com/git/git](https://github.com/git/git)。\n   * 证据中的版本号 `7e34d8174d` 为 Git 源码仓库中的一个具体提交哈希（Commit Hash），对应快照中的 `builtin/hash-object.c` 文件。\n2. **许可证状态**：\n   * 经核实，Git 核心项目的许可证自诞生起一直为 **GPLv2（GNU General Public License Version 2）**，且项目在 `COPYING` 文件中明确限制**只能使用第 2 版**（即 SPDX 标识的 `GPL-2.0-only`，无“或后续版本”选择权）。\n   * 截至目前，Git 核心项目**未发生过整体重新授权（Re-licensing）**。虽然 Git 的部分辅助工具或第三方绑定库（如 libgit2）有特定的链接例外或不同许可，但核心文件 `builtin/hash-object.c` 仍严格受 `GPL-2.0-only` 约束。\n\n---\n\n### 二、 风险与冲突分析\n\n根据证据的判定结果，该冲突的风险等级为 **S4（严重）**，状态为 **不兼容（incompatible）**：\n* **来源许可证（GPL-2.0-only）**：具有强传染性（Copyleft）。一旦以分发（Distribution）或网络服务（SaaS，视具体司法管辖区及 GPL 解释而定）的形式使用，其传染范围会扩展至整件结合作品（Derivative Work）。\n* **目标许可证（LicenseRef-Proprietary）**：属于私有/专有许可，其 Copyleft 强度远低于 GPL-2.0-only 的要求。\n* **核心冲突**：将 GPL-2.0-only 的代码与私有许可代码混合并进行分发，违反了 GPL-2.0-only 的条款（即衍生作品必须同样以 GPL-2.0-only 许可发布，并提供对应源码）。\n\n---\n\n### 三、 开发者具体处置步骤\n\n为了避免潜在的开源合规风险与法律纠纷，建议开发团队采取以下处置措施：\n\n#### 1. 立即停止私有化集成与分发（紧急止损）\n* **停止合并与分发**：立即停止将包含 `git-7e34d8174d/builtin/hash-object.c`（或任何基于该文件的修改版本）的软件，以 `LicenseRef-Proprietary`（私有许可）进行商业分发、销售或通过网络向公众提供服务。\n* **评估影响面**：排查当前产品代码库，确认是否已引入该文件或其他受 GPL-2.0-only 传染的 Git 核心源码。\n\n#### 2. 严格履行 GPL-2.0-only 的合规义务（若保留代码）\n如果业务场景允许继续使用该开源代码（即不采用私有许可，而是开源或内部使用）：\n* **保留版权与许可声明**：在分发二进制或软件时，必须完整保留该文件的 GPL-2.0-only 版权声明及许可证副本。\n* **提供源码要约（Source Code Offer）**：随分发产品提供完整的对应源码，或书面承诺在收到请求后一定期限内（通常为 3 年内）以成本价或免费提供完整源代码。\n\n#### 3. 技术隔离与代码重构（推荐方案）\n若产品必须维持 `LicenseRef-Proprietary` 私有许可，需进行技术重构以切断 GPL 传染链：\n* **功能替代（Rewrite / Replace）**：移除对 Git 核心库中 `builtin/hash-object.c` 的直接依赖。改用标准库、自研算法或采用宽松/Permissive 许可证（如 MIT、Apache 2.0）的第三方库来实现相同的哈希计算功能。\n* **进程级隔离（IPC Separation）**：如果必须调用 Git 命令行工具（`git hash-object`），应以独立进程（Subprocess）方式调用，确保私有程序与 Git 核心代码之间保持清晰的进程边界与通信协议，避免构成“结合作品”（Combined Work），但需注意网络服务模式下可能仍存在风险。\n\n#### 4. 商业授权或合规转型\n* **申请商业许可（Commercial Licensing）**：如果业务上必须将该部分核心逻辑深度集成到私有产品中且无法替代，可以尝试联系 Git 项目的版权持有人（主要维护者及贡献者）或相关基金会，协商获取 GPL-2.0-only 的商业使用豁免或专有许可。\n* **调整产品许可策略**：如果产品本身适合开源，可考虑将整个产品的许可统一调整为 `GPL-2.0-only`，以满足开源合规要求，实现生态共赢。",
+      "searches": [
+        {
+          "query": "git official repository license GPL-2.0-only",
+          "results": [
+            {
+              "title": "Git GPL-2.0 obligations and the libgit2 linking exception | LICENSEWARE Wiki",
+              "url": "https://wiki.licenseware.io/wiki/git-gpl-2-0-obligations-and-libgit2"
+            },
+            {
+              "title": "GitHub - pombredanne/gpl-history · GitHub",
+              "url": "https://github.com/pombredanne/gpl-history"
+            },
+            {
+              "title": "JasPer - Michael Adams @ University of Victoria",
+              "url": "https://www.ece.uvic.ca/~mdadams/jasper"
+            },
+            {
+              "title": "GIT Geeks Information",
+              "url": "https://rocketreach.co/git-geeks-profile_b4439f08fdf3fd31"
+            },
+            {
+              "title": "$53K–$139K Manage Git Repository Jobs | Indeed",
+              "url": "https://ca.indeed.com/q-manage-git-repository-jobs.html"
+            }
+          ]
+        },
+        {
+          "query": "git version 7e34d8174d release announcement",
+          "results": [
+            {
+              "title": "The latest on Git updates - The GitHub Blog",
+              "url": "https://github.blog/open-source/git"
+            },
+            {
+              "title": "git/GIT-VERSION-GEN at master · git/git · GitHub",
+              "url": "https://github.com/git/git/blob/master/GIT-VERSION-GEN"
+            },
+            {
+              "title": "What's new in Git 2.56.0?",
+              "url": "https://about.gitlab.com/blog/whats-new-in-git-2-56-0"
+            },
+            {
+              "title": "GitHub Releases | Git | AlgoMaster.io",
+              "url": "https://algomaster.io/learn/git/github-releases"
+            },
+            {
+              "title": "Where is the Changelog and Release Notes of the Git project? - Stack Overflow",
+              "url": "https://stackoverflow.com/questions/78292078/where-is-the-changelog-and-release-notes-of-the-git-project"
+            }
+          ]
+        },
+        {
+          "query": "git project official repository github.com/git/git",
+          "results": [
+            {
+              "title": "GitHub - git/git: Git Source Code Mirror - This is a publish-only repository but pull requests can be turned into patches to the mailing list via GitGitGadget (https://gitgitgadget.github.io/). Please",
+              "url": "https://github.com/git/git"
+            },
+            {
+              "title": "Git · GitHub",
+              "url": "https://github.com/GIT"
+            },
+            {
+              "title": "Git Guides - git init · GitHub",
+              "url": "https://github.com/git-guides/git-init"
+            },
+            {
+              "title": "How to create your first GitHub repository: A beginner's guide | Tutorial",
+              "url": "https://www.youtube.com/watch?v=-RZ03WHqkaY"
+            },
+            {
+              "title": "Git - Getting a Git Repository",
+              "url": "https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "ask": {
+      "seconds": 25.2,
+      "text": "- **最需要注意的合规风险**：目标文件 `hash-object.c` 来自 Git 提交 `7e34d8174d`，其许可证为 GPL-2.0-only，而分发目标许可证为 `LicenseRef-Proprietary`。两者直接冲突，风险等级为 S4（严重），状态为 incompatible。主要问题在于：GPL-2.0-only 具有强传染性，要求衍生作品也以 GPL-2.0-only 发布，而 `LicenseRef-Proprietary` 的 copyleft 强度低于 GPL-2.0-only，无法满足该要求。此外，分发时需保留版权/许可声明并随分发提供对应源码（或书面要约），否则进一步违反 GPL-2.0 条款。\n\n- **来源项目许可证近年变化**：根据公开资料，Git 项目长期采用 GPL-2.0-only 许可证，其 COPYING 文件明确排除后续 GPL 版本（如 GPL-3.0），即不允许接收者选择 GPL-3.0 条款。检索未发现 Git 近年变更许可证的公告或记录，其许可证状态保持稳定。\n\n（注：以上解读基于 CodeGuard 确定性引擎给出的风险等级与结论，不构成法律意见。如需进一步佐证，可查阅 Git 官方仓库的 COPYING 文件或 SPDX 许可证列表。）",
+      "searches": [
+        {
+          "query": "git project GPL-2.0-only license history changes",
+          "results": [
+            {
+              "title": "Git licensing | LICENSEWARE Wiki",
+              "url": "https://wiki.licenseware.io/wiki/git-licensing"
+            },
+            {
+              "title": "linux/LICENSES/preferred/GPL-2.0 at master · torvalds/linux · GitHub",
+              "url": "https://github.com/torvalds/linux/blob/master/LICENSES/preferred/GPL-2.0"
+            },
+            {
+              "title": "Changing project license from MIT to GPL? - Lounge - Joplin Forum",
+              "url": "https://discourse.joplinapp.org/t/changing-project-license-from-mit-to-gpl/25558"
+            },
+            {
+              "title": "GNU General Public License - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/GNU_General_Public_License"
+            },
+            {
+              "title": "GNU General Public License v2.0 - GNU Project - Free Software Foundation",
+              "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"
+            }
+          ]
+        },
+        {
+          "query": "git commit 7e34d8174d license",
+          "results": [
+            {
+              "title": "Add support for GitHub projects · licensee/licensee@1b9d1f2 · GitHub",
+              "url": "https://github.com/licensee/licensee/commit/1b9d1f2b00fa9654f5df0d4fccdfaf9f8b0d1c26"
+            },
+            {
+              "title": "Apache License, Version 2.0 | Apache Software Foundation",
+              "url": "https://www.apache.org/licenses/LICENSE-2.0"
+            },
+            {
+              "title": "The MIT License",
+              "url": "https://opensource.org/license/mit"
+            },
+            {
+              "title": "Deed - Attribution 2.0 Generic - Creative Commons",
+              "url": "https://creativecommons.org/licenses/by/2.0/deed.en"
+            },
+            {
+              "title": "Deed - Attribution-NonCommercial 4.0 International - Creative Commons",
+              "url": "https://creativecommons.org/licenses/by-nc/4.0/deed.en"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "C-itsdangerous-clean",
+    "expect": "语料外独立项目，不应阻断",
+    "source_sha256": "3afbf6050e8b73605931d1e516f374835456979e4319c098bfe5f284f120c6c5",
+    "scan_seconds": 3.1,
+    "blocking": false,
+    "findings": [
+      {
+        "key": "click@8.5.0:click-8.5.0/src/click/utils.py",
+        "risk": "S0",
+        "confidence": 0.6734,
+        "coverage": 0.0286,
+        "verbatim": 11
+      },
+      {
+        "key": "flask@d086db856b:flask-d086db856b/src/flask/app.py",
+        "risk": "S0",
+        "confidence": 0.5715,
+        "coverage": 0.0286,
+        "verbatim": 2
+      }
+    ],
+    "deep": {
+      "seconds": 22.18,
+      "model": "dots3-note-prev",
+      "risk": "S0",
+      "text": "根据现有证据与公开信息核实，处置建议如下：\n\n**来源项目与许可证核实**\n- click 项目官方仓库为 pallets/click（GitHub），当前版本 8.5.0 采用 BSD-3-Clause 许可证，官方文档与仓库均保持一致，未发现重新授权或许可证变更公告。\n- 8.5.0 版本发布说明中未提及许可证相关变更，仅包含功能更新与缺陷修复。\n\n**兼容性结论**\n- 证据引擎判定：来源 BSD-3-Clause → 目标 MIT，使用方式为分发，状态为兼容，无冲突，唯一义务为保留版权/许可声明。\n- 该结论基于证据评分与匹配跨度得出，不代表法律意见。\n\n**处置步骤**\n1. 在目标项目（timed.py）的分发包中，保留 click 的 BSD-3-Clause 许可声明原文及版权声明，路径可参考 click 官方许可证页。\n2. 在目标项目的 LICENSE 或 NOTICE 文件中，同时列出 MIT（目标）与 BSD-3-Clause（依赖）许可文本，并注明对应版本与来源仓库。\n3. 持续关注 click 项目的官方仓库与 releases 页面，若未来发生许可证变更，需重新评估兼容性并更新合规文档。\n\n**引用来源**\n- click 官方文档（许可证页）：https://click.palletsprojects.com/en/stable/license\n- click 项目 GitHub 主页：https://github.com/pallets/click\n- click 8.5.0 发布说明：https://click.palletsprojects.com/en/stable/changes\n- click 8.5.0 GitHub Release：https://github.com/pallets/click/releases/tag/8.5.0",
+      "searches": [
+        {
+          "query": "click python project official repository license",
+          "results": [
+            {
+              "title": "Welcome to Click — Click Documentation (8.5.x)",
+              "url": "https://click.palletsprojects.com"
+            },
+            {
+              "title": "python-project-template/LICENSE at main · carbonplan/python-project-template · GitHub",
+              "url": "https://github.com/carbonplan/python-project-template/blob/main/LICENSE"
+            },
+            {
+              "title": "BSD-3-Clause License — Click Documentation (8.5.x)",
+              "url": "https://click.palletsprojects.com/en/stable/license"
+            },
+            {
+              "title": "click-contrib — Click Documentation (8.5.x)",
+              "url": "https://click.palletsprojects.com/en/stable/contrib"
+            },
+            {
+              "title": "History and License — Python 3.15.2 documentation",
+              "url": "https://docs.python.org/3/license.html"
+            }
+          ]
+        },
+        {
+          "query": "click python pallets BSD-3-Clause license history relicense",
+          "results": [
+            {
+              "title": "Pallets · GitHub",
+              "url": "https://github.com/pallets"
+            },
+            {
+              "title": "Pallets",
+              "url": "https://palletsprojects.com"
+            },
+            {
+              "title": "Pallet - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/Pallet"
+            },
+            {
+              "title": "Pallet",
+              "url": "https://www.pallet.com"
+            },
+            {
+              "title": "Wooden Pallets | NC DEQ",
+              "url": "https://www.deq.nc.gov/about/divisions/environmental-assistance-and-customer-service/recycling-and-materials-management/recycle-right/special-recyclables/wooden-pallets"
+            }
+          ]
+        },
+        {
+          "query": "click 8.5.0 release notes license change",
+          "results": [
+            {
+              "title": "Changes — Click Documentation (8.5.x)",
+              "url": "https://click.palletsprojects.com/en/stable/changes"
+            },
+            {
+              "title": "Releases · pallets/click · GitHub",
+              "url": "https://github.com/pallets/click/releases"
+            },
+            {
+              "title": "OneStream Release Notes",
+              "url": "https://documentation.onestream.com/1375907/Content/PDFs/OneStream_Version_8.5.0_Release_Notes.pdf"
+            },
+            {
+              "title": "Phoenix's new licensing system with 8.5+ https://my.certara.net - Phoenix WNL basics - Certara",
+              "url": "https://forum.certara.com/t/phoenixs-new-licensing-system-with-8-5-https-my-certara-net/3748"
+            },
+            {
+              "title": "Release Notes",
+              "url": "https://help-risk.lumivero.com/v8_10/en/Release-Notes.htm"
+            }
+          ]
+        }
+      ]
+    },
+    "ask": {
+      "seconds": 20.42,
+      "text": "根据审查摘要与公开资料，解读如下：\n\n**最需注意的合规风险：保留版权/许可声明**\n- 审查引擎在 click 与 flask 中均识别出 BSD-3-Clause 许可证，虽风险等级为 S0（无实质条件风险），但明确列出义务为“保留版权/许可声明”。这意味着在分发 timed.py 时，必须随附这两个依赖项的版权声明与许可证全文，否则将违反 BSD-3-Clause 的条款。该义务是确定性引擎给出的结论，不可忽略。\n\n**来源项目许可证近年变化情况**\n- **click**：公开资料显示，click 的许可证曾按版本区间划分：8.2.0 及以上版本使用 BSD-3-Clause，更早版本曾使用 BSD-2-Clause。审查目标版本为 8.5.0，落在 BSD-3-Clause 区间内，因此当前版本许可证近年无变化，仍为 BSD-3-Clause。  \n  - 佐证：Snyk 页面显示 click 的许可证区间（https://security.snyk.io/package/pip/click）\n- **flask**：检索到的 Flask 官方文档（3.1.x）仍显示为 BSD-3-Clause，未发现近年有变更公告。BSD-3-Clause 本身为稳定许可，flask 自采用该许可以来未见公开的重新授权或升级记录。  \n  - 佐证：Flask 许可证页面（https://flask.palletsprojects.com/en/stable/license）\n\n**结论**  \n当前审查结果未发现许可证冲突或代码复用风险，主要合规义务为在分发时完整保留 click 与 flask 的 BSD-3-Clause 声明。两者许可证近年均无实质性变化，风险可控。如需进一步降低风险，建议在项目文档或分发包中显式附上这两个依赖的许可证原文。",
+      "searches": [
+        {
+          "query": "click 8.5.0 license BSD-3-Clause",
+          "results": [
+            {
+              "title": "BSD-3-Clause License — Click Documentation (8.5.x)",
+              "url": "https://click.palletsprojects.com/en/stable/license"
+            },
+            {
+              "title": "click | Snyk",
+              "url": "https://security.snyk.io/package/pip/click"
+            },
+            {
+              "title": "click | PyPI | Open Source Insights",
+              "url": "https://deps.dev/pypi/click"
+            },
+            {
+              "title": "GitHub - pallets/click at blog.gitguardian.com · GitHub",
+              "url": "https://github.com/pallets/click?ref=blog.gitguardian.com"
+            },
+            {
+              "title": "Open Source Software Licenses 101: The BSD 3-Clause License | FOSSA Blog",
+              "url": "https://fossa.com/blog/open-source-software-licenses-101-bsd-3-clause-license"
+            }
+          ]
+        },
+        {
+          "query": "flask BSD-3-Clause license history changes",
+          "results": [
+            {
+              "title": "BSD-3-Clause License — Flask Documentation (3.1.x)",
+              "url": "https://flask.palletsprojects.com/en/stable/license"
+            },
+            {
+              "title": "BSD licenses - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/BSD_licenses"
+            },
+            {
+              "title": "Open Source Software Licenses 101: The BSD 3-Clause License | FOSSA Blog",
+              "url": "https://fossa.com/blog/open-source-software-licenses-101-bsd-3-clause-license"
+            },
+            {
+              "title": "History of Open-Source Licenses: What License to Choose?",
+              "url": "https://memgraph.com/blog/history-of-open-source-licenses-what-license-to-choose"
+            },
+            {
+              "title": "BSD 3-Clause \"New\" or \"Revised\" license | Interoperable Europe Portal",
+              "url": "https://interoperable-europe.ec.europa.eu/licence/bsd-3-clause-new-or-revised-license"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "D-pip-vendored-urllib3",
+    "expect": "真实 vendoring，可能命中 urllib3，观察评级",
+    "source_sha256": "b117515dddf2799d7ebca975af25a72b5e4802741c211ee18c4196227598583c",
+    "scan_seconds": 5.13,
+    "blocking": false,
+    "findings": [
+      {
+        "key": "urllib3@2.8.0:urllib3-2.8.0/src/urllib3/util/url.py",
+        "risk": "S1",
+        "confidence": 0.9994,
+        "coverage": 0.9681,
+        "verbatim": 48
+      },
+      {
+        "key": "urllib3@2.8.0:urllib3-2.8.0/src/urllib3/_base_connection.py",
+        "risk": "S0",
+        "confidence": 0.6373,
+        "coverage": 0.0106,
+        "verbatim": 7
+      }
+    ],
+    "deep": {
+      "seconds": 20.91,
+      "model": "dots3-note-prev",
+      "risk": "S1",
+      "text": "根据提供的证据与联网核实结果，现给出以下处置建议：\n\n## 证据摘要\n\n- **项目**：urllib3 2.8.0\n- **文件**：`urllib3-2.8.0/src/urllib3/util/url.py`\n- **许可证**：MIT（SPDX 匹配置信度 0.9994，覆盖率 0.9681，已交叉验证）\n- **风险等级**：S1（低风险）\n- **兼容性结论**：源端与目标端均为 MIT，分发使用兼容，需履行义务为\"保留版权/许可声明\"\n\n## 官方信息核实\n\n- **官方仓库**：https://github.com/urllib3/urllib3\n- **版本公告**：2.8.0 于 2026-09-15 发布，详见 CHANGES.rst（https://github.com/urllib3/urllib3/blob/main/CHANGES.rst）\n- **许可证声明**：项目文档明确说明 \"urllib3 is made available under the MIT License. For more details, see LICENSE.txt.\"（https://urllib3.readthedocs.io）\n- **许可证历史**：在公开网络检索中，未发现 urllib3 进行过重新授权的公告或记录；该项目自始至终采用 MIT 许可证。\n\n## 处置建议（面向开发者）\n\n1. **确认许可证文件**：在您的项目中，请确保包含 urllib3 的原始许可证文本，通常为项目根目录下的 `LICENSE.txt` 文件。该文件应随您的分发包一同发布。\n\n2. **保留版权声明**：根据 MIT 许可证要求，您必须在分发的 urllib3 源代码（包括 `url.py` 及其他文件）中保留原有的版权 notices 和许可证声明。不要移除或修改这些声明。\n\n3. **分发形式**：如果您以源代码形式分发 urllib3，请确保 `LICENSE.txt` 完整且可读；如果您以编译后二进制形式分发，应提供获取源代码和许可证文本的途径（例如，提供源码仓库链接或随包附上许可证副本）。\n\n4. **内部使用**：若仅内部使用，虽无强制披露要求，但建议保留许可证文件以备合规审计。\n\n5. **升级跟踪**：关注 urllib3 官方仓库的 CHANGES.rst，了解未来版本的许可证变更或安全更新。当前至 2.8.0 版本，未发现许可证变更迹象。\n\n以上建议仅基于现有证据，不构成法律意见。如需法律意见，请咨询专业律师。",
+      "searches": [
+        {
+          "query": "urllib3 2.8.0 官方仓库 GitHub",
+          "results": [
+            {
+              "title": "urllib3/CHANGES.rst at main · urllib3/urllib3 · GitHub",
+              "url": "https://github.com/urllib3/urllib3/blob/main/CHANGES.rst"
+            },
+            {
+              "title": "urllib3 2.8.0 documentation",
+              "url": "https://urllib3.readthedocs.io"
+            },
+            {
+              "title": "Arch Linux - python-urllib3 2.8.0-1 (any)",
+              "url": "https://archlinux.org/packages/extra/any/python-urllib3"
+            },
+            {
+              "title": "urllib3>=2.0 does not work with system Python on macOS",
+              "url": "https://github.com/urllib3/urllib3/issues/3020?timeline_page=1"
+            },
+            {
+              "title": "GitHub",
+              "url": "https://tavily.com/knowledge/company/WGf4o1saQ1yD"
+            }
+          ]
+        },
+        {
+          "query": "urllib3 license history MIT relicense",
+          "results": [
+            {
+              "title": "urllib3 2.8.0 documentation",
+              "url": "https://urllib3.readthedocs.io"
+            },
+            {
+              "title": "How to properly re-license code released under the MIT License?",
+              "url": "https://opensource.stackexchange.com/questions/6838/how-to-properly-re-license-code-released-under-the-mit-license"
+            },
+            {
+              "title": "MIT License - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/MIT_License"
+            },
+            {
+              "title": "Exploring the MIT Open Source License: A Comprehensive Guide | MIT Technology Licensing Office",
+              "url": "https://tlo.mit.edu/understand-ip/exploring-mit-open-source-license-comprehensive-guide"
+            },
+            {
+              "title": "The MIT License",
+              "url": "https://opensource.org/license/mit"
+            }
+          ]
+        }
+      ]
+    },
+    "ask": {
+      "seconds": 18.9,
+      "text": "根据审查摘要与公开资料，解读如下：\n\n**最需注意的合规风险**  \n- **高比例代码复用的署名义务**：`urllib3-2.8.0/src/urllib3/util/url.py` 与目标文件匹配度高达 96.8%，被 CodeGuard 判定为 S1 级低风险，核心义务是**保留原版权/许可声明**。分发时必须在源码或文档中显式声明该文件来源于 urllib3 并附带 MIT 许可证原文，否则可能构成对原作品署名权的侵犯。  \n- **另一文件风险可忽略**：`_base_connection.py` 匹配度仅 1.06%，被判定为 S0 无风险，但仍建议保留 MIT 声明以符合项目整体许可要求。\n\n**许可证近年变化情况**  \n- 公开资料显示，urllib3 自诞生起即采用 MIT 许可证，至 2.8.0 版本（2025-09-15 发布）未发生变更。  \n- 官方文档（https://urllib3.readthedocs.io）明确声明“urllib3 is made available under the MIT License”；  \n- deps.dev 的 Open Source Insights 页面（https://deps.dev/pypi/urllib3）确认 2.8.0 版本包含 LICENSE.txt 且为 MIT；  \n- GitHub Releases 页面（https://github.com/urllib3/urllib3/releases）未提及任何许可证调整。\n\n综上，urllib3 近年保持 MIT 许可证不变，主要合规风险集中在高复用文件的署名义务，需确保分发物中包含原项目版权与许可声明。如需进一步验证，可查阅项目根目录 LICENSE.txt 原文。",
+      "searches": [
+        {
+          "query": "urllib3 2.8.0 MIT license",
+          "results": [
+            {
+              "title": "urllib3 2.8.0 documentation",
+              "url": "https://urllib3.readthedocs.io"
+            },
+            {
+              "title": "Arch Linux - python-urllib3 2.8.0-1 (any)",
+              "url": "https://archlinux.org/packages/extra/any/python-urllib3"
+            },
+            {
+              "title": "urllib3 | PyPI | Open Source Insights",
+              "url": "https://deps.dev/pypi/urllib3"
+            },
+            {
+              "title": "Releases · urllib3/urllib3 · GitHub",
+              "url": "https://github.com/urllib3/urllib3/releases"
+            },
+            {
+              "title": "Patent License Agreement between Sangamo and MIT",
+              "url": "https://www.sec.gov/Archives/edgar/data/1001233/000119312510089133/dex104.htm"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,450 @@
+{
+  "summary": {
+    "trials_per_case": 5,
+    "safety_invariants": "held on all 20 trials",
+    "cases": [
+      {
+        "id": "W1-ranger-gpl-out-of-corpus",
+        "detection_rate": "5/5",
+        "correct_upstream_rate": "5/5"
+      },
+      {
+        "id": "W2-itsdangerous-mit-out-of-corpus",
+        "detection_rate": "5/5",
+        "correct_upstream_rate": "5/5"
+      },
+      {
+        "id": "W3-toml-mit-niche",
+        "detection_rate": "0/5",
+        "correct_upstream_rate": "0/5"
+      },
+      {
+        "id": "W4-synapse-license-drift",
+        "detection_rate": "1/5",
+        "correct_upstream_rate": "1/5"
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "W1-ranger-gpl-out-of-corpus",
+      "expect": "语料外 GPL-3.0 原文：离线不阻断，联网溯源应能命中 ranger（最高 S3）",
+      "file": "ranger/ranger/ext/rifle.py",
+      "upstream": "ranger",
+      "source_sha256": "817198459f317231163ac92262a4b0cf0dbb32421c3a68c76690d4ca6cea8620",
+      "chars": 25093,
+      "trials": [
+        {
+          "seconds": 31.59,
+          "offline_blocking": false,
+          "offline_findings": 4,
+          "detected": true,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S3",
+            "package": "ranger",
+            "license": "GPL-3.0",
+            "confidence": 0.9973,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 172.17,
+          "offline_blocking": false,
+          "offline_findings": 4,
+          "detected": true,
+          "fetched": 4,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S2",
+            "package": "web-source",
+            "license": "UNKNOWN",
+            "confidence": 0.3805,
+            "verbatim": 4,
+            "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/core/actions.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py",
+            "https://raw.githubusercontent.com/ranger/ranger/master/setup.py",
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/core/actions.py",
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/api/commands.py"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          ]
+        },
+        {
+          "seconds": 57.07,
+          "offline_blocking": false,
+          "offline_findings": 4,
+          "detected": true,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S2",
+            "package": "web-source",
+            "license": "UNKNOWN",
+            "confidence": 0.9973,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 48.69,
+          "offline_blocking": false,
+          "offline_findings": 4,
+          "detected": true,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S3",
+            "package": "ranger",
+            "license": "GPL-3.0-only",
+            "confidence": 0.9973,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 46.71,
+          "offline_blocking": false,
+          "offline_findings": 4,
+          "detected": true,
+          "fetched": 2,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S2",
+            "package": "web-source",
+            "license": "UNKNOWN",
+            "confidence": 0.9973,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          },
+          "fetched_urls": [
+            "https://github.com/ranger/ranger/raw/refs/tags/1.9.4/ranger/ext/rifle.py",
+            "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py"
+          ],
+          "fetch_errors": [
+            "仅允许拉取公开 raw 源码地址（GitHub/GitLab/Gitee）"
+          ]
+        }
+      ],
+      "detection_rate": "5/5",
+      "correct_upstream_rate": "5/5"
+    },
+    {
+      "id": "W2-itsdangerous-mit-out-of-corpus",
+      "expect": "语料外宽松许可原文：即使命中也应不阻断、不过度定级",
+      "file": "itsdangerous/src/itsdangerous/serializer.py",
+      "upstream": "itsdangerous",
+      "source_sha256": "6d6f1687897c7e3ac6eeff5bfd6794df90e299feedcc6aae3faa0e53ffe925e8",
+      "chars": 15563,
+      "trials": [
+        {
+          "seconds": 25.76,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "itsdangerous",
+            "license": "BSD-3-Clause",
+            "confidence": 0.9953,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 18.28,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 1,
+          "searches": 2,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "itsdangerous",
+            "license": "BSD-3-Clause",
+            "confidence": 0.9953,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 22.89,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "itsdangerous",
+            "license": "BSD-3-Clause",
+            "confidence": 0.9953,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 26.31,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 1,
+          "searches": 2,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "itsdangerous",
+            "license": "BSD-3-Clause",
+            "confidence": 0.9953,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          ],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 29.2,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 2,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "itsdangerous",
+            "license": "BSD-3-Clause",
+            "confidence": 0.9953,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/pallets/itsdangerous/master/src/itsdangerous/serializer.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/pallets/itsdangerous/master/src/itsdangerous/serializer.py",
+            "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/serializer.py"
+          ],
+          "fetch_errors": []
+        }
+      ],
+      "detection_rate": "5/5",
+      "correct_upstream_rate": "5/5"
+    },
+    {
+      "id": "W3-toml-mit-niche",
+      "expect": "小众 MIT 真实文件：不得产生阻断级误报",
+      "file": "toml/toml/decoder.py",
+      "upstream": "toml",
+      "source_sha256": "0d41864b078a87e4fcee84e2c72f587d364c1fbd7e24b9f6d727b983cf6258b5",
+      "chars": 38762,
+      "trials": [
+        {
+          "seconds": 164.5,
+          "offline_blocking": false,
+          "offline_findings": 3,
+          "detected": false,
+          "fetched": 2,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py",
+            "https://raw.githubusercontent.com/uiri/toml/master/toml/encoder.py"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py",
+            "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/toml/encoder.py"
+          ]
+        },
+        {
+          "seconds": 80.14,
+          "offline_blocking": false,
+          "offline_findings": 3,
+          "detected": false,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/uiri/toml/master/LICENSE"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/LICENSE"
+          ]
+        },
+        {
+          "seconds": 17.16,
+          "offline_blocking": false,
+          "offline_findings": 3,
+          "detected": false,
+          "fetched": 0,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 72.53,
+          "offline_blocking": false,
+          "offline_findings": 3,
+          "detected": false,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/uiri/toml/master/setup.py"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/setup.py"
+          ]
+        },
+        {
+          "seconds": 91.3,
+          "offline_blocking": false,
+          "offline_findings": 3,
+          "detected": false,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/uiri/toml/master/toml/decoder.py"
+          ]
+        }
+      ],
+      "detection_rate": "0/5",
+      "correct_upstream_rate": "0/5"
+    },
+    {
+      "id": "W4-synapse-license-drift",
+      "expect": "许可证漂移观察：仓库现 Apache-2.0，模型记忆可能滞后；只记录不强制命中",
+      "file": "synapse/synapse/util/stringutils.py",
+      "upstream": "synapse",
+      "source_sha256": "bed38e6ad2d3781ce9cb71ce110abbc4da351dc27c30998149262f1fefe8656a",
+      "chars": 8189,
+      "trials": [
+        {
+          "seconds": 32.42,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": false,
+          "fetched": 0,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 24.02,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": false,
+          "fetched": 0,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 47.35,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": false,
+          "fetched": 1,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/element-hq/synapse/develop/synapse/utils/stringutils.py"
+          ],
+          "fetch_errors": [
+            "拉取超时或网络错误：https://raw.githubusercontent.com/element-hq/synapse/develop/synapse/utils/stringutils.py"
+          ]
+        },
+        {
+          "seconds": 16.93,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": false,
+          "fetched": 0,
+          "searches": 3,
+          "search_errors": 0,
+          "top": null,
+          "fetched_urls": [],
+          "fetch_errors": []
+        },
+        {
+          "seconds": 110.5,
+          "offline_blocking": false,
+          "offline_findings": 1,
+          "detected": true,
+          "fetched": 3,
+          "searches": 3,
+          "search_errors": 0,
+          "top": {
+            "risk": "S1",
+            "package": "matrix-synapse",
+            "license": "Apache-2.0",
+            "confidence": 0.9919,
+            "verbatim": 48,
+            "url": "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/util/stringutils.py"
+          },
+          "fetched_urls": [
+            "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/util/stringutils.py",
+            "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/handlers/room.py",
+            "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/storage/databases/main/user_directory.py"
+          ],
+          "fetch_errors": []
+        }
+      ],
+      "detection_rate": "1/5",
+      "correct_upstream_rate": "1/5"
+    }
+  ]
+}

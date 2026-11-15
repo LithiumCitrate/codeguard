@@ -71,3 +71,18 @@ sh scripts/record_demo.sh                                           # 录屏用�
 > 试用反馈必须由试用者本人填写；团队可以记录观察和提示次数，但不能代填、诱导或改写原话。
 > 若最终只有 1 人完成，报告写“1 人小规模试用”，不要写成 2 人；不要把课程/社团同学写成企业试点。
 > 两份原始表、匿名化截图和计时记录是最低配套；只有汇总表而没有原始表，评委会追问证据链。
+
+## llmFusion 联网层证据（可选增强，离线核心与 main 一致）
+
+| 文件 | 说明 |
+|---|---|
+| `webprobe-eval-20261115.json` / `.md` | 语料外边际收益评测，2 次试验/例：ranger 1/2、itsdangerous 1/2 检出，toml/synapse 因查询拉取失败跳过，`license_verified_rate` 均为 0/2；样本量小且有 2 例跳过，**不足以单独支撑 AI 必要性结论** |
+| `llmfusion-round2-realprojects.json` | 5 次试验/例：ranger 5/5、itsdangerous 5/5 稳定检出（0.997 / 0.995、48 逐字 token），**toml 0/5、synapse 1/5 未稳定检出**；ranger 有 3/5 次 `top.package` 为 `web-source/UNKNOWN`（上游按拉取 URL 归属）；20 次试验安全不变量全部成立 |
+| `llmfusion-round1-realgithub.json` | 第一轮真实 GitHub 用例（minio/git/itsdangerous/pip）及联网深挖检索轨迹 |
+| `eval_llmfusion_round1.py` / `eval_llmfusion_round2.py` | 两轮可复现脚本；密钥经环境变量传入、不写盘 |
+
+> 口径提醒（2026-11-15 修订）：联网召回按多次试验比率报告，不承诺单次必中，不写成
+> “4 例全部 0.99+ 命中”；`web:license-text-verified` 核验通道已在 `web_evidence.py` 实现，
+> 但**本轮评测未触发成功**（留存 JSON 中该标记 0 次出现，成功检出的 `license_source` 均为
+> `web:llm-inferred`），故不主张“许可证已由 LICENSE 原文核验确认”。
+> 完整数据、局限与删除历史数字的记录见 `docs/WEBPROBE.md` 第 5 节。

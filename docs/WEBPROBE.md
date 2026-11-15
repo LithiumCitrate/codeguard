@@ -17,8 +17,9 @@
 - 本地语料只覆盖 32 个来源 / 1717 文件。语料外的项目（如 ranger、itsdangerous、toml）
   无论怎么改指纹、调模型，离线引擎都**检不出**——它没有这些原文。
 - 联网溯源让大模型联网推断候选上游、拉取公开 raw 原文，再交给**同一套**确定性管线验证。
-  实测对语料外原文复制可达 0.99+ 置信度检出（离线为 0）。这是"AI 扩展了能力边界"的
-  可验证证据，而非"AI 复述了规则 already 能做的事"。
+  实测在 4 个语料外项目中的 **2 个**（ranger、itsdangerous）上稳定检出（离线均为 0 检出），
+  另 2 个（toml、synapse）未稳定检出。这是"AI 扩展了能力边界"的一组**有明确边界的**
+  可验证证据，而非"AI 复述了规则 already 能做的事"；完整比率与证据见第 5 节。
 
 ## 2. 架构：AI 提案，确定性验证
 
@@ -50,7 +51,7 @@
 | 拉取面收敛 | 仅 `raw.githubusercontent.com` / `gist.githubusercontent.com` / GitLab `/-/raw/` / Gitee `/raw/`；https；≤200KB；超时；重定向逐跳校验不出白名单 |
 | 不污染离线 | 临时索引 + 临时目录，用完即删；共享只读生产 CMS；语料/索引/`last_digest` 均不写 |
 | 不越权阻断 | 联网命中 `blocking=False`，风险封顶 S3；许可证未经核验时按 unknown→S2 复核 |
-| 许可证可核验 | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认 |
+| 许可证可核验（通道已实现） | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认。**本轮评测未触发成功**（`license_verified_rate` 0/2，成功检出均为模型推断），见第 5 节 |
 | 可审计 | 每条发现附 `provenance{url, sha256, fetched_at, license_source, license_url, license_sha256}`；检索轨迹逐条留痕 |
 | 密钥不外泄 | 仅存本机 gitignored `.codeguard/llm_config.json`；不返回浏览器、不写入导出 |
 
@@ -65,21 +66,34 @@ python scripts/eval_webprobe.py --trials 3
 
 评测对每个语料外真实 GitHub 文件做 N 次试验，每次：离线扫描(基线) → 联网溯源 →
 离线扫描(复核)，**硬断言**离线判定前后逐字节一致、联网不阻断、不超 S3、审计字段齐全、
-宽松许可不过度定级、命中必指向真实上游。检出以比率报告（LLM 提案非确定性）。
+宽松许可不过度定级、命中原文来自白名单并通过精确验证。检出以比率报告（LLM 提案非确定性）。
+注意上游归属按**拉取 URL** 判定：`top.package` 可能是 `web-source/UNKNOWN`，不等于模型报出的包名。
 
-## 5. 实测（代表性一次运行，2026-11-15；复现见上）
+## 5. 实测（2026-11-15 留存证据；复现见上）
 
-| 项目（语料外） | 许可证 | 离线检出上游 | 联网检出 | 置信度 | 最长逐字 |
-|---|---|---|---|---|---|
-| ranger | GPL-3.0 | 0/5 | 5/5 | 0.997 | 48 |
-| itsdangerous | BSD-3-Clause | 0/5 | 5/5 | 0.995 | 48 |
-| toml | MIT | 0/5 | 视网络 | 0.994 | 48 |
-| synapse | Apache-2.0 | 0/5 | 视网络 | 0.992 | 48 |
+两轮独立评测，均按多次试验比率报告（LLM 提案非确定性）。原始记录随本仓库
+`submission/evidence/` 与比赛提交材料《佐证材料》提供：`webprobe-eval-20261115.{json,md}`、
+`llmfusion-round2-realprojects.json`。
 
-- 20 次试验安全不变量全部成立；密钥零泄漏。
-- toml/synapse 在部分窗口因 raw.githubusercontent 连接超时未检出——**优雅降级**
-  （记录 fetch/search 错误、不产生误报），如实计入比率。
-- 许可证文本核验把"模型推断"升级为"LICENSE 原文核验"，减少 unknown→S2 的保守降级。
+| 项目（语料外） | round2 联网检出（5 次/例） | webprobe 联网检出（2 次/例） | 离线检出上游 | 成功试验置信度 |
+|---|---|---|---|---|
+| ranger | 5/5 | 1/2 | 0 | 0.997（48 逐字 token） |
+| itsdangerous | 5/5 | 1/2 | 0 | 0.995（48 逐字 token） |
+| toml | 0/5 | 跳过（查询拉取失败） | 0 | — |
+| synapse | 1/5 | 跳过（查询拉取失败） | 0 | 0.992（单次） |
+
+- 两轮安全不变量分别在 20 次 / 4 次试验全部成立；密钥零泄漏。
+- ranger 在 round2 有 3/5 次 `top.package` 记为 `web-source/UNKNOWN`，上游按拉取 URL 归属，
+  不是模型给出的包名；`correct_upstream_rate` 按 URL 统计为 5/5，勿读作"模型每次都报对包名"。
+- toml 0/5、synapse 1/5 属**未稳定检出**，原因是查询拉取失败/提案未命中，**优雅降级**并记录
+  fetch/search 错误、不产生误报；不能写成 0.99+ 置信度命中。早期版本本表格曾列出
+  toml 0.994、synapse 0.992 两个置信度，无对应留存证据，2026-11-15 已删除。
+- LICENSE 文本核验通道（`web:license-text-verified`）已在 `web_evidence.py` 实现，但**本轮评测
+  未触发成功**：`license_verified_rate` 为 0/2，成功检出试验的 `license_source` 均为
+  `web:llm-inferred`。因此本节只主张"通道已实现、失败回退模型推断并标注、待补跑成功用例"，
+  **不主张**"许可证已由 LICENSE 原文核验确认"或"减少了 unknown→S2 的保守降级"。
+- webprobe 一轮仅 2 次试验/例且 2 例跳过，样本量小，**不足以单独支撑 AI 必要性结论**，
+  须与 round2 合并阅读。
 
 ## 6. 局限（如实披露）
 
