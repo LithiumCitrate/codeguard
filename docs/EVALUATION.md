@@ -131,3 +131,22 @@ tests/docs/examples；目标许可证取仓库 LICENSE，使用方式 `distribut
 **边界**：这是仓库采样，不是全仓审计或用户试用；vendoring 命中是"真实复制"而非违规结论；
 真实模型泄漏正例仍需单独收集。复现：`python scripts/eval_realworld.py`，原始结果见
 `submission/evidence/realworld-github-20261024-v051.*`（2026-10-20 口径保留作历史）。
+
+
+---
+
+## 双人盲标一致性复核（2026-11-15 补充）
+
+复现：`python scripts/eval_annotation_agreement.py`；证据
+`submission/evidence/annotation-agreement-20261115.{json,md}`。
+
+从两份未修改的独立盲标 CSV 重算：2×2 混淆矩阵（行 = 标注人1，列 = 标注人2，A / 非 A）
+为 [[44, 1], [2, 0]]，原始一致率 0.9362（44/47）；Cohen's κ = -0.0292（bootstrap CI
+[-0.0682, 0.0]）、PABAK 0.8723、Gwet's AC1 0.9320（CI [0.8273, 1.0]）。
+
+κ 为负是 **high-agreement / low-kappa 悖论**：47 条为论文预筛的 striking-similar 正例，
+A 类平均边际 0.968，Cohen 期望一致率 0.938 反而高于实际一致率 0.936。
+该系数在此不适用，报告改用 AC1 / PABAK 并与一致率并列；κ 的 CI 跨 0 只说明「不可估计」，
+不是「两人随机乱标」。3 条分歧全部经第三人按逐字 token 与覆盖率复核闭环，最终 A 47/47。
+
+以上系数只衡量评分者间信度，不衡量标签正确性；也不改变 47/47 的检出 / 归因口径。

@@ -1,0 +1,82 @@
+{
+ "schema": "codeguard.license-grounding-realnetwork/v1",
+ "generated_at": "2026-11-15T06:33:22Z",
+ "mode": "hybrid-real-network-grounding",
+ "proposal": "offline-deterministic-fixture (no API key, no query, no source upload)",
+ "licence_fetch": "real public network via shipped fetch_source",
+ "source_url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/src/itsdangerous/timed.py",
+ "result": {
+  "verified": true,
+  "invariants": {
+   "offline_index_unchanged": true,
+   "never_blocks": true,
+   "risk_capped_at_S3": true,
+   "audit_fields_present": true,
+   "real_network_license_fetched": true
+  },
+  "license_source": "web:license-text-verified",
+  "license_spdx": "BSD-3-Clause",
+  "license_spdx_verified": "BSD-3-Clause",
+  "license_url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE.txt",
+  "license_sha256": "63af09891b6be8ad1a4252ed43af0f4efba7fc948e228367bed7f3c5ae0b09d7",
+  "grounding_status": "verified",
+  "grounding_reason": "license-text-classified",
+  "grounding_attempts": [
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE",
+    "outcome": "fetch_failed",
+    "reason": "拉取失败：HTTP 404（https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE）"
+   },
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE.txt",
+    "outcome": "classified",
+    "spdx": "BSD-3-Clause",
+    "sha256": "63af09891b6be8ad1a4252ed43af0f4efba7fc948e228367bed7f3c5ae0b09d7"
+   }
+  ],
+  "risk": "S1",
+  "blocking": false,
+  "elapsed_ms": 4599,
+  "network_log": [
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE",
+    "outcome": "real-network-failed",
+    "reason": "拉取失败：HTTP 404（https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE）",
+    "elapsed_s": 0.91,
+    "attempt": 1
+   },
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE",
+    "outcome": "real-network-failed",
+    "reason": "拉取失败：HTTP 404（https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE）",
+    "elapsed_s": 0.91,
+    "attempt": 2
+   },
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE",
+    "outcome": "real-network-failed",
+    "reason": "拉取失败：HTTP 404（https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE）",
+    "elapsed_s": 0.64,
+    "attempt": 3
+   },
+   {
+    "url": "https://raw.githubusercontent.com/pallets/itsdangerous/main/LICENSE.txt",
+    "outcome": "real-network-200",
+    "bytes": 1475,
+    "sha256": "63af09891b6be8ad1a4252ed43af0f4efba7fc948e228367bed7f3c5ae0b09d7",
+    "elapsed_s": 0.86,
+    "attempt": 1
+   }
+  ],
+  "notes": [
+   "联网溯源为独立补充通道：候选上游由大模型联网推断，拉取原文后走与本地语料完全相同的确定性验证（检索→精确验证→判定→义务推演→佐证门槛）。",
+   "命中后会尝试拉取上游 LICENSE 原文做确定性 SPDX 核验；核验成功的许可证标注web:license-text-verified，失败则保留模型推断（web:llm-inferred），并在 provenance.license_grounding 记录失败原因与逐 URL 尝试轨迹，供评审核验。",
+   "联网命中最高按 S3 提示，不直接阻断；请人工确认上游许可证后再决定处置。",
+   "本通道不修改本地语料、索引与离线审查结论。"
+  ]
+ },
+ "does_not_rewrite": [
+  "webprobe-eval-20261115.json license_verified_rate 0/2",
+  "llmfusion-round2-realprojects.json licence labels"
+ ]
+}

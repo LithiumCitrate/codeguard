@@ -153,3 +153,23 @@ python scripts/eval_webprobe.py --trials 3
 
 差异点：传统扫描器强在**已知依赖/声明**的合规清点；CodeGuard 强在**内联复制的片段级
 证据链**与**语料外召回**，且把 AI 放在"提案/解读"而非"判定"位置，兼顾召回与可审计。
+
+
+---
+
+## 真实网络 LICENSE 核验用例（2026-11-15 补充）
+
+复现：`python scripts/eval_license_grounding_realnetwork.py`；证据
+`submission/evidence/license-grounding-realnetwork-20261115.{json,md}`。
+
+混合模式：上游提案保持离线确定性夹具（无密钥、无检索查询、不上传源码），
+上游 LICENSE 原文通过出厂 `fetch_source` 从**真实公网**拉取。
+`pallets/itsdangerous/main/LICENSE.txt` 返回 200（BSD-3-Clause，URL 与 SHA-256 留存），
+`ground_license` 确定性分类为 verified，`run_web_probe` 把该发现的 provenance 从
+`web:llm-inferred` 升级为 `web:license-text-verified`；不阻断、封顶 S3、离线索引不变、
+审计字段齐全等安全不变量全部成立。
+
+**边界**：样本量 1，提案环节仍为夹具。它把「通道已实现」推进到「在真实原文上可核验」，
+但**不改写** `webprobe-eval-20261115.json` 的 `license_verified_rate 0/2`，
+也不与 18/18 的纯离线夹具评测合并成成功率。完整真实联网（含 LLM 提案）的成功率
+仍须自配密钥、稳定网络下用 `scripts/eval_webprobe.py` 测量。

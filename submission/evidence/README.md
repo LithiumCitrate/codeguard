@@ -126,3 +126,38 @@ python scripts/eval_license_grounding.py
 > **该评测为 offline-fixture，不能换算成真实联网 `license_verified_rate`；真实联网仍为 0/2，
 > 需在稳定网络下重跑 `eval_webprobe.py` 才能更新。** patched 版本会把每次失败原因写入证据，
 > 使下一次补跑可定位、可归因。
+
+
+---
+
+## 2026-11-15 补充证据（③ / ④）
+
+本批证据为半决赛复评中「③ AI 必要性缺少量化对照」与「④ κ 负值引发标注可信度疑问」两项的修复，
+全部由仓库脚本从原始证据离线重算，未改动任何原始标签或评测结果。
+
+| 证据 | 内容 | 复现脚本 |
+|---|---|---|
+| `judge-ablation-20261115.json` / `.md` / `eval_judge_curve.png` | 规则回退 vs 12 维逻辑回归的配对级 PR 与阈值曲线；20,159 个候选对、与基准同种子同语料、使用出厂模型 | `scripts/eval_judge_curve.py --root <repo>` |
+| `annotation-agreement-20261115.json` / `.md` | 47 条双人盲标 2×2 混淆矩阵、κ 悖论解释、PABAK 0.8723 / Gwet's AC1 0.9320、2000 次 bootstrap CI | `scripts/eval_annotation_agreement.py` |
+
+**③ 口径边界（必须随数字一起引用）**：单位是（片段, 候选原文）**配对**，不是文件。
+规则回退 AUC 0.9628、模型 0.9617，**模型并未提高排序上限**；差异在工作点——
+生产阈值 0.55 下规则回退 P/R/F1 = 0.9778 / 0.6545 / 0.7841，模型 = 0.9529 / 0.8696 / 0.9093。
+如实说明：规则回退把阈值手工下调到 0.25 亦可达最佳 F1 0.9263（模型 0.9145 @0.45），
+因此 AI 的价值是「可学习、可校准的组合器把工作点固定在出厂阈值」，不是「更高检出率」。
+文件级检出在两种打分下同为 97%，门禁由佐证规则兜底。
+
+**④ 口径边界**：AC1 / PABAK 只衡量**评分者间信度**，不衡量标签是否正确；
+正确性仍由逐字命中、覆盖率与第三人复核支撑。κ = -0.0292 属高一致率 / 低 κ 悖论
+（47 条为预筛正例，A 类边际 0.968，Cohen 期望一致率 0.938 > 实际 0.936），该系数在此不适用，
+不再单独引用。
+
+**llmFusion 额外证据**：
+
+| 证据 | 内容 | 复现脚本 |
+|---|---|---|
+| `license-grounding-realnetwork-20261115.json` / `.md` | 混合模式真实网络核验：提案为离线夹具，上游 LICENSE 原文走真实公网；真实拉取 `pallets/itsdangerous/main/LICENSE.txt`（SHA-256 已留存），确定性识别 BSD-3-Clause，`run_web_probe` 端到端触发 `web:license-text-verified`，安全不变量全成立 | `scripts/eval_license_grounding_realnetwork.py` |
+
+> 该用例样本量为 1，**不改写** `webprobe-eval-20261115.json` 与 `llmfusion-round2-realprojects.json`
+> 中真实联网 `license_verified_rate 0/2` 的历史口径，也不代表完整联网 webprobe 的成功率。
+> 与 18/18 的纯离线夹具评测 `license-grounding-eval-20261115.*` 三者口径不同，不得合并成一个成功率。
