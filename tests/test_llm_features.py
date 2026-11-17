@@ -215,33 +215,28 @@ def test_assist_summary_and_ask_flow(app, stub):
     assert offline['offline'] and '片段命中' in offline['text']
     with pytest.raises(ValueError, match='配置大模型'):
         app.assist({'action': 'ask', 'question': '哪个命中风险最高？'})
+    # 文件夹审查共用同一入口：digest 缺失会让 assist 永远报"先完成一次来源审查"
+    tree = app.scan_tree({'files': [
+        {'path': 'pkg/copied.py', 'content': read_negative('ring_cache.py')},
+        {'path': 'pkg/clean.py', 'content': read_negative('word_tally.py')}],
+        'license': 'MIT', 'usage': 'distribution'})
+    assert tree['summary']['blocked'] == 1
+    tree_offline = app.assist({'action': 'summary'})
+    assert tree_offline['offline'] and '文件夹审查：2 个文件' in tree_offline['text']
+    assert app.last_digest['findings'][0]['file'] == 'pkg/copied.py'
+    assert app.last_findings[0].package == app.index.docs[0].package
     configure(app, stub)
     summary = app.assist({'action': 'summary'})
     assert summary == {'offline': False, 'model': 'model-a', 'text': 'STUB-PROSE'}
+    assert 'pkg/copied.py' in json.dumps(StubHandler.last_chat, ensure_ascii=False)
+    scan(app)
+    assert app.assist({'action': 'summary'})['text'] == 'STUB-PROSE'
     answer = app.assist({'action': 'ask', 'question': '为何阻断？'})
     assert answer['text'] == 'STUB-PROSE'
     with pytest.raises(ValueError, match='2–1000'):
         app.assist({'action': 'ask', 'question': 'x'})
     with pytest.raises(ValueError, match='无效'):
         app.assist({'action': 'rebase'})
-
-
-def test_assist_summary_after_tree_scan(app, stub):
-    with pytest.raises(ValueError, match='先完成一次来源审查'):
-        app.assist({'action': 'summary'})
-    tree = app.scan_tree({'files': [
-        {'path': 'pkg/copied.py', 'content': read_negative('ring_cache.py')},
-        {'path': 'pkg/clean.py', 'content': read_negative('word_tally.py')}],
-        'license': 'MIT', 'usage': 'distribution'})
-    assert tree['summary']['blocked'] == 1
-    offline = app.assist({'action': 'summary'})
-    assert offline['offline'] and '文件夹审查：2 个文件' in offline['text']
-    assert app.last_digest['findings'][0]['file'] == 'pkg/copied.py'
-    assert app.last_findings[0].package == app.index.docs[0].package
-    configure(app, stub)
-    summary = app.assist({'action': 'summary'})
-    assert summary['text'] == 'STUB-PROSE'
-    assert 'pkg/copied.py' in json.dumps(StubHandler.last_chat, ensure_ascii=False)
 
 
 def test_scan_with_assist_records_honest_ai_usage(app, stub):
