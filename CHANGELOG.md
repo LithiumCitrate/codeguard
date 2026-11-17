@@ -6,6 +6,16 @@ abides by semantic versioning.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Folder review no longer dead-ends the AI summary/ask entry**
+  (`src/codeguard/web.py`, `src/codeguard/static/app.js`): `/api/scan_tree` now
+  writes the same `last_digest` / `last_findings` state as a single-file scan,
+  aggregated over the whole folder (findings capped at 50 with an omitted count),
+  so "AI 摘要" and follow-up questions work after a folder upload instead of
+  always raising "请先完成一次来源审查". The tree result also reveals the ask form.
+  Regression coverage is merged into the existing assist-flow test (202 total).
+
 ## [0.6.0] - 2026-11-15
 
 ### Added
