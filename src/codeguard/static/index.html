@@ -105,7 +105,7 @@
             <li><small>开源项目 / SOURCES</small><b class="fn" id="factPkgs">—</b></li>
             <li><small>许可证 / LICENCES</small><b class="fy" id="factLic">—</b></li>
           </ul>
-          <div class="dossier-foot"><span><i></i> READY FOR REVIEW</span><span>SPDX / v0.5.1</span></div>
+          <div class="dossier-foot"><span><i></i> READY FOR REVIEW</span><span>SPDX / v0.6.0</span></div>
         </aside>
       </div>
 
@@ -411,7 +411,7 @@
         <ol class="steps">
           <li><b>多层指纹检索</b><p>字面、局部别名、角色与结构边四层视图；默认用角色、抽象与结构边做 LSH 候选检索，验证时计算四层相似度。</p></li>
           <li><b>回读原文，精确验证</b><p>Jaccard、IDF 加权包含度与最长逐字 token 命中共同构成证据，原文只读回本机语料。</p></li>
-          <li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分是模型输出，不应解释为经过校准的来源概率。</p></li>
+          <li><b>轻量模型判定</b><p>12 维特征逻辑回归辅助判断片段来源。评分经独立校准检验（留出 ECE 0.074），仍是工程风险提示，来源候选需人工核查。</p></li>
           <li><b>义务推理与门禁</b><p>结合声明的许可证与使用方式给出工程风险；证据不足时降级为复核提示，而不是直接阻断。</p></li>
         </ol>
         <h2 id="about-limits">适用边界</h2>
