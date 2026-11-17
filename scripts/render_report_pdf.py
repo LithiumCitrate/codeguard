@@ -8,7 +8,7 @@ source of truth, the PDF is a pure build artifact.
 Usage:
     python scripts/render_report_pdf.py
     python scripts/render_report_pdf.py --src submission/09-技术报告-升级版.md \
-        --out submission/CodeGuard-技术报告-v0.5.1.pdf
+        --out submission/CodeGuard-技术报告-v0.6.0.pdf
 """
 from __future__ import annotations
 
@@ -195,7 +195,7 @@ def footer_factory(date_label: str):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--src", type=Path, default=ROOT / "submission" / "09-技术报告-升级版.md")
-    parser.add_argument("--out", type=Path, default=ROOT / "submission" / "CodeGuard-技术报告-v0.5.1.pdf")
+    parser.add_argument("--out", type=Path, default=ROOT / "submission" / "CodeGuard-技术报告-v0.6.0.pdf")
     parser.add_argument("--date", default="2026-10-25")
     args = parser.parse_args()
 

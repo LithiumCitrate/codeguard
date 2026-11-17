@@ -22,7 +22,8 @@ try:
         raise RuntimeError('Failed to launch: '+line)
     url = match.group()
     health = json.load(urllib.request.urlopen(url+'/api/health',timeout=15))
-    assert health['ready'] and health['corpus']['readable'] == 585
+    assert health['ready'] and health['corpus']['readable'] == 1717
+    assert health['stats']['packages'] == 32
     with urllib.request.urlopen(url,timeout=15) as response:
         assert response.status == 200 and 'CodeGuard' in response.read().decode('utf-8')
     for asset in ['app.js','style.css','fonts/Saira.ttf']:
