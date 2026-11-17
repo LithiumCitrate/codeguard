@@ -18,6 +18,10 @@
 
 ## 2. 三十秒上手
 
+不想装 Python：下载 [Release v0.6.0 的 CodeGuard-Windows-x64.zip](https://github.com/LithiumCitrate/codeguard/releases/tag/v0.6.0)，
+解压后进入 `CodeGuard` 目录双击「启动工作台.cmd」（或直接双击 CodeGuard.exe），浏览器自动打开本地工作台；
+语料、索引与判定模型已内置，不配置密钥时全程离线。源码方式如下：
+
 ```bash
 pip install .                      # 运行期零第三方依赖（构建 wheel 需要 setuptools，pip 会自动取）
 

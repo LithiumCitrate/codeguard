@@ -35,7 +35,7 @@ HumanEval 的 canonical solution 是独立编写的 Python 函数，不是本项
 ## 3. 复现
 
 ```bash
-# 需要已有语料与索引（约 585 文档 / 36k 片段）
+# 需要已有语料与索引（当前口径 1717 文档 / 138928 片段；历史 20 包时代为 585 / 36193）
 codeguard corpus && codeguard index
 python scripts/eval_humaneval.py
 ```
