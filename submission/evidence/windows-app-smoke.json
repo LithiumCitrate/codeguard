@@ -49,7 +49,7 @@
       "payload_bytes": 38899840,
       "payload_bytes_per_chunk": 280,
       "buckets": 2942081,
-      "built_at": 1794734316
+      "built_at": 1792779245
     },
     "corpus": {
       "total": 1717,
@@ -86,10 +86,16 @@
       "input_sha256": "c4348223fe03ea08ad3f3555064d8c8c8e2bd3aa3221a14e9d5f68b89af49004"
     }
   ],
+  "tree_assist": {
+    "files": 2,
+    "blocked": 1,
+    "summary_offline": true,
+    "summary_chars": 181
+  },
   "status": "passed",
-  "note": "2026-11-17 复测：与决赛提交 CodeGuard.zip 内便携包同批；readable=1717，离线判定，无外部调用",
+  "note": "2026-11-17 复测：与决赛提交 CodeGuard.zip 内便携包同批；readable=1717，离线判定，无外部调用；文件夹审查后 AI 摘要可用",
   "webprobe_endpoint": "present (HTTP 400, expected without keys)",
-  "exe_sha256": "3dc433cb1d6a4d8b60c844379737509950f2b16fbe6fe4c4bf602636b8fe22bf",
-  "index_sha256": "fd8a1125d657e0d85785c1a69448e1217dc3e81953a573e2e6f4f685c796ab95",
-  "generated_at": "2026-11-17T16:26:57+08:00"
+  "exe_sha256": "b37e8d6f4948f502d093e5ae6423052da22645aef2e1ced4cb615f3194d2f4c0",
+  "index_sha256": "35b1c62ecd5da283351b8d0c6066960335bf1aa8a653487cf5efe63e44366d0e",
+  "generated_at": "2026-11-17T20:59:09+08:00"
 }
