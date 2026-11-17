@@ -496,6 +496,7 @@ function renderTree(data, skipped) {
   $('empty').hidden = true;
   $('result').hidden = false;
   $('exports').hidden = true;
+  $('askForm').hidden = false;
   const s = data.summary;
   $('resultBadge').className = 'state' + (s.blocked ? ' is-alert' : '');
   $('resultBadge').textContent = s.blocked ? '文件夹内有阻断级风险' : '文件夹分析完成';

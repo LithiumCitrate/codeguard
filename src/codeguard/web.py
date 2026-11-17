@@ -257,6 +257,7 @@ class Workbench:
         provider = get_provider('offline')
         from .adjudicate import language_for
         results = []
+        flat = []
         risk_counts = {'S0': 0, 'S1': 0, 'S2': 0, 'S3': 0, 'S4': 0}
         blocked = 0
         with self.lock:
@@ -274,6 +275,7 @@ class Workbench:
                     item = finding.as_dict()
                     item['explanation'] = provider.describe(finding)
                     details.append(item)
+                    flat.append((path, finding))
                 results.append({
                     'path': path,
                     'total_spans': result.total_spans,
@@ -285,6 +287,25 @@ class Workbench:
                 })
         results.sort(key=lambda r: (-RISK_ORDER.index(r['risk']), r['path']))
         overall = results[0]['risk'] if results else 'S0'
+        # 文件夹审查与单文件审查共用 AI 摘要/追问入口：digest 缺失会让
+        # assist 永远报"先完成一次来源审查"。按整夹聚合，命中截断保前 50。
+        capped = flat[:50]
+        self.last_findings = [f for _, f in capped]
+        self.last_digest = {
+            'target': '文件夹审查：%d 个文件' % len(results),
+            'target_license': license_id, 'usage': usage,
+            'blocking': blocked > 0,
+            'total_spans': sum(r['total_spans'] for r in results),
+            'matched_spans': sum(r['matched_spans'] for r in results),
+            'files': len(results), 'blocked_files': blocked,
+            'findings_omitted': max(0, len(flat) - len(capped)),
+            'findings': [{'file': p, 'package': f.package, 'version': f.version,
+                          'path': f.path, 'license_spdx': f.license_spdx, 'risk': f.risk,
+                          'risk_label': RISK_LABELS[f.risk], 'confidence': f.confidence,
+                          'coverage': f.coverage, 'max_verbatim_run': f.max_verbatim_run,
+                          'status': f.verdict.status, 'obligations': f.verdict.obligations,
+                          'conflicts': f.verdict.conflicts}
+                         for p, f in capped]}
         return {'summary': {
                     'files': len(results), 'risk_counts': risk_counts, 'blocked': blocked,
                     'overall_risk': overall, 'overall_label': RISK_LABELS[overall],
