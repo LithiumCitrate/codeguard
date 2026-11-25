@@ -27,7 +27,7 @@ from dataclasses import asdict, dataclass, field
 from .cms import CountMin
 from .fingerprint import LAYER_SIZES, build_fingerprint
 from .minhash import band_keys, h64
-from .normalize import build_spans
+from .normalize import build_query_spans, build_spans
 
 INDEX_VERSION = "1.2"
 MAGIC = b"CGIDX2"
@@ -240,7 +240,7 @@ class FingerprintIndex:
 
     def probe(self, text: str, language: str = "python", min_band_hits: int = 1):
         """LSH prefilter; returns [(span_ordinal, span, fingerprint, {chunk: hits})]."""
-        spans = build_spans(text, language, self.params.window, self.params.stride)
+        spans = build_query_spans(text, language, self.params.window, self.params.stride)
         results = []
         for ord_no, span in enumerate(spans):
             fp = build_fingerprint(span)

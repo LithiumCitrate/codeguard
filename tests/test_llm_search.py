@@ -250,3 +250,30 @@ def test_ask_with_search_and_interpret_search(app, stub):
     assert 'searches' not in data['llm']
     with pytest.raises(ValueError, match='Tavily'):
         app.assist({'action': 'ask', 'question': '联网查一下', 'search': True})
+
+
+def test_http_json_retries_transient_drop(monkeypatch):
+    import http.client
+    import io
+    calls = {'n': 0}
+
+    class FakeResp:
+        def read(self):
+            return b'{"ok": true}'
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def flaky_open(req, timeout=20):
+        calls['n'] += 1
+        if calls['n'] == 1:
+            raise http.client.RemoteDisconnected('Remote end closed connection')
+        return FakeResp()
+
+    monkeypatch.setattr(llm.urllib.request, 'urlopen', flaky_open)
+    monkeypatch.setattr(llm.time, 'sleep', lambda s: None)
+    assert llm._http_json(urllib.request.Request('https://api.example.com/v1/chat'), 10) == {'ok': True}
+    assert calls['n'] == 2

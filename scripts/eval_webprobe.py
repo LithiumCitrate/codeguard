@@ -35,7 +35,7 @@ if str(SRC) not in sys.path:
 from codeguard import web_evidence  # noqa: E402
 from codeguard.adjudicate import Scanner  # noqa: E402
 from codeguard.cli import load_index, load_model, workspace  # noqa: E402
-from codeguard.llm import OpenAICompatProvider, extract_license_markers  # noqa: E402
+from codeguard.llm import extract_license_markers, provider_from_settings  # noqa: E402
 from codeguard import __version__  # noqa: E402
 
 # Real projects deliberately OUTSIDE the shipped corpus. `upstream` is the
@@ -52,6 +52,12 @@ CASES = [
      "usage": "distribution", "permissive": True},
     {"name": "synapse", "query": "https://raw.githubusercontent.com/matrix-org/synapse/develop/synapse/util/stringutils.py",
      "file": "stringutils.py", "upstream": "synapse", "license": "LicenseRef-Proprietary",
+     "usage": "distribution", "permissive": True},
+    {"name": "aiohttp", "query": "https://raw.githubusercontent.com/aio-libs/aiohttp/master/aiohttp/helpers.py",
+     "file": "helpers.py", "upstream": "aiohttp", "license": "LicenseRef-Proprietary",
+     "usage": "distribution", "permissive": True},
+    {"name": "markupsafe", "query": "https://raw.githubusercontent.com/pallets/markupsafe/main/src/markupsafe/__init__.py",
+     "file": "markupsafe_init.py", "upstream": "markupsafe", "license": "MIT",
      "usage": "distribution", "permissive": True},
 ]
 
@@ -99,6 +105,7 @@ def run_case(case, index, model, provider, trials):
                      "license": top["license_spdx"] if top else None,
                      "license_source": top["provenance"]["license_source"] if top else None,
                      "url": top["provenance"]["url"] if top else None,
+                     "probe_error": probe.get("error"),
                      "search_errors": sum(1 for s in probe["searches"] if s.get("error")),
                      "fetch_errors": [f["error"] for f in probe["fetched"] if f.get("error")]})
     detected = sum(1 for r in rows if r["detected"])
@@ -153,10 +160,10 @@ def main(argv=None):
     parser.add_argument("--out-dir", default=str(ROOT / "submission" / "evidence"))
     parser.add_argument("--date", default="")
     args = parser.parse_args(argv)
-    provider = OpenAICompatProvider.from_env()
-    if provider is None or not provider.tavily_api_key:
-        raise SystemExit("需要 CODEGUARD_LLM_BASE_URL/API_KEY/MODEL 与 CODEGUARD_TAVILY_API_KEY")
     root = workspace(args.workspace)
+    provider = provider_from_settings(root)
+    if provider is None or not provider.tavily_api_key:
+        raise SystemExit("需要 CODEGUARD_LLM_BASE_URL/API_KEY/MODEL 或 .codeguard/llm_config.json 与 Tavily API Key")
     index = load_index(root)
     model = load_model(root)
     cases = [c for c in CASES if not args.only or c["name"] in args.only]

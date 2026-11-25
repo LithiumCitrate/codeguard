@@ -339,6 +339,17 @@ def verbatim_text(text: str) -> str:
     return " ".join(t.text for t in tokenize_source(text))
 
 
+def _make_span(tokens, lines, start: int, stop: int) -> Span:
+    window = tokens[start:stop]
+    roles = role_stream(window)
+    return Span(lines[start], lines[stop - 1],
+                tuple(literal_stream(window)),
+                tuple(abstract_stream(window)),
+                tuple(roles),
+                tuple(relation_edges(roles)),
+                start, stop)
+
+
 def build_spans(text: str, language: str = "python", size: int = 48,
                 stride: int = 24) -> list:
     """Slide a token window over the file and canonicalize *within* each window.
@@ -360,14 +371,59 @@ def build_spans(text: str, language: str = "python", size: int = 48,
         stop = min(n, start + size)
         if stop - start < 10:
             continue
-        window = tokens[start:stop]
-        roles = role_stream(window)
-        spans.append(Span(lines[start], lines[stop - 1],
-                          tuple(literal_stream(window)),
-                          tuple(abstract_stream(window)),
-                          tuple(roles),
-                          tuple(relation_edges(roles)),
-                          start, stop))
+        spans.append(_make_span(tokens, lines, start, stop))
         if stop == n:
             break
     return spans
+
+
+def _first_non_import_line(text: str) -> int | None:
+    """Line number of the first code line past leading docstrings/imports."""
+    in_doc = ""
+    for ln_no, line in enumerate(text.splitlines(), 1):
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        if in_doc:
+            if in_doc in s:
+                in_doc = ""
+            continue
+        if ln_no <= 8 and (s.startswith('"""') or s.startswith("'''")):
+            quote = s[:3]
+            if s.count(quote) == 1:
+                in_doc = quote
+            continue
+        if s.startswith(("import ", "from ")):
+            continue
+        return ln_no
+    return None
+
+
+def build_query_spans(text: str, language: str = "python", size: int = 48,
+                      stride: int = 24) -> list:
+    """Query-side span builder: adds one post-import body span when needed.
+
+    Partial copies and LLM-generated helpers frequently pair a block of
+    ``import`` statements with a function lifted from the middle of an upstream
+    file. When that pushes the first definition inside the same 48-token window
+    as the imports, both LSH Jaccard and containment get diluted. Adding a
+    single span anchored at the first non-import definition recovers those
+    matches without altering the on-disk index format.
+    """
+    spans = build_spans(text, language, size, stride)
+    if language != "python" or not spans:
+        return spans
+    first_line = _first_non_import_line(text)
+    if first_line is None:
+        return spans
+    tokens = tokenize_source(text, language)
+    body_idx = next((i for i, t in enumerate(tokens) if t.line >= first_line), None)
+    if body_idx is None or body_idx == 0:
+        return spans
+    if any(abs(sp.tok_start - body_idx) <= 4 for sp in spans):
+        return spans
+    stop = min(len(tokens), body_idx + size)
+    if stop - body_idx < 10:
+        return spans
+    lines = [t.line for t in tokens]
+    return spans + [_make_span(tokens, lines, body_idx, stop)]

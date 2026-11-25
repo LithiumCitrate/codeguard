@@ -17,9 +17,11 @@ never embedded in reports.
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 
@@ -138,21 +140,40 @@ class _HTTPStatusError(ValueError):
         self.code = code
 
 
-def _http_json(request, timeout):
-    try:
-        with urllib.request.urlopen(request, timeout=timeout) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        detail = ""
-        if exc.code in (401, 403):
-            detail = "（API Key 无效或无权限）"
-        raise _HTTPStatusError(exc.code, "接口返回 HTTP %d%s" % (exc.code, detail)) from exc
-    except urllib.error.URLError as exc:
-        raise ValueError("无法连接接口地址：%s" % exc.reason) from exc
-    except (TimeoutError, OSError) as exc:
-        raise ValueError("连接超时或网络错误：%s" % exc) from exc
-    except ValueError:
-        raise ValueError("接口返回的不是有效 JSON")
+_TRANSIENT_HTTP = frozenset({429, 502, 503, 504})
+
+
+def _http_json(request, timeout, retries: int = 2):
+    """Execute a JSON HTTP request with bounded retry on transient drops."""
+    last_exc = None
+    for attempt in range(retries + 1):
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = ""
+            if exc.code in (401, 403):
+                detail = "（API Key 无效或无权限）"
+            err = _HTTPStatusError(exc.code, "接口返回 HTTP %d%s" % (exc.code, detail))
+            if exc.code in _TRANSIENT_HTTP and attempt < retries:
+                last_exc = err
+                time.sleep(0.8 * (attempt + 1))
+                continue
+            raise err from exc
+        except urllib.error.URLError as exc:
+            raise ValueError("无法连接接口地址：%s" % exc.reason) from exc
+        except (http.client.HTTPException, TimeoutError) as exc:
+            err = ValueError("连接超时或网络错误：%s" % exc)
+            if attempt < retries:
+                last_exc = err
+                time.sleep(0.8 * (attempt + 1))
+                continue
+            raise err from exc
+        except OSError as exc:
+            raise ValueError("连接超时或网络错误：%s" % exc) from exc
+        except ValueError as exc:
+            raise ValueError("接口返回的不是有效 JSON") from exc
+    raise last_exc
 
 
 def list_models(base_url, api_key, timeout: int = 20) -> list:

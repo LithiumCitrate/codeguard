@@ -41,7 +41,7 @@ from .fingerprint import build_fingerprint
 from .index import ALL_LAYERS, BAND_PLAN, DocRecord, FingerprintIndex, Params
 from .minhash import band_keys
 from .mutations import MUTATIONS, apply_mutation, describe, parses
-from .normalize import build_spans, tokenize_source
+from .normalize import build_query_spans, tokenize_source
 from .score import (FEATURE_NAMES, LogisticRegression, best_threshold,
                     bootstrap_ci, confusion, evaluate,
                     expected_calibration_error, group_split, rank_auc, std)
@@ -186,8 +186,8 @@ def collect_traces(index: FingerprintIndex, cases: list, reader: CandidateReader
     t0 = time.time()
     pairs = 0
     for case in cases:
-        spans = build_spans(case.text, "python", index.params.window,
-                            index.params.stride)
+        spans = build_query_spans(case.text, "python", index.params.window,
+                                  index.params.stride)
         case.spans = [(s.start_line, s.end_line) for s in spans]
         bucket = []
         for ord_no, span in enumerate(spans):

@@ -483,6 +483,39 @@ def test_web_finding_license_upgraded_to_text_verified(base_index, monkeypatch):
     assert f["provenance"]["license_url"].endswith("/LICENSE")
     assert result["blocking"] is False
 
+
+def test_blob_to_raw_and_infer_package():
+    assert web_evidence.blob_to_raw("https://gitlab.com/a/b/-/blob/main/c.py") == \
+        "https://gitlab.com/a/b/-/raw/main/c.py"
+    assert web_evidence.blob_to_raw("https://gitee.com/a/b/blob/master/c.py") == \
+        "https://gitee.com/a/b/raw/master/c.py"
+    assert web_evidence.infer_package_from_url(
+        "https://raw.githubusercontent.com/ranger/ranger/master/ranger/ext/rifle.py") == "ranger/ranger"
+    assert web_evidence.infer_package_from_url("https://gitlab.com/a/b/-/raw/main/c.py") == "a/b"
+    assert web_evidence.infer_package_from_url("https://gist.githubusercontent.com/u/1/raw/x.py") == "web-source"
+
+
+def test_compact_code_and_metadata_seeds():
+    long_code = "import toml\nclass TomlDecoder:\n    pass\n" + ("x = 1\n" * 4000)
+    compact = web_evidence.compact_code_for_proposal(long_code, limit=12000)
+    assert len(compact) <= 12500 and "中间省略" in compact
+    seeds = web_evidence.metadata_seeds(long_code, "decoder.py", {"spdx": [], "source_urls": []})
+    assert seeds and "decoder.py" in seeds[0] and "TomlDecoder" in seeds[0]
+
+
+def test_run_web_probe_degrades_gracefully_on_proposal_error(base_index):
+    class Flaky:
+        model = "fake"
+        tavily_api_key = "t"
+
+        def chat_with_search(self, prompt, seeds=(), timeout=90, max_rounds=3):
+            raise ValueError("连接超时或网络错误：RemoteDisconnected")
+
+    res = web_evidence.run_web_probe(
+        base_index, None, Flaky(), "x = 1\n", "review.py", {}, "distribution", "MIT")
+    assert res["findings"] == [] and res["blocking"] is False
+    assert "RemoteDisconnected" in res["error"] and res["notes"]
+
 # NOTE: the 2026-11-15 grounding hardening (failure audit, COPYING fallback,
 # per-repository cache) is covered by the standalone evaluation harness
 # ``scripts/eval_license_grounding.py``, which is wired into CI. It is an

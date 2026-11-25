@@ -110,7 +110,12 @@ def fetch_source(url: str, timeout: int = FETCH_TIMEOUT) -> dict:
 
 
 _DEFAULT_REFS = ("master", "main", "develop")
-_RAW_REF = re.compile(r"^(https://raw\.githubusercontent\.com/[^/]+/[^/]+/)([^/]+)(/.+)$")
+_RAW_REF = re.compile(
+    r"^(https://(?:raw\.githubusercontent\.com/[^/]+/[^/]+/|gitlab\.com/[^/]+/[^/]+/-/raw/|gitee\.com/[^/]+/[^/]+/raw/))([^/]+)(/.+)$"
+)
+_REPO_ID_RE = re.compile(
+    r"^https://(?:raw\.githubusercontent\.com/([^/]+/[^/]+)/|gitlab\.com/([^/]+/[^/]+)/-/raw/|gitee\.com/([^/]+/[^/]+)/raw/)"
+)
 
 
 def _ref_fallbacks(url: str):
@@ -162,8 +167,8 @@ _LIC_SIGNATURES = (
     ("BSD-2-Clause", r"redistribution and use in source and binary forms"),
 )
 _LIC_NAMES = ("LICENSE", "LICENSE.txt", "LICENSE.md", "COPYING",
-              "COPYING.txt", "LICENSE.rst", "LICENCE", "LICENCE.txt",
-              "docs/LICENSE")
+              "COPYING.txt", "COPYING.LESSER", "LICENSE.rst", "LICENCE",
+              "LICENCE.txt", "LICENSE-MIT", "LICENSE-APACHE", "docs/LICENSE")
 # A licence fetch is best-effort and must not be allowed to stall the probe:
 # the source fetch has already consumed most of the network budget.
 GROUNDING_TIMEOUT = 8
@@ -237,18 +242,52 @@ def ground_license(source_url: str, max_tries: int | None = None,
 
 
 _GITHUB_BLOB = re.compile(r"^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$")
+_GITLAB_BLOB = re.compile(r"^https://gitlab\.com/([^/]+)/([^/]+)/-/blob/([^/]+)/(.+)$")
+_GITEE_BLOB = re.compile(r"^https://gitee\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.+)$")
 _CODE_EXTS = {".py", ".pyw", ".c", ".h", ".cpp", ".cc", ".hpp", ".go", ".rs",
               ".js", ".mjs", ".ts", ".jsx", ".tsx", ".java", ".rb", ".php"}
+
+
+def infer_package_from_url(url: str) -> str:
+    """Derive ``owner/repo`` from a public raw host URL when known."""
+    m = _REPO_ID_RE.match(str(url or "").strip())
+    if not m:
+        return "web-source"
+    for group in m.groups():
+        if group:
+            return group
+    return "web-source"
 
 
 def github_blob_to_raw(url: str) -> str:
     """Deterministic assist: a github blob link in the code becomes a raw URL."""
     parts = urllib.parse.urlsplit(str(url).strip())
-    m = _GITHUB_BLOB.match("https://%s%s" % (parts.netloc, parts.path))
-    if not m or parts.netloc.lower() != "github.com":
+    host = parts.netloc.lower()
+    if host != "github.com":
+        return ""
+    m = _GITHUB_BLOB.match("https://%s%s" % (host, parts.path))
+    if not m:
         return ""
     owner, repo, ref, path = m.groups()
     return "https://raw.githubusercontent.com/%s/%s/%s/%s" % (owner, repo, ref, path)
+
+
+def blob_to_raw(url: str) -> str:
+    """Convert GitHub, GitLab, or Gitee blob URLs to public raw URLs."""
+    gh = github_blob_to_raw(url)
+    if gh:
+        return gh
+    parts = urllib.parse.urlsplit(str(url).strip())
+    norm = "https://%s%s" % (parts.netloc.lower(), parts.path)
+    m = _GITLAB_BLOB.match(norm)
+    if m:
+        owner, repo, ref, path = m.groups()
+        return "https://gitlab.com/%s/%s/-/raw/%s/%s" % (owner, repo, ref, path)
+    m = _GITEE_BLOB.match(norm)
+    if m:
+        owner, repo, ref, path = m.groups()
+        return "https://gitee.com/%s/%s/raw/%s/%s" % (owner, repo, ref, path)
+    return ""
 
 
 def harvest_search_urls(searches, name: str) -> list:
@@ -261,7 +300,7 @@ def harvest_search_urls(searches, name: str) -> list:
     out = []
     for trace in searches or []:
         for result in trace.get("results", []):
-            raw = github_blob_to_raw(result.get("url", ""))
+            raw = blob_to_raw(result.get("url", ""))
             if raw and os.path.splitext(urllib.parse.urlsplit(raw).path)[1].lower() in exts:
                 out.append(raw)
     return out
@@ -315,12 +354,66 @@ def parse_candidates(text: str) -> list:
     return out
 
 
+_DEF_SIG_RE = re.compile(r"^(?:async\s+)?(?:def|class)\s+([A-Za-z_][A-Za-z0-9_]*)")
+_FROM_IMP_RE = re.compile(r"^\s*(?:from|import)\s+([A-Za-z_][A-Za-z0-9_.]*)")
+
+
+def compact_code_for_proposal(code: str, limit: int = 12000) -> str:
+    """Keep large files compact for multi-round LLM proposal without losing clues."""
+    if len(code) <= limit:
+        return code
+    head = code[:7200]
+    tail = code[-2600:]
+    middle = code[7200:-2600]
+    sigs = []
+    for line in middle.splitlines():
+        s = line.strip()
+        if _DEF_SIG_RE.match(line) or "copyright" in s.lower() or "http" in s.lower():
+            sigs.append(line[:140])
+            if len(sigs) >= 30:
+                break
+    digest = "\n".join(sigs)
+    return ("%s\n\n# ... [中间省略，提取顶层结构与声明线索] ...\n%s\n\n# ... [文件尾部] ...\n%s"
+            % (head, digest[:1800], tail))
+
+
+def metadata_seeds(code: str, name: str, markers: dict) -> list:
+    """Deterministic metadata-only search queries (no verbatim source lines)."""
+    seeds = ["%s %s license" % (name, spdx) for spdx in (markers.get("spdx") or [])[:1]]
+    seeds += (markers.get("source_urls") or [])[:1]
+    if not seeds:
+        symbols = []
+        for line in code.splitlines():
+            m = _DEF_SIG_RE.match(line)
+            if m and not m.group(1).startswith("_"):
+                sym = m.group(1)
+                if sym not in symbols:
+                    symbols.append(sym)
+                    if len(symbols) >= 3:
+                        break
+        mods = []
+        for line in code.splitlines()[:40]:
+            m = _FROM_IMP_RE.match(line)
+            if m:
+                root_mod = m.group(1).split(".")[0]
+                if root_mod not in ("os", "sys", "re", "io", "json", "time", "math",
+                                    "typing", "pathlib", "collections", "functools",
+                                    "itertools", "datetime", "__future__") and root_mod not in mods:
+                    mods.append(root_mod)
+                    if len(mods) >= 2:
+                        break
+        parts = [name] + mods[:1] + symbols[:2] + ["github"]
+        query = " ".join(p for p in parts if p).strip()
+        if query:
+            seeds.append(query[:200])
+    return seeds
+
+
 def propose_upstream(provider, code: str, name: str, markers: dict):
     prompt = _PROPOSE_PROMPT % (MAX_CANDIDATES, name,
                                 json.dumps(markers, ensure_ascii=False)[:2000],
-                                code[:30000])
-    seeds = ["%s %s license" % (name, spdx) for spdx in (markers.get("spdx") or [])[:1]]
-    seeds += (markers.get("source_urls") or [])[:1]
+                                compact_code_for_proposal(code))
+    seeds = metadata_seeds(code, name, markers)
     text, searches = provider.chat_with_search(prompt, seeds, timeout=120, max_rounds=3)
     candidates = parse_candidates(text)
     if not candidates:
@@ -337,19 +430,22 @@ def propose_upstream(provider, code: str, name: str, markers: dict):
         except ValueError:
             pass
     for cand in candidates:
-        raw = github_blob_to_raw(cand["url"])
+        raw = blob_to_raw(cand["url"])
         if raw:
             cand["url"] = raw
+        if not cand.get("package") or cand["package"] == "web-source":
+            cand["package"] = infer_package_from_url(cand["url"])
     known = {c["url"] for c in candidates}
 
     def add(url, reason):
         if url and url not in known and len(candidates) < MAX_CANDIDATES:
             known.add(url)
-            candidates.append({"url": url, "package": "web-source", "version": "web",
-                               "license_spdx": "UNKNOWN", "reason": reason})
+            candidates.append({"url": url, "package": infer_package_from_url(url),
+                               "version": "web", "license_spdx": "UNKNOWN",
+                               "reason": reason})
 
     for url in (markers.get("source_urls") or []):
-        add(github_blob_to_raw(url), "代码注释中出现的仓库链接（确定性转换）")
+        add(blob_to_raw(url), "代码注释中出现的仓库链接（确定性转换）")
     for url in harvest_search_urls(searches, name):
         add(url, "检索结果中的源码链接（确定性转换）")
     return candidates, searches, text
@@ -475,7 +571,15 @@ def verify_web_candidates(base_index, model, code: str, name: str, candidates: l
 def run_web_probe(base_index, model, provider, code: str, name: str, markers: dict,
                   usage: str, target_license: str) -> dict:
     t0 = time.time()
-    candidates, searches, proposal = propose_upstream(provider, code, name, markers)
+    try:
+        candidates, searches, proposal = propose_upstream(provider, code, name, markers)
+    except ValueError as exc:
+        return {"findings": [], "fetched": [], "searches": [], "proposal": "",
+                "model": provider.model, "blocking": False,
+                "total_spans": 0, "matched_spans": 0, "timings": {},
+                "error": str(exc),
+                "notes": ["联网提案暂时失败（%s）；未修改任何本地语料、索引与离线结论。" % exc],
+                "elapsed_ms": int((time.time() - t0) * 1000)}
     if not candidates:
         return {"findings": [], "fetched": [], "searches": searches, "proposal": proposal,
                 "model": provider.model, "blocking": False,

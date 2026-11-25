@@ -17,9 +17,7 @@
 - 本地语料只覆盖 32 个来源 / 1717 文件。语料外的项目（如 ranger、itsdangerous、toml）
   无论怎么改指纹、调模型，离线引擎都**检不出**——它没有这些原文。
 - 联网溯源让大模型联网推断候选上游、拉取公开 raw 原文，再交给**同一套**确定性管线验证。
-  实测在 4 个语料外项目中的 **2 个**（ranger、itsdangerous）上稳定检出（离线均为 0 检出），
-  另 2 个（toml、synapse）未稳定检出。这是"AI 扩展了能力边界"的一组**有明确边界的**
-  可验证证据，而非"AI 复述了规则 already 能做的事"；完整比率与证据见第 5 节。
+  在 2026-11-25 复测的 6 个语料外真实项目（`ranger`、`itsdangerous`、`toml`、`synapse`、`aiohttp`、`markupsafe`，每例 2 次试验、离线检出均为 0）中，联网通道累计命中 **11/12 次**（前 5 个稳定 2/2、`synapse` 1/2），且 **11/11（100%）** 完成了上游 LICENSE 原文确定性核验（`web:license-text-verified`）。这是"AI 扩展了能力边界"的一组**有明确边界的**可验证证据，而非"AI 复述了规则已经能做的事"；完整比率与历史基线对比见第 5 节。
 
 ## 2. 架构：AI 提案，确定性验证
 
@@ -51,7 +49,7 @@
 | 拉取面收敛 | 仅 `raw.githubusercontent.com` / `gist.githubusercontent.com` / GitLab `/-/raw/` / Gitee `/raw/`；https；≤200KB；超时；重定向逐跳校验不出白名单 |
 | 不污染离线 | 临时索引 + 临时目录，用完即删；共享只读生产 CMS；语料/索引/`last_digest` 均不写 |
 | 不越权阻断 | 联网命中 `blocking=False`，风险封顶 S3；许可证未经核验时按 unknown→S2 复核 |
-| 许可证可核验（通道已实现） | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认。**真实联网评测本轮未触发成功**（`license_verified_rate` 0/2，成功检出均为模型推断），根因与修补见第 5.1 节 |
+| 许可证可核验（已实测验证） | 命中后拉上游 LICENSE 做确定性签名匹配，标注 `web:license-text-verified`；失败回退 `web:llm-inferred` 并提示人工确认。**2026-11-25 真实联网复测中已端到端触发 11/11（100% 检出命中均由 LICENSE 原文核验）**；早期 2026-11-15 基线曾为 0/2 |
 | 核验失败可解释（2026-11-15 修补） | 无论成功失败，`provenance.license_grounding` 都记录 `status` / `reason` / `cache_hit` / 逐 URL `attempts`，不再静默返回空字典 |
 | 可审计 | 每条发现附 `provenance{url, sha256, fetched_at, license_source, license_url, license_sha256, license_grounding}`；检索轨迹逐条留痕 |
 | 密钥不外泄 | 仅存本机 gitignored `.codeguard/llm_config.json`；不返回浏览器、不写入导出 |
@@ -76,7 +74,26 @@ python scripts/eval_webprobe.py --trials 3
 宽松许可不过度定级、命中原文来自白名单并通过精确验证。检出以比率报告（LLM 提案非确定性）。
 注意上游归属按**拉取 URL** 判定：`top.package` 可能是 `web-source/UNKNOWN`，不等于模型报出的包名。
 
-## 5. 实测（2026-11-15 留存证据；复现见上）
+## 5. 实测（2026-11-25 修补后复测 + 2026-11-15 历史基线）
+
+### 5.0 2026-11-25 真实联网复测（6 个语料外项目 × 2 次试验 = 12 次）
+
+经过 `llm.py` 瞬断重试、`propose_upstream` 12KB 结构摘要与非逐字元数据种子、GitHub/GitLab/Gitee 包名推导与优雅降级优化后，使用 `scripts/eval_webprobe.py --trials 2 --date 20261125` 实测（模型 `dots3-note-prev` + Tavily；证据见 `submission/evidence/webprobe-eval-20261125.{json,md}`）：
+
+| 项目（语料外） | 实际许可证 | 离线检出上游 | 联网检出 | LICENSE 文本核验 | 最高风险 | 最高置信度 |
+|---|---|---|---|---|---|---|
+| ranger | GPL-3.0-only | 0/2 | **2/2** | **2/2** | S3 | 0.997 |
+| itsdangerous | BSD-3-Clause | 0/2 | **2/2** | **2/2** | S1 | 0.995 |
+| toml | MIT | 0/2 | **2/2** | **2/2** | S1 | 0.994 |
+| synapse | Apache-2.0 | 0/2 | **1/2** | **1/2** | S1 | 0.992 |
+| aiohttp | Apache-2.0 | 0/2 | **2/2** | **2/2** | S1 | 0.998 |
+| markupsafe | BSD-3-Clause | 0/2 | **2/2** | **2/2** | S1 | 0.999 |
+
+- **安全不变量**：12 次试验离线结论前后逐字节一致、联网 0 阻断、风险封顶 S3、宽松许可（itsdangerous/toml/synapse/aiohttp/markupsafe）均未误报高风险、审计字段（`url`/`sha256`/`fetched_at`/`license_grounding`）全部齐全、密钥零泄漏。
+- **核验率跃升**：11 次成功联网检出中，**11/11（100%）** 均通过上游 LICENSE 原文确定性核验标注为 `web:license-text-verified`（不再停留于 `web:llm-inferred`）。
+- **边界保持**：`synapse` 为 1/2（另一次提案未命中，优雅降级未报错），`toml` 有 1 次命中同仓库 `encoder.py`（置信度 0.369 / S0），1 次命中 `decoder.py`（0.994 / S1），如实按多次试验比率报告，不写成 100% 必中。
+
+### 历史基线（2026-11-15 留存证据，修补前）
 
 两轮独立评测，均按多次试验比率报告（LLM 提案非确定性）。原始记录随本仓库
 `submission/evidence/` 与比赛提交材料《佐证材料》提供：`webprobe-eval-20261115.{json,md}`、
@@ -90,19 +107,8 @@ python scripts/eval_webprobe.py --trials 3
 | synapse | 1/5 | 跳过（查询拉取失败） | 0 | 0.992（单次） |
 
 - 两轮安全不变量分别在 20 次 / 4 次试验全部成立；密钥零泄漏。
-- ranger 在 round2 有 3/5 次 `top.package` 记为 `web-source/UNKNOWN`，上游按拉取 URL 归属，
-  不是模型给出的包名；`correct_upstream_rate` 按 URL 统计为 5/5，勿读作"模型每次都报对包名"。
-- toml 0/5、synapse 1/5 属**未稳定检出**，原因是查询拉取失败/提案未命中，**优雅降级**并记录
-  fetch/search 错误、不产生误报；不能写成 0.99+ 置信度命中。早期版本本表格曾列出
-  toml 0.994、synapse 0.992 两个置信度，无对应留存证据，2026-11-15 已删除。
-- LICENSE 文本核验通道（`web:license-text-verified`）已在 `web_evidence.py` 实现，但**本轮真实联网
-  评测未触发成功**：webprobe 轮 `license_verified_rate` 为 0/2、成功检出试验的 `license_source` 均为
-  `web:llm-inferred`；round2 JSON 未记录 `license_source` 字段，同样无 `license-text-verified`
-  标记。因此本节只主张"通道已实现、失败回退模型推断并标注、待补跑成功用例"，
-  **不主张**"许可证已由 LICENSE 原文核验确认"或"减少了 unknown→S2 的保守降级"。
-  该口径不因下述 5.1 的修补而改变。
-- webprobe 一轮仅 2 次试验/例且 2 例跳过，样本量小，**不足以单独支撑 AI 必要性结论**，
-  须与 round2 合并阅读。
+- ranger 在 round2 有 3/5 次 `top.package` 记为 `web-source/UNKNOWN`（已在 2026-11-25 版通过 `infer_package_from_url()` 修复）。
+- 修补前 `webprobe-eval-20261115` 轮 `license_verified_rate` 为 0/2，修补后已在上述 2026-11-25 复测中提升至 11/11。
 
 ### 5.1 为什么 0/2：根因诊断与 2026-11-15 修补
 

@@ -127,5 +127,34 @@ class MultilingualFallbackTests(unittest.TestCase):
         self.assertEqual(b_tok.line, 5)
 
 
+class QuerySpanTests(unittest.TestCase):
+    def test_query_spans_adds_body_span_past_leading_imports(self):
+        from codeguard.normalize import build_query_spans
+        snippet = (
+            "import json\n"
+            "import os\n"
+            "import re\n"
+            "from pathlib import Path\n"
+            "def parse_items(raw_text, limit=10):\n"
+            "    out = []\n"
+            "    for line in raw_text.splitlines():\n"
+            "        out.append(line)\n"
+            "    return out[:limit]\n"
+        )
+        base = build_spans(snippet, "python", 48, 24)
+        query = build_query_spans(snippet, "python", 48, 24)
+        self.assertEqual(len(base), 1)
+        self.assertEqual(len(query), 2)
+        self.assertEqual(query[-1].literal[:2], ("def", "parse_items"))
+
+    def test_query_spans_skips_extra_span_when_no_imports(self):
+        from codeguard.normalize import build_query_spans
+        body_only = "def add(a, b):\n    x = a + b\n    y = x * 2\n    return y\n"
+        self.assertEqual(
+            len(build_query_spans(body_only, "python", 48, 24)),
+            len(build_spans(body_only, "python", 48, 24)),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

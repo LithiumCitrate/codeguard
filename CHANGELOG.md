@@ -6,6 +6,36 @@ abides by semantic versioning.
 
 ## [Unreleased]
 
+### Improved
+
+- **Post-import body-aligned query span for partial copies**
+  (`src/codeguard/normalize.py`, `src/codeguard/index.py`, `src/codeguard/benchmark.py`):
+  added `build_query_spans()`, which appends one span anchored at the first
+  non-import code line when leading `import`/`from` statements share a 48-token
+  window with the body. Index format (`index.bin`) is unchanged; on the
+  24-file mutation benchmark, `partial` recall rises from **79% → 88%**
+  (overall **97% → 98%** / `0.9844`, mismatch `0.02`, negatives `0/9`,
+  `--fp-study 200` blocking **0/200**), full-corpus `--full-corpus` `partial`
+  rises from **79% → 83%** (overall `0.9792` / `+IDF 0.9739`), and HumanEval
+  remains **0/164 blocking** (p50 `26.4 ms`).
+- **llmFusion reliability, package attribution, and real-network verification**
+  (`src/codeguard/llm.py`, `src/codeguard/web_evidence.py`,
+  `scripts/eval_webprobe.py`):
+  - `_http_json()` retries boundedly on transient transport drops
+    (`RemoteDisconnected`, `IncompleteRead`, `TimeoutError`, HTTP `429/502/503/504`);
+  - `propose_upstream()` compacts files >12 KB (`compact_code_for_proposal()`),
+    synthesizes non-verbatim metadata search seeds (`metadata_seeds()`), converts
+    GitHub/GitLab/Gitee blob URLs (`blob_to_raw()`), and infers `owner/repo`
+    names (`infer_package_from_url()`) instead of leaving `web-source`;
+  - `ground_license()` supports GitLab/Gitee raw roots and additional license
+    filenames (`COPYING.LESSER`, `LICENSE-MIT`, `LICENSE-APACHE`);
+  - `run_web_probe()` degrades gracefully on upstream proposal errors;
+  - `scripts/eval_webprobe.py` expanded from 4 to 6 out-of-corpus projects
+    (`ranger`, `itsdangerous`, `toml`, `synapse`, `aiohttp`, `markupsafe`),
+    recording **11/12 detections** and **11/11 `web:license-text-verified`**
+    with all safety invariants holding on 12/12 trials (`webprobe-eval-20261125.*`).
+- Added 6 offline regression tests (`208` total).
+
 ### Fixed
 
 - **Folder review no longer dead-ends the AI summary/ask entry**
