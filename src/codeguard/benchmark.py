@@ -41,7 +41,7 @@ from .fingerprint import build_fingerprint
 from .index import ALL_LAYERS, BAND_PLAN, DocRecord, FingerprintIndex, Params
 from .minhash import band_keys
 from .mutations import MUTATIONS, apply_mutation, describe, parses
-from .normalize import build_query_spans, tokenize_source
+from .normalize import build_query_spans, resolve_language, tokenize_source
 from .score import (FEATURE_NAMES, LogisticRegression, best_threshold,
                     bootstrap_ci, confusion, evaluate,
                     expected_calibration_error, group_split, rank_auc, std)
@@ -125,11 +125,12 @@ def build_bench_index(corpus_root: str, entries) -> FingerprintIndex:
     for doc_id, e in enumerate(entries):
         text = open(os.path.join(corpus_root, e.path.replace("/", os.sep)),
                     encoding="utf-8", errors="replace").read()
+        lang = resolve_language(e.path, e.language)
         index.add_document(DocRecord(doc_id, e.package, e.version, e.path,
-                                     e.license_spdx, e.license_source, e.language,
+                                     e.license_spdx, e.license_source, lang,
                                      text.count("\n") + 1,
-                                     len(tokenize_source(text, e.language)),
-                                     e.sha256, len(text)), text, language=e.language)
+                                     len(tokenize_source(text, lang)),
+                                     e.sha256, len(text)), text, language=lang)
     return index.finalize()
 
 
@@ -442,9 +443,10 @@ def false_positive_study(prod_index, corpus_root: str, entries, sample: int,
         text = open(path, encoding="utf-8", errors="replace").read()
         # worst-case project licence: every copyleft source becomes a conflict,
         # so the blocking count below is an upper bound on real-world noise
+        lang = resolve_language(e.path, e.language)
         scan = scanner.scan_text(text, target=e.path,
                                  target_license="LicenseRef-Proprietary",
-                                 package_hint=e.package, language=e.language)
+                                 package_hint=e.package, language=lang)
         for f in scan.findings:
             by_risk[f.risk] = by_risk.get(f.risk, 0) + 1
             row = {"query": e.path, "query_license": e.license_spdx,

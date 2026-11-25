@@ -126,6 +126,101 @@ class MultilingualFallbackTests(unittest.TestCase):
                  if t.text == "b"][0]
         self.assertEqual(b_tok.line, 5)
 
+    def test_language_for_maps_supported_extensions(self):
+        from codeguard.adjudicate import language_for
+        self.assertEqual(language_for("a.py"), "python")
+        self.assertEqual(language_for("a.pyw"), "python")
+        for ext in (".c", ".h", ".cpp", ".cc", ".hpp"):
+            self.assertEqual(language_for("mod" + ext), "c")
+        self.assertEqual(language_for("srv.go"), "go")
+        for ext in (".js", ".mjs", ".ts", ".jsx", ".tsx"):
+            self.assertEqual(language_for("app" + ext), "javascript")
+        self.assertEqual(language_for("lib.rs"), "rust")
+        self.assertEqual(language_for("notes.txt"), "generic")
+
+    def test_language_specific_keywords_and_builtins(self):
+        c_toks = tokenize_source("static int f(size_t n) { printf(\"x\"); return 0; }\n", "c")
+        c_kinds = {t.text: t.kind for t in c_toks}
+        self.assertEqual(c_kinds["static"], "keyword")
+        self.assertEqual(c_kinds["return"], "keyword")
+        c_roles = role_stream(c_toks, language="c")
+        self.assertIn("B:size_t", c_roles)
+        self.assertIn("B:printf", c_roles)
+
+        go_toks = tokenize_source("func run(n int) { s := make([]int, n); fmt.Println(len(s)) }\n", "go")
+        go_kinds = {t.text: t.kind for t in go_toks}
+        self.assertEqual(go_kinds["func"], "keyword")
+        go_roles = role_stream(go_toks, language="go")
+        self.assertIn("K:func", go_roles)
+        self.assertIn("B:make", go_roles)
+        self.assertIn("B:len", go_roles)
+
+        js_toks = tokenize_source("function deb(fn) { const t = setTimeout(fn, 10); console.log(t); }\n", "javascript")
+        js_kinds = {t.text: t.kind for t in js_toks}
+        self.assertEqual(js_kinds["function"], "keyword")
+        self.assertEqual(js_kinds["const"], "keyword")
+        js_roles = role_stream(js_toks, language="javascript")
+        self.assertIn("K:function", js_roles)
+        self.assertIn("B:setTimeout", js_roles)
+        self.assertIn("B:console", js_roles)
+
+        rs_src = "pub fn parse<'a>(input: &'a str) -> Option<Vec<String>> { let ch = 'x'; println!(\"{}\", input); None }\n"
+        rs_toks = tokenize_source(rs_src, "rust")
+        rs_kinds = {t.text: t.kind for t in rs_toks}
+        self.assertEqual(rs_kinds["fn"], "keyword")
+        self.assertEqual(rs_kinds["let"], "keyword")
+        self.assertIn("'x'", [t.text for t in rs_toks if t.kind == "string"])
+        rs_roles = role_stream(rs_toks, language="rust")
+        self.assertIn("K:fn", rs_roles)
+        self.assertIn("B:Option", rs_roles)
+        self.assertIn("B:Vec", rs_roles)
+
+    def test_multilang_definition_edges_survive_rename_and_reorder(self):
+        go_a = "func helper(x int, y string) int {\n    res := len(y)\n    return res + x\n}\n"
+        go_b = "func renamed_fn(a int, b string) int {\n    total := len(b)\n    return total + a\n}\n"
+        roles_a = role_stream(tokenize_source(go_a, "go"), language="go")
+        roles_b = role_stream(tokenize_source(go_b, "go"), language="go")
+        self.assertEqual(roles_a, roles_b)
+        edges_a = relation_edges(roles_a)
+        edges_b = relation_edges(roles_b)
+        self.assertEqual(edges_a, edges_b)
+        self.assertIn("def.shape|func|L", edges_a)
+
+        rust_a = (
+            "struct Store { count: usize }\n"
+            "trait Runner { fn step(&self); }\n"
+            "impl Runner for Store {\n"
+            "    fn step(&self) { let a = 1; let b = 2; println!(\"{}\", a + b); }\n"
+            "}\n"
+        )
+        rust_reordered = (
+            "trait Runner { fn step(&self); }\n"
+            "struct Store { count: usize }\n"
+            "impl Runner for Store {\n"
+            "    fn step(&self) { let b = 2; let a = 1; println!(\"{}\", a + b); }\n"
+            "}\n"
+        )
+        edges_r1 = relation_edges(role_stream(tokenize_source(rust_a, "rust"), language="rust"))
+        edges_r2 = relation_edges(role_stream(tokenize_source(rust_reordered, "rust"), language="rust"))
+        self.assertEqual(set(edges_r1), set(edges_r2))
+        self.assertTrue(any(e.startswith("def.shape|struct|") for e in edges_r1))
+        self.assertTrue(any(e.startswith("def.shape|trait|") for e in edges_r1))
+        self.assertTrue(any(e.startswith("def.shape|impl|") for e in edges_r1))
+        self.assertTrue(any(e.startswith("def.shape|fn|") for e in edges_r1))
+
+        js_src = "function compute(items, scale) { return items.length * scale; }\n"
+        js_edges = relation_edges(role_stream(tokenize_source(js_src, "javascript"), language="javascript"))
+        self.assertIn("def.shape|function|L", js_edges)
+        self.assertIn("function.arity|2", js_edges)
+
+        enum_rs = "enum Mode { Fast, Safe }\n"
+        e_edges = relation_edges(role_stream(tokenize_source(enum_rs, "rust"), language="rust"))
+        self.assertTrue(any(e.startswith("def.shape|enum|") for e in e_edges))
+
+        go_iface = "type Reader interface { Read(buf []byte) int }\n"
+        i_edges = relation_edges(role_stream(tokenize_source(go_iface, "go"), language="go"))
+        self.assertTrue(any(e.startswith("def.shape|interface|") for e in i_edges))
+
 
 class QuerySpanTests(unittest.TestCase):
     def test_query_spans_adds_body_span_past_leading_imports(self):

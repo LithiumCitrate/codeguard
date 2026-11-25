@@ -344,9 +344,10 @@ class Workbench:
         if not self.health()['ready']:
             raise ValueError('语料原文缺失或哈希不一致，无法完成可信验证；请重新建立语料')
         name = str(data.get('name', 'review.py'))[:120].replace('\\', '/').split('/')[-1]
+        from .adjudicate import language_for
         with self.lock:
             result = Scanner(self.index, model=self.model, usage=usage).scan_text(
-                code, target=name, target_license=license_id)
+                code, target=name, target_license=license_id, language=language_for(name))
             configured = provider_from_settings(self.root)
             use_llm = bool(data.get('assist')) or bool(configured and configured.tavily_api_key)
             llm_provider = configured if use_llm else None

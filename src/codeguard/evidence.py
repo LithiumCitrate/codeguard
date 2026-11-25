@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from .fingerprint import span_shingles
 from .minhash import containment, jaccard
-from .normalize import build_spans
+from .normalize import build_spans, resolve_language
 
 @dataclass
 class PairScore:
@@ -51,10 +51,12 @@ class CandidateReader:
 
     def spans_for(self, doc_id: int):
         if doc_id not in self._spans:
-            path = self.index.corpus_file(self.index.doc_for(doc_id))
+            doc = self.index.doc_for(doc_id)
+            path = self.index.corpus_file(doc)
             text = read_source(path)
+            lang = doc.language or resolve_language(doc.path)
             self._spans[doc_id] = build_spans(
-                text, self.index.doc_for(doc_id).language,
+                text, lang,
                 self.index.params.window, self.index.params.stride) if text else []
             self._shingles[doc_id] = [span_shingles(s) for s in self._spans[doc_id]]
         return self._spans[doc_id], self._shingles[doc_id]

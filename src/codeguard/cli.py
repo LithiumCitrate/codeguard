@@ -21,7 +21,8 @@ from .evaluate import load_manifest, run_eval, write_eval
 from .index import DocRecord, FingerprintIndex, Params
 from .license_intel import RISK_LABELS, analyze, normalize_expression, resolve_spdx
 from .llm import DISCLOSURE, get_provider
-from .normalize import tokenize_source
+from .normalize import resolve_language, tokenize_source
+from .policy import PolicyError, apply_policy, load_policy
 from .report import (index_fingerprint, provenance_receipt, to_cyclonedx, to_html,
                      to_sarif, write_outputs)
 from .score import LogisticRegression
@@ -182,10 +183,11 @@ def cmd_index(args):
             if len(text) < args.min_bytes:
                 skipped += 1
                 continue
+            lang = resolve_language(e.path, e.language)
             doc = DocRecord(next(ids), package, version, e.path, e.license_spdx,
-                            e.license_source, e.language, text.count("\n") + 1,
-                            len(tokenize_source(text)), e.sha256, len(text))
-            index.add_document(doc, text)
+                            e.license_source, lang, text.count("\n") + 1,
+                            len(tokenize_source(text, lang)), e.sha256, len(text))
+            index.add_document(doc, text, language=lang)
             added += 1
     index.finalize()
     size = index.save(index_path(root))
@@ -207,7 +209,21 @@ def _scanner(index, args, usage):
                    corroborate_confidence=args.corroborate_confidence)
 
 
+def _load_cli_policy(policy_path: str):
+    if not policy_path:
+        return None
+    try:
+        return load_policy(policy_path)
+    except (OSError, PolicyError) as exc:
+        _die("codeguard: 策略文件无效：%s（退出码 2）" % exc)
+
+
 def cmd_scan(args):
+    policy = _load_cli_policy(getattr(args, "policy", ""))
+    target_license = (args.license if args.license is not None
+                      else (policy.project_license if policy and policy.project_license else "MIT"))
+    usage = (args.usage if args.usage is not None
+             else (policy.usage if policy and policy.usage else "inline_copy"))
     root = workspace(args.workspace)
     index = load_index(root)
     caveat = check_corpus(index, args.allow_partial_corpus)
@@ -217,18 +233,22 @@ def cmd_scan(args):
         targets.extend(iter_sources(item, tuple("." + e for e in args.ext.split(","))))
     if not targets:
         _die("codeguard: 没有匹配到待扫描文件（退出码 2）")
-    scanner = _scanner(index, args, args.usage)
+    scanner = _scanner(index, args, usage)
     provider = get_provider(args.explain)
     out_dir = args.out or os.path.join(root, "reports")
     total_findings = 0
+    if policy is not None:
+        print("已加载合规策略：%s（project_license=%s usage=%s）"
+              % (policy.path, target_license, usage))
     for path in targets:
         text = open(path, encoding="utf-8", errors="replace").read()
         scan = scanner.scan_text(strip_diff_markers(text), target=path.replace(os.sep, "/"),
-                                 target_license=args.license,
+                                 target_license=target_license,
                                  package_hint=os.path.basename(path).split(".")[0],
                                  language=language_for(path))
         if caveat:
             scan.notes.append(caveat)
+        audit = apply_policy(scan, policy) if policy is not None else None
         explanations = {f.key: provider.describe(f) for f in scan.findings}
         written = write_outputs(scan, index, out_dir, explanations,
                                 tuple(args.format.split(",")))
@@ -236,10 +256,16 @@ def cmd_scan(args):
         print("%s: 片段 %d/%d 命中，来源 %d 个" % (path.replace(os.sep, "/"),
                                                   scan.matched_spans, scan.total_spans,
                                                   len(scan.findings)))
+        if audit is not None:
+            print("   策略审计：豁免 %d 条，拒绝 %d 条（sha256=%s）"
+                  % (audit["waived_count"], audit["denied_count"],
+                     audit["policy_sha256"][:12]))
         for f in scan.findings[:args.max_show]:
-            print("   [%s] %-14s %-18s conf=%.2f cov=%.2f %s"
+            tag = (" [策略:%s: %s]" % (f.policy_action, f.policy_reason)
+                   if f.policy_action else "")
+            print("   [%s] %-14s %-18s conf=%.2f cov=%.2f %s%s"
                   % (f.risk, f.license_spdx, f.package, f.confidence, f.coverage,
-                     f.path.split("/")[-1]))
+                     f.path.split("/")[-1], tag))
         for p in written:
             print("   -> %s" % p.replace(os.sep, "/"))
         results.append(scan)
@@ -277,6 +303,18 @@ def read_diff_argument(value: str) -> str:
 
 
 def cmd_gate(args):
+    policy = _load_cli_policy(getattr(args, "policy", ""))
+    target_license = (args.license if args.license is not None
+                      else (policy.project_license if policy and policy.project_license else "MIT"))
+    usage = (args.usage if args.usage is not None
+             else (policy.usage if policy and policy.usage else "distribution"))
+    if args.fail_on is not None:
+        fail_on = [x.strip() for x in args.fail_on.split(",") if x.strip()]
+    elif policy is not None and policy.fail_on is not None:
+        fail_on = list(policy.fail_on)
+    else:
+        fail_on = ["S3", "S4"]
+
     root = workspace(args.workspace)
     index = load_index(root)
     caveat = check_corpus(index, args.allow_partial_corpus)
@@ -284,12 +322,19 @@ def cmd_gate(args):
     if not text.strip():
         print("codeguard gate: 没有新增代码可检查")
         return 0
-    scanner = _scanner(index, args, args.usage)
+    lang = language_for(args.name) if args.name else "generic"
+    if lang == "generic" and args.diff and args.diff != "-" and os.path.exists(args.diff):
+        lang = language_for(args.diff)
+    if lang == "generic":
+        lang = "python"
+    scanner = _scanner(index, args, usage)
     scan = scanner.scan_text(text, target=args.name or "diff",
-                             target_license=args.license, package_hint="")
+                             target_license=target_license, package_hint="",
+                             language=lang)
     if caveat:
         scan.notes.append(caveat)
-    blocking = [f for f in scan.findings if f.risk in args.fail_on.split(",")]
+    audit = apply_policy(scan, policy) if policy is not None else None
+    blocking = [f for f in scan.findings if f.risk in fail_on]
     out_dir = args.out or os.path.join(root, "reports")
     provider = get_provider("offline")
     write_outputs(scan, index, out_dir,
@@ -301,17 +346,25 @@ def cmd_gate(args):
             json.dump(to_sarif(scan, index), fh, ensure_ascii=False, indent=1)
     if not scan.findings:
         print("CodeGuard: 未发现语料库来源的复用（检查 %d 个片段）" % scan.total_spans)
+        if audit is not None:
+            print("策略已加载：%s（豁免 0 条，拒绝 0 条）" % audit["policy_path"])
         return 0
     print("CodeGuard 合规门禁 · 目标 %s · 项目许可证 %s" % (scan.target, scan.target_license))
+    if audit is not None:
+        print("策略：%s · 豁免 %d 条 · 拒绝 %d 条 · fail_on=%s"
+              % (audit["policy_path"], audit["waived_count"],
+                 audit["denied_count"], ",".join(fail_on) or "(none)"))
     for f in scan.findings:
-        mark = "x" if f.risk in args.fail_on.split(",") else "!" if f.risk == "S2" else "-"
-        print(" [%s] %-9s %-18s conf=%.2f  来源 %s@%s:%s" % (
+        mark = "x" if f.risk in fail_on else "!" if f.risk == "S2" else "-"
+        tag = (" [%s: %s]" % (f.policy_action, f.policy_reason)
+               if f.policy_action else "")
+        print(" [%s] %-9s %-18s conf=%.2f  来源 %s@%s:%s%s" % (
             mark, f.risk, f.license_spdx, f.confidence, f.package, f.version,
-            f.path.split("/")[-1]))
+            f.path.split("/")[-1], tag))
     print("\n共 %d 条来源，其中阻断级 %d 条；报告：%s"
           % (len(scan.findings), len(blocking), out_dir.replace(os.sep, "/")))
     for n in scan.notes:
-        if "降级" in n:
+        if "降级" in n or n.startswith("策略"):
             print(" " + n)
     if blocking:
         print("门禁失败：请替换实现、改用兼容许可证，或按 copyleft 条款公开源码。")
@@ -475,10 +528,13 @@ def build_parser():
 
     p = sub.add_parser("scan", help="扫描文件或目录")
     p.add_argument("paths", nargs="+")
-    p.add_argument("--license", default="MIT", help="被扫描项目的许可证 SPDX id")
-    p.add_argument("--usage", default="inline_copy",
-                   choices=["internal_use", "inline_copy", "static_link", "dynamic_link",
-                            "tool_interface", "network_service", "distribution"])
+    p.add_argument("--policy", default="", help="项目级合规策略 JSON 路径（如 .codeguard.json）")
+    p.add_argument("--license", default=None, help="被扫描项目的许可证 SPDX id（默认 MIT）")
+    p.add_argument("--usage", default=None,
+                   choices=["internal_use", "unmodified_internal", "inline_copy",
+                            "static_link", "dynamic_link", "tool_interface",
+                            "network_service", "distribution"],
+                   help="使用方式（默认 inline_copy）")
     p.add_argument("--ext", default="py")
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--min-span-prob", type=float, default=0.55)
@@ -500,12 +556,13 @@ def build_parser():
     p = sub.add_parser("gate", help="CI 门禁：读取 diff，阻断级风险返回退出码 1")
     p.add_argument("--diff", default="", help="diff/源码路径，- 或省略表示 stdin")
     p.add_argument("--name", default="")
-    p.add_argument("--license", default="MIT")
-    p.add_argument("--usage", default="distribution")
+    p.add_argument("--policy", default="", help="项目级合规策略 JSON 路径（如 .codeguard.json）")
+    p.add_argument("--license", default=None, help="被扫描项目的许可证 SPDX id（默认 MIT）")
+    p.add_argument("--usage", default=None, help="使用方式（默认 distribution）")
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--min-span-prob", type=float, default=0.55)
     p.add_argument("--top-verify", type=int, default=4)
-    p.add_argument("--fail-on", default="S3,S4")
+    p.add_argument("--fail-on", default=None, help="阻断的风险等级（默认 S3,S4）")
     p.add_argument("--allow-partial-corpus", action="store_true",
                    help="语料原文不全时仍继续（会有漏报风险，写进报告）")
     p.add_argument("--corroborate-coverage", type=float, default=0.15,

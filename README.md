@@ -71,7 +71,7 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 ## 4. 实测效果（`codeguard benchmark --files 24`）
 
-**当前口径**：语料由 20 个 PyPI 包（585 文件）扩充为 **32 个来源 / 1717 个文件 / 138928 片段 / 11 种 SPDX**
+**当前口径**：语料由 20 个 PyPI 包（585 文件）扩充为 **32 个来源 / 1717 个文件 / 127156 片段 / 11 种 SPDX**
 （新增 13 个浅克隆的 GitHub 仓库：fastapi、django、git、nginx、minio、jquery 等，覆盖 C/Go/JS/Rust；
 复现见 `scripts/expand_corpus_github.py`）。语料：24 个真实开源文件 / 18 个包 / 9 种 SPDX；192 个变异用例 + 9 个全新实现负例。
 
@@ -102,7 +102,9 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 外部干净负例在查询窗口优化后复测：HumanEval 164 个独立实现 **0/164 阻断（95% 单侧上限 1.81%）**，任意命中仅 2，扫描 p50 **26.4 ms**（见 `submission/evidence/humaneval-20261125.*`）。
 
-工程指标：1717 文档 / 138928 片段索引 34.4 MB（约 243 B/片段），buckets 2.94 M；50 k 字符真实文件扫描秒级。
+**多语言语法感知基准（`scripts/eval_multilang.py`，2026-11-25 离线实测）**：针对 C / Go / JavaScript / Rust（各抽样 8 份真实语料 × 4 类变异 + 61 份干净与跨语言负例），文件级精确检出 **124/128（96.9%）**，同包级归因 **128/128（100.0%）**（C/JS/Rust 均 **100%**，Go 文件级 87.5% / 同包级 100%），**0 误阻断**（见 `submission/evidence/multilang-eval-20261125.*`）。同时新增项目级合规策略 `--policy`（`src/codeguard/policy.py`，支持 `allow_packages` 豁免降级留痕与 `deny_licenses` 黑名单阻断）。
+
+工程指标：1717 文档 / 127156 片段索引 31.7 MB（约 255 B/片段），buckets 2.72 M；50 k 字符真实文件扫描秒级。
 
 ### 4.1 外部干净负例（2026-10-24）
 
@@ -198,7 +200,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
                    eval_webprobe.py（联网溯源边际收益评测，AI 必要性证据）
-tests/             208 个用例，全部离线跑在 fixture 上
+tests/             216 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  WEBPROBE.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -208,7 +210,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 208 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 216 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

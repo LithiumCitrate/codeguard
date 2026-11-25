@@ -6,6 +6,35 @@ abides by semantic versioning.
 
 ## [Unreleased]
 
+### Added
+
+- **Language-aware C / Go / JavaScript / Rust normalization & offline multilang benchmark**
+  (`src/codeguard/normalize.py`, `src/codeguard/adjudicate.py`,
+  `src/codeguard/index.py`, `src/codeguard/evidence.py`, `src/codeguard/cli.py`,
+  `scripts/eval_multilang.py`):
+  - `language_for()` and `resolve_language()` distinguish `python`, `c`, `go`,
+    `javascript`, and `rust`; `_fallback_tokens()`, `role_stream()`, and
+    `relation_edges()` recognize per-language keywords, builtins, C-family
+    comments, Go/JS template strings, Rust lifetimes, and multi-language
+    definition edges (`func`/`function`/`fn`/`struct`/`interface`/`impl`/`enum`/`trait`),
+    while leaving Python behavior byte-identical.
+  - Rebuilding the index (`codeguard index`) properly strips C-family comments
+    across the 836 non-Python corpus files (**1,717 docs / 127,156 chunks / 31.7 MB**).
+  - Offline benchmark `scripts/eval_multilang.py` across 32 real corpus files
+    (8 per language × 4 mutations + 61 clean/cross-language negatives):
+    **124/128 (96.9%)** exact file-level detection, **128/128 (100.0%)**
+    package-level attribution (**C 100%, JS 100%, Rust 100%, Go 87.5% file /
+    100% package**), and **0 false blocks** (`multilang-eval-20261125.*`).
+- **Auditable project compliance policy engine `--policy`**
+  (`src/codeguard/policy.py`, `src/codeguard/cli.py`, `src/codeguard/report.py`,
+  `tests/test_policy.py`):
+  - Loads JSON policy files (`project_license`, `usage`, `fail_on`,
+    `allow_packages` with waiver reasons, `deny_licenses`) with strict schema
+    validation; never deletes findings—waived findings downgrade to `S1` with
+    `policy_action="waived"`, denied corroborated findings escalate to `S4`
+    with `policy_action="denied"`, and `policy_audit` is recorded in JSON/HTML/SARIF.
+- Added 8 offline unit tests (**216 total**, all passing).
+
 ### Improved
 
 - **Post-import body-aligned query span for partial copies**

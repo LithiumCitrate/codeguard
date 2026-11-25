@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 
 from .evidence import CandidateReader, PairScore, score_pair
 from .license_intel import RISK_LABELS, analyze, risk_level
+from .normalize import resolve_language
 
 DEFAULT_MIN_SPAN_PROB = 0.55
 DEFAULT_TOP_VERIFY = 4
@@ -93,24 +94,31 @@ class Finding:
     target: str = ""
     target_license: str = ""
     corroborated: bool = True
+    policy_action: str = ""
+    policy_reason: str = ""
 
     @property
     def key(self) -> str:
         return "%s@%s:%s" % (self.package, self.version, self.path)
 
     def as_dict(self) -> dict:
-        return {"package": self.package, "version": self.version, "path": self.path,
-                "license_spdx": self.license_spdx, "license_origin": self.license_origin,
-                "confidence": round(self.confidence, 4),
-                "coverage": round(self.coverage, 4),
-                "matched_spans": len(self.spans),
-                "max_verbatim_run": self.max_verbatim_run,
-                "corroborated": self.corroborated,
-                "query_lines": self.matched_query_lines,
-                "target": self.target, "target_license": self.target_license,
-                "risk": self.risk, "risk_label": RISK_LABELS[self.risk],
-                "verdict": self.verdict.as_dict() if self.verdict else None,
-                "evidence": [p.as_dict() for p in self.spans]}
+        out = {"package": self.package, "version": self.version, "path": self.path,
+               "license_spdx": self.license_spdx, "license_origin": self.license_origin,
+               "confidence": round(self.confidence, 4),
+               "coverage": round(self.coverage, 4),
+               "matched_spans": len(self.spans),
+               "max_verbatim_run": self.max_verbatim_run,
+               "corroborated": self.corroborated,
+               "query_lines": self.matched_query_lines,
+               "target": self.target, "target_license": self.target_license,
+               "risk": self.risk, "risk_label": RISK_LABELS[self.risk],
+               "verdict": self.verdict.as_dict() if self.verdict else None,
+               "evidence": [p.as_dict() for p in self.spans]}
+        if self.policy_action:
+            out["policy_action"] = self.policy_action
+        if self.policy_reason:
+            out["policy_reason"] = self.policy_reason
+        return out
 
 
 @dataclass
@@ -124,18 +132,22 @@ class ScanResult:
     scanned_at: float
     timings: dict = field(default_factory=dict)
     notes: list = field(default_factory=list)
+    policy_audit: dict | None = None
 
     @property
     def blocking(self) -> bool:
         return any(f.risk in ("S3", "S4") for f in self.findings)
 
     def as_dict(self) -> dict:
-        return {"schema": "codeguard.scan/v1", "target": self.target,
-                "target_license": self.target_license, "usage": self.usage,
-                "total_spans": self.total_spans, "matched_spans": self.matched_spans,
-                "scanned_at": self.scanned_at, "timings": self.timings,
-                "notes": self.notes,
-                "findings": [f.as_dict() for f in self.findings]}
+        out = {"schema": "codeguard.scan/v1", "target": self.target,
+               "target_license": self.target_license, "usage": self.usage,
+               "total_spans": self.total_spans, "matched_spans": self.matched_spans,
+               "scanned_at": self.scanned_at, "timings": self.timings,
+               "notes": self.notes,
+               "findings": [f.as_dict() for f in self.findings]}
+        if self.policy_audit is not None:
+            out["policy_audit"] = self.policy_audit
+        return out
 
 
 class Scanner:
@@ -277,8 +289,7 @@ class Scanner:
 
 
 def language_for(path: str) -> str:
-    ext = os.path.splitext(path)[1].lower()
-    return {".py": "python", ".pyw": "python"}.get(ext, "generic")
+    return resolve_language(path)
 
 
 def iter_sources(root: str, extensions=(".py",)):

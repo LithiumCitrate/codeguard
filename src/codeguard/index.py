@@ -27,7 +27,7 @@ from dataclasses import asdict, dataclass, field
 from .cms import CountMin
 from .fingerprint import LAYER_SIZES, build_fingerprint
 from .minhash import band_keys, h64
-from .normalize import build_query_spans, build_spans
+from .normalize import build_query_spans, build_spans, resolve_language
 
 INDEX_VERSION = "1.2"
 MAGIC = b"CGIDX2"
@@ -110,8 +110,9 @@ class FingerprintIndex:
 
     # ------------------------------------------------------------------ build
 
-    def add_document(self, doc: DocRecord, text: str, language: str = "python") -> int:
-        spans = build_spans(text, language, self.params.window, self.params.stride)
+    def add_document(self, doc: DocRecord, text: str, language: str = "") -> int:
+        lang = language or doc.language or resolve_language(doc.path)
+        spans = build_spans(text, lang, self.params.window, self.params.stride)
         self.docs.append(doc)
         for span in spans:
             fp = build_fingerprint(span)

@@ -59,7 +59,7 @@ def provenance_receipt(scan, index, explanations: dict | None = None) -> dict:
                 "exact_layer_jaccard": m.pair.exact,
                 "lsh_band_hits": m.pair.band_hits,
                 "features": m.pair.features})
-        findings.append({
+        item = {
             "source": {"package": f.package, "version": f.version, "path": f.path,
                        "license_spdx": f.license_spdx,
                        "license_resolved_from": f.license_origin},
@@ -67,8 +67,12 @@ def provenance_receipt(scan, index, explanations: dict | None = None) -> dict:
             "risk": f.risk, "risk_label": RISK_LABELS[f.risk],
             "verdict": f.verdict.as_dict(),
             "explanation": (explanations or {}).get(f.key, ""),
-            "evidence": evidence})
-    return {
+            "evidence": evidence}
+        if getattr(f, "policy_action", ""):
+            item["policy_action"] = f.policy_action
+            item["policy_reason"] = f.policy_reason
+        findings.append(item)
+    receipt = {
         "schema": "codeguard.provenance/v1",
         "metadata": {"tool": TOOL_NAME, "version": TOOL_VERSION,
                      "generated_at": _utc_stamp(scan.scanned_at),
@@ -85,6 +89,9 @@ def provenance_receipt(scan, index, explanations: dict | None = None) -> dict:
         "notes": scan.notes,
         "disclaimer": "工程性风险提示，不构成法律意见。",
     }
+    if getattr(scan, "policy_audit", None):
+        receipt["policy_audit"] = scan.policy_audit
+    return receipt
 
 
 def _ai_usage() -> dict:
@@ -185,10 +192,15 @@ def to_html(receipt: dict) -> str:
         ev = f["evidence"][0] if f["evidence"] else {}
         feats = " · ".join("%s=%.2f" % (k, v) for k, v in
                            sorted(ev.get("exact_layer_jaccard", {}).items()))
+        policy_note = ""
+        if f.get("policy_action"):
+            policy_note = "<br><span class=sub>策略: %s（%s）</span>" % (
+                html.escape(f["policy_action"]),
+                html.escape(f.get("policy_reason", "")))
         rows.append(
             "<tr><td><code>%s@%s</code><br><span class=sub>%s</span></td>"
             "<td><b>%s</b><br><span class=sub>%s</span></td>"
-            "<td><span class='badge %s'>%s</span></td>"
+            "<td><span class='badge %s'>%s</span>%s</td>"
             "<td><span class='%s'>%s</span></td>"
             "<td>%.3f<div class=bar><i style='width:%.0f%%'></i></div></td>"
             "<td>%d</td><td><code>%s</code></td></tr>" % (
@@ -196,7 +208,7 @@ def to_html(receipt: dict) -> str:
                 html.escape(src["path"]),
                 html.escape(src["license_spdx"]),
                 html.escape("解析来源: " + src["license_resolved_from"]),
-                f["risk"], f["risk"],
+                f["risk"], f["risk"], policy_note,
                 f["verdict"]["status"], f["verdict"]["status"],
                 f["confidence"], f["confidence"] * 100,
                 ev.get("verbatim_token_run", 0), html.escape(feats)))
@@ -229,12 +241,37 @@ def to_html(receipt: dict) -> str:
             obligations.append("<li><b>冲突</b> %s：%s</li>" % (
                 html.escape(f["source"]["package"]), html.escape(c)))
     ai = receipt["metadata"]["ai_usage"]
+    policy_block = ""
+    audit = receipt.get("policy_audit")
+    if audit:
+        p_items = []
+        for w in audit.get("waived", []):
+            p_items.append("<li><b>豁免</b> <code>%s@%s</code>（%s）：%s → %s；理由：%s</li>" % (
+                html.escape(w["package"]), html.escape(w["version"]),
+                html.escape(w["license_spdx"]), html.escape(w["previous_risk"]),
+                html.escape(w["risk"]), html.escape(w["reason"])))
+        for d in audit.get("denied", []):
+            p_items.append("<li><b>拒绝</b> <code>%s@%s</code>（%s）：%s → %s；理由：%s</li>" % (
+                html.escape(d["package"]), html.escape(d["version"]),
+                html.escape(d["license_spdx"]), html.escape(d["previous_risk"]),
+                html.escape(d["risk"]), html.escape(d["reason"])))
+        policy_block = (
+            "<h2>合规策略审计</h2><div class=card>"
+            "策略文件 <code>%s</code>（SHA-256 <code>%s</code>）｜ "
+            "豁免 %d 条 ｜ 拒绝 %d 条 ｜ 总发现 %d 条<ul>%s</ul></div>"
+            % (html.escape(audit.get("policy_path", "")),
+               html.escape(audit.get("policy_sha256", "")[:16]),
+               audit.get("waived_count", 0),
+               audit.get("denied_count", 0),
+               audit.get("total_findings", 0),
+               "".join(p_items) or "<li>未命中策略豁免或拒绝规则</li>"))
     return """<!doctype html><html lang="zh"><head><meta charset="utf-8">
 <title>CodeGuard 合规报告 · %s</title><style>%s</style></head><body>
 <h1>CodeGuard 开源许可证污染溯源报告</h1>
 <div class=sub>目标 <code>%s</code> ｜ 项目许可证 <code>%s</code> ｜ 使用方式 <code>%s</code>
 ｜ 片段 %d/%d ｜ 索引指纹 <code>%s</code> ｜ 生成于 %s</div>
 <div class=card>%s</div>
+%s
 <h2>命中来源</h2>
 <table><tr><th>语料来源</th><th>许可证</th><th>风险</th><th>合规结论</th>
 <th>置信度</th><th>逐字命中</th><th>各层精确相似度</th></tr>%s</table>
@@ -250,6 +287,7 @@ def to_html(receipt: dict) -> str:
                      "<b>结论：</b>共 %d 条来源命中，其中 %d 条为阻断级风险（S3/S4）。" % (
                          len(receipt["findings"]),
                          sum(1 for f in receipt["findings"] if f["risk"] in ("S3", "S4"))),
+                     policy_block,
                      "\n".join(rows) or "<tr><td colspan=7>未检出来自语料库的复用</td></tr>",
                      evidence_block, "\n".join(obligations) or "<li>无</li>",
                      html.escape(ai["provider"]), ai["external_calls"],
@@ -336,6 +374,9 @@ def to_sarif(scan, index) -> dict:
                 "verbatimTokenRun": finding.max_verbatim_run,
                 "verdict": finding.verdict.status if finding.verdict else "unknown",
                 "corroborated": finding.corroborated,
+                **({"policyAction": finding.policy_action,
+                    "policyReason": finding.policy_reason}
+                   if getattr(finding, "policy_action", "") else {}),
             },
             "relatedLocations": [{
                 "id": 1,
@@ -370,6 +411,8 @@ def to_sarif(scan, index) -> dict:
                 "usage": scan.usage,
                 "indexFingerprint": index_fingerprint(index),
                 "disclaimer": "工程性风险提示，不构成法律意见。",
+                **({"policyAudit": scan.policy_audit}
+                   if getattr(scan, "policy_audit", None) else {}),
             },
         }],
     }

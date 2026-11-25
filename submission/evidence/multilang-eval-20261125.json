@@ -1,0 +1,2901 @@
+{
+ "schema": "codeguard.multilang-eval/v1",
+ "generated_at": "2026-11-25T15:18:19Z",
+ "tool_version": "0.6.0",
+ "index_fingerprint": "121bb5650b959fc2912e5285f57fe09d",
+ "index_stats": {
+  "index_version": "1.2",
+  "documents": 1717,
+  "chunks": 127156,
+  "packages": 32,
+  "licenses": [
+   "AGPL-3.0-only",
+   "Apache-2.0",
+   "BSD-2-Clause",
+   "BSD-3-Clause",
+   "GPL-2.0-only",
+   "GPL-2.0-or-later",
+   "LGPL-2.1",
+   "LGPL-3.0-only",
+   "MIT",
+   "MPL-2.0",
+   "PSF-2.0"
+  ],
+  "params": {
+   "window": 48,
+   "stride": 24,
+   "min_tokens": 10,
+   "sketch_sizes": {
+    "role": 64,
+    "abs": 64,
+    "edge": 32,
+    "lit": 32
+   },
+   "active_layers": [
+    "role",
+    "abs",
+    "edge"
+   ]
+  },
+  "band_plan": {
+   "role": 12,
+   "abs": 12,
+   "edge": 6,
+   "lit": 4
+  },
+  "sketch_bytes_per_chunk": 160,
+  "payload_bytes": 35603680,
+  "payload_bytes_per_chunk": 280,
+  "buckets": 2716895,
+  "built_at": 1795619502
+ },
+ "seed": 20261125,
+ "per_language": {
+  "c": {
+   "files": 8,
+   "packages": [
+    "git",
+    "nginx",
+    "radare2"
+   ],
+   "total_cases": 32,
+   "detected": 32,
+   "package_detected": 32,
+   "overall_detect_rate": 1.0,
+   "overall_package_detect_rate": 1.0,
+   "overall_top1_rate": 1.0,
+   "overall_corroborated_rate": 1.0,
+   "cross_package_false_blocks": 0,
+   "elapsed_seconds": 28.171,
+   "per_mutation": {
+    "identity": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 2022.2
+    },
+    "comment_inject": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 498.29
+    },
+    "reformat": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 515.22
+    },
+    "rename": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 481.58
+    }
+   }
+  },
+  "go": {
+   "files": 8,
+   "packages": [
+    "cobra",
+    "minio"
+   ],
+   "total_cases": 32,
+   "detected": 28,
+   "package_detected": 32,
+   "overall_detect_rate": 0.875,
+   "overall_package_detect_rate": 1.0,
+   "overall_top1_rate": 0.75,
+   "overall_corroborated_rate": 0.875,
+   "cross_package_false_blocks": 0,
+   "elapsed_seconds": 19.393,
+   "per_mutation": {
+    "identity": {
+     "cases": 8,
+     "detected": 7,
+     "detect_rate": 0.875,
+     "package_detect_rate": 1.0,
+     "top1_rate": 0.75,
+     "corroborated_rate": 0.875,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 1074.19
+    },
+    "comment_inject": {
+     "cases": 8,
+     "detected": 7,
+     "detect_rate": 0.875,
+     "package_detect_rate": 1.0,
+     "top1_rate": 0.75,
+     "corroborated_rate": 0.875,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 455.57
+    },
+    "reformat": {
+     "cases": 8,
+     "detected": 7,
+     "detect_rate": 0.875,
+     "package_detect_rate": 1.0,
+     "top1_rate": 0.75,
+     "corroborated_rate": 0.875,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 456.76
+    },
+    "rename": {
+     "cases": 8,
+     "detected": 7,
+     "detect_rate": 0.875,
+     "package_detect_rate": 1.0,
+     "top1_rate": 0.75,
+     "corroborated_rate": 0.875,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 433.55
+    }
+   }
+  },
+  "javascript": {
+   "files": 8,
+   "packages": [
+    "django",
+    "fastapi",
+    "jquery",
+    "pydantic",
+    "radare2"
+   ],
+   "total_cases": 32,
+   "detected": 32,
+   "package_detected": 32,
+   "overall_detect_rate": 1.0,
+   "overall_package_detect_rate": 1.0,
+   "overall_top1_rate": 1.0,
+   "overall_corroborated_rate": 1.0,
+   "cross_package_false_blocks": 0,
+   "elapsed_seconds": 11.938,
+   "per_mutation": {
+    "identity": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 613.4
+    },
+    "comment_inject": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 297.95
+    },
+    "reformat": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 296.31
+    },
+    "rename": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 281.48
+    }
+   }
+  },
+  "rust": {
+   "files": 8,
+   "packages": [
+    "html5ever",
+    "pydantic"
+   ],
+   "total_cases": 32,
+   "detected": 32,
+   "package_detected": 32,
+   "overall_detect_rate": 1.0,
+   "overall_package_detect_rate": 1.0,
+   "overall_top1_rate": 1.0,
+   "overall_corroborated_rate": 1.0,
+   "cross_package_false_blocks": 0,
+   "elapsed_seconds": 8.37,
+   "per_mutation": {
+    "identity": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 465.21
+    },
+    "comment_inject": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 197.04
+    },
+    "reformat": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 198.09
+    },
+    "rename": {
+     "cases": 8,
+     "detected": 8,
+     "detect_rate": 1.0,
+     "package_detect_rate": 1.0,
+     "top1_rate": 1.0,
+     "corroborated_rate": 1.0,
+     "cross_package_false_blocks": 0,
+     "mean_ms": 183.94
+    }
+   }
+  }
+ },
+ "negatives": {
+  "total_probes": 61,
+  "python_clean": 9,
+  "multilang_clean": 8,
+  "cross_language_probes": 44,
+  "false_blocks": 0,
+  "any_finding": 2,
+  "elapsed_seconds": 7.885,
+  "samples": [
+   {
+    "id": "python-clean:attempt_loop.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 3,
+    "max_risk": "S2",
+    "elapsed_ms": 290.64
+   },
+   {
+    "id": "cross:attempt_loop.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 207.95
+   },
+   {
+    "id": "cross:attempt_loop.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 104.42
+   },
+   {
+    "id": "cross:attempt_loop.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 80.27
+   },
+   {
+    "id": "cross:attempt_loop.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 116.82
+   },
+   {
+    "id": "python-clean:calendar_span.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 207.36
+   },
+   {
+    "id": "cross:calendar_span.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 161.96
+   },
+   {
+    "id": "cross:calendar_span.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 85.75
+   },
+   {
+    "id": "cross:calendar_span.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 99.17
+   },
+   {
+    "id": "cross:calendar_span.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 92.2
+   },
+   {
+    "id": "python-clean:grid_algebra.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 483.09
+   },
+   {
+    "id": "cross:grid_algebra.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 150.5
+   },
+   {
+    "id": "cross:grid_algebra.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 128.43
+   },
+   {
+    "id": "cross:grid_algebra.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 121.59
+   },
+   {
+    "id": "cross:grid_algebra.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 119.9
+   },
+   {
+    "id": "python-clean:ordered_lookup.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 85.95
+   },
+   {
+    "id": "cross:ordered_lookup.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 109.28
+   },
+   {
+    "id": "cross:ordered_lookup.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 54.4
+   },
+   {
+    "id": "cross:ordered_lookup.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 47.17
+   },
+   {
+    "id": "cross:ordered_lookup.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 46.23
+   },
+   {
+    "id": "python-clean:range_fold.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 505.84
+   },
+   {
+    "id": "cross:range_fold.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 141.26
+   },
+   {
+    "id": "cross:range_fold.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 85.87
+   },
+   {
+    "id": "cross:range_fold.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 80.6
+   },
+   {
+    "id": "cross:range_fold.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 81.95
+   },
+   {
+    "id": "python-clean:ring_cache.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 1,
+    "max_risk": "S0",
+    "elapsed_ms": 301.22
+   },
+   {
+    "id": "cross:ring_cache.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 228.16
+   },
+   {
+    "id": "cross:ring_cache.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 265.29
+   },
+   {
+    "id": "cross:ring_cache.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 132.53
+   },
+   {
+    "id": "cross:ring_cache.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 343.12
+   },
+   {
+    "id": "python-clean:roman_form.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 164.0
+   },
+   {
+    "id": "cross:roman_form.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 147.98
+   },
+   {
+    "id": "cross:roman_form.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 79.25
+   },
+   {
+    "id": "cross:roman_form.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 89.51
+   },
+   {
+    "id": "cross:roman_form.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 94.01
+   },
+   {
+    "id": "python-clean:slug_maker.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 131.75
+   },
+   {
+    "id": "cross:slug_maker.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 140.47
+   },
+   {
+    "id": "cross:slug_maker.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 59.05
+   },
+   {
+    "id": "cross:slug_maker.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 60.84
+   },
+   {
+    "id": "cross:slug_maker.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 87.47
+   },
+   {
+    "id": "python-clean:word_tally.py",
+    "language": "python",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 122.79
+   },
+   {
+    "id": "cross:word_tally.py->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 114.06
+   },
+   {
+    "id": "cross:word_tally.py->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 75.9
+   },
+   {
+    "id": "cross:word_tally.py->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 79.07
+   },
+   {
+    "id": "cross:word_tally.py->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 78.05
+   },
+   {
+    "id": "clean-c-ring",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 159.91
+   },
+   {
+    "id": "cross:clean-c-ring->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 137.56
+   },
+   {
+    "id": "clean-c-checksum",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 77.99
+   },
+   {
+    "id": "cross:clean-c-checksum->go",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 91.47
+   },
+   {
+    "id": "clean-go-bucket",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 67.08
+   },
+   {
+    "id": "cross:clean-go-bucket->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 46.54
+   },
+   {
+    "id": "clean-go-kv",
+    "language": "go",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 63.74
+   },
+   {
+    "id": "cross:clean-go-kv->javascript",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 120.09
+   },
+   {
+    "id": "clean-js-lru",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 45.82
+   },
+   {
+    "id": "cross:clean-js-lru->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 97.85
+   },
+   {
+    "id": "clean-js-query",
+    "language": "javascript",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 69.02
+   },
+   {
+    "id": "cross:clean-js-query->rust",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 119.96
+   },
+   {
+    "id": "clean-rust-bsearch",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 68.91
+   },
+   {
+    "id": "cross:clean-rust-bsearch->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 92.7
+   },
+   {
+    "id": "clean-rust-histogram",
+    "language": "rust",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 78.55
+   },
+   {
+    "id": "cross:clean-rust-histogram->c",
+    "language": "c",
+    "blocking": false,
+    "findings": 0,
+    "max_risk": "S0",
+    "elapsed_ms": 64.08
+   }
+  ]
+ },
+ "summary": {
+  "languages": [
+   "c",
+   "go",
+   "javascript",
+   "rust"
+  ],
+  "total_positive_cases": 128,
+  "total_detected": 124,
+  "total_package_detected": 128,
+  "overall_detect_rate": 0.9688,
+  "overall_package_detect_rate": 1.0,
+  "negative_false_blocks": 0,
+  "cross_package_false_blocks": 0,
+  "total_false_blocks": 0,
+  "total_elapsed_seconds": 75.757
+ },
+ "cases": [
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-pairs.c",
+   "license": "GPL-2.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-pairs.c"
+   ],
+   "elapsed_ms": 4929.42
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-pairs.c",
+   "license": "GPL-2.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-pairs.c"
+   ],
+   "elapsed_ms": 342.33
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-pairs.c",
+   "license": "GPL-2.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-pairs.c"
+   ],
+   "elapsed_ms": 379.59
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-pairs.c",
+   "license": "GPL-2.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-pairs.c"
+   ],
+   "elapsed_ms": 319.66
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+   "license": "BSD-2-Clause",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+    "nginx-9a7439fd79/src/event/quic/ngx_event_quic_bpf.c"
+   ],
+   "elapsed_ms": 3005.35
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+   "license": "BSD-2-Clause",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+    "nginx-9a7439fd79/src/event/quic/ngx_event_quic_bpf.c"
+   ],
+   "elapsed_ms": 558.14
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+   "license": "BSD-2-Clause",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+    "nginx-9a7439fd79/src/event/quic/ngx_event_quic_bpf.c"
+   ],
+   "elapsed_ms": 547.11
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+   "license": "BSD-2-Clause",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/event/ngx_event_connect.c",
+    "nginx-9a7439fd79/src/event/quic/ngx_event_quic_bpf.c"
+   ],
+   "elapsed_ms": 503.96
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/libr/anal/type_pdb.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/libr/anal/type_pdb.c"
+   ],
+   "elapsed_ms": 2751.81
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/libr/anal/type_pdb.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/libr/anal/type_pdb.c"
+   ],
+   "elapsed_ms": 433.79
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/libr/anal/type_pdb.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/libr/anal/type_pdb.c"
+   ],
+   "elapsed_ms": 466.57
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/libr/anal/type_pdb.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/libr/anal/type_pdb.c"
+   ],
+   "elapsed_ms": 469.2
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-tree.c",
+   "license": "GPL-2.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-tree.c"
+   ],
+   "elapsed_ms": 910.49
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-tree.c",
+   "license": "GPL-2.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-tree.c"
+   ],
+   "elapsed_ms": 381.48
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-tree.c",
+   "license": "GPL-2.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-tree.c"
+   ],
+   "elapsed_ms": 385.81
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/diff-tree.c",
+   "license": "GPL-2.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/diff-tree.c"
+   ],
+   "elapsed_ms": 384.1
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_bpf.c",
+   "license": "BSD-2-Clause",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_bpf.c"
+   ],
+   "elapsed_ms": 677.05
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_bpf.c",
+   "license": "BSD-2-Clause",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_bpf.c"
+   ],
+   "elapsed_ms": 176.43
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_bpf.c",
+   "license": "BSD-2-Clause",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_bpf.c"
+   ],
+   "elapsed_ms": 183.64
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_bpf.c",
+   "license": "BSD-2-Clause",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_bpf.c"
+   ],
+   "elapsed_ms": 167.24
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/binr/r2r/load.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/binr/r2r/load.c"
+   ],
+   "elapsed_ms": 2651.27
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/binr/r2r/load.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/binr/r2r/load.c"
+   ],
+   "elapsed_ms": 1326.38
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/binr/r2r/load.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/binr/r2r/load.c"
+   ],
+   "elapsed_ms": 1373.43
+  },
+  {
+   "language": "c",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/binr/r2r/load.c",
+   "license": "LGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/binr/r2r/load.c"
+   ],
+   "elapsed_ms": 1249.13
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/hash-object.c",
+   "license": "GPL-2.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/hash-object.c",
+    "git-7e34d8174d/branch.c",
+    "git-7e34d8174d/builtin/fast-export.c"
+   ],
+   "elapsed_ms": 559.1
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/hash-object.c",
+   "license": "GPL-2.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/hash-object.c",
+    "git-7e34d8174d/branch.c",
+    "git-7e34d8174d/builtin/fast-export.c"
+   ],
+   "elapsed_ms": 268.88
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/hash-object.c",
+   "license": "GPL-2.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/hash-object.c",
+    "git-7e34d8174d/branch.c",
+    "git-7e34d8174d/builtin/fast-export.c"
+   ],
+   "elapsed_ms": 259.48
+  },
+  {
+   "language": "c",
+   "package": "git",
+   "path": "git-7e34d8174d/builtin/hash-object.c",
+   "license": "GPL-2.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "git-7e34d8174d/builtin/hash-object.c",
+    "git-7e34d8174d/branch.c",
+    "git-7e34d8174d/builtin/fast-export.c"
+   ],
+   "elapsed_ms": 241.33
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_crc32.c",
+   "license": "BSD-2-Clause",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_crc32.c"
+   ],
+   "elapsed_ms": 693.06
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_crc32.c",
+   "license": "BSD-2-Clause",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_crc32.c"
+   ],
+   "elapsed_ms": 498.92
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_crc32.c",
+   "license": "BSD-2-Clause",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_crc32.c"
+   ],
+   "elapsed_ms": 526.09
+  },
+  {
+   "language": "c",
+   "package": "nginx",
+   "path": "nginx-9a7439fd79/src/core/ngx_crc32.c",
+   "license": "BSD-2-Clause",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "nginx-9a7439fd79/src/core/ngx_crc32.c"
+   ],
+   "elapsed_ms": 518.01
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/bash_completionsV2.go",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/bash_completionsV2.go"
+   ],
+   "elapsed_ms": 440.29
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/bash_completionsV2.go",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/bash_completionsV2.go"
+   ],
+   "elapsed_ms": 74.99
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/bash_completionsV2.go",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/bash_completionsV2.go"
+   ],
+   "elapsed_ms": 80.11
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/bash_completionsV2.go",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/bash_completionsV2.go"
+   ],
+   "elapsed_ms": 62.29
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/api-resources.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/api-resources.go"
+   ],
+   "elapsed_ms": 1058.91
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/api-resources.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/api-resources.go"
+   ],
+   "elapsed_ms": 246.89
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/api-resources.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/api-resources.go"
+   ],
+   "elapsed_ms": 256.67
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/api-resources.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/api-resources.go"
+   ],
+   "elapsed_ms": 238.49
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/powershell_completions.go",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/powershell_completions.go",
+    "cobra-adbc881390/fish_completions.go"
+   ],
+   "elapsed_ms": 898.97
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/powershell_completions.go",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/powershell_completions.go",
+    "cobra-adbc881390/fish_completions.go"
+   ],
+   "elapsed_ms": 93.41
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/powershell_completions.go",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/powershell_completions.go",
+    "cobra-adbc881390/fish_completions.go"
+   ],
+   "elapsed_ms": 94.71
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/powershell_completions.go",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/powershell_completions.go",
+    "cobra-adbc881390/fish_completions.go"
+   ],
+   "elapsed_ms": 77.22
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bootstrap-peer-server_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "identity",
+   "detected": false,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": false,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/background-newdisks-heal-ops_gen_test.go"
+   ],
+   "elapsed_ms": 385.13
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bootstrap-peer-server_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": false,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": false,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/background-newdisks-heal-ops_gen_test.go"
+   ],
+   "elapsed_ms": 254.65
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bootstrap-peer-server_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": false,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": false,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/background-newdisks-heal-ops_gen_test.go"
+   ],
+   "elapsed_ms": 243.76
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bootstrap-peer-server_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "rename",
+   "detected": false,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": false,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/background-newdisks-heal-ops_gen_test.go"
+   ],
+   "elapsed_ms": 217.66
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/args.go",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/args.go"
+   ],
+   "elapsed_ms": 969.77
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/args.go",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/args.go"
+   ],
+   "elapsed_ms": 200.79
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/args.go",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/args.go"
+   ],
+   "elapsed_ms": 189.36
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/args.go",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/args.go"
+   ],
+   "elapsed_ms": 167.27
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+    "minio-7aac2a2c5b/cmd/batch-job-common-types_gen_test.go"
+   ],
+   "elapsed_ms": 2167.04
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+    "minio-7aac2a2c5b/cmd/batch-job-common-types_gen_test.go"
+   ],
+   "elapsed_ms": 1819.07
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+    "minio-7aac2a2c5b/cmd/batch-job-common-types_gen_test.go"
+   ],
+   "elapsed_ms": 1810.84
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": false,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/batch-expire_gen_test.go",
+    "minio-7aac2a2c5b/cmd/batch-job-common-types_gen_test.go",
+    "minio-7aac2a2c5b/cmd/bucket-replication-metrics_gen_test.go"
+   ],
+   "elapsed_ms": 1739.57
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/flag_groups.go",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/flag_groups.go"
+   ],
+   "elapsed_ms": 1413.97
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/flag_groups.go",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/flag_groups.go"
+   ],
+   "elapsed_ms": 375.94
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/flag_groups.go",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/flag_groups.go"
+   ],
+   "elapsed_ms": 427.57
+  },
+  {
+   "language": "go",
+   "package": "cobra",
+   "path": "cobra-adbc881390/flag_groups.go",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "cobra-adbc881390/flag_groups.go"
+   ],
+   "elapsed_ms": 378.8
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-stats.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/bucket-stats.go"
+   ],
+   "elapsed_ms": 1259.45
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-stats.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/bucket-stats.go"
+   ],
+   "elapsed_ms": 578.78
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-stats.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/bucket-stats.go"
+   ],
+   "elapsed_ms": 551.05
+  },
+  {
+   "language": "go",
+   "package": "minio",
+   "path": "minio-7aac2a2c5b/cmd/bucket-stats.go",
+   "license": "AGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "minio-7aac2a2c5b/cmd/bucket-stats.go"
+   ],
+   "elapsed_ms": 587.13
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/core.js",
+   "license": "BSD-3-Clause",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/core.js"
+   ],
+   "elapsed_ms": 874.31
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/core.js",
+   "license": "BSD-3-Clause",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/core.js"
+   ],
+   "elapsed_ms": 302.46
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/core.js",
+   "license": "BSD-3-Clause",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/core.js"
+   ],
+   "elapsed_ms": 303.5
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/core.js",
+   "license": "BSD-3-Clause",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/core.js"
+   ],
+   "elapsed_ms": 292.69
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/custom.js",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/custom.js"
+   ],
+   "elapsed_ms": 1411.46
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/custom.js",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/custom.js"
+   ],
+   "elapsed_ms": 556.12
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/custom.js",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/custom.js"
+   ],
+   "elapsed_ms": 558.43
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/custom.js",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/custom.js"
+   ],
+   "elapsed_ms": 545.99
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/src/selector/unescapeSelector.js",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/src/selector/unescapeSelector.js"
+   ],
+   "elapsed_ms": 144.1
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/src/selector/unescapeSelector.js",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/src/selector/unescapeSelector.js"
+   ],
+   "elapsed_ms": 38.86
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/src/selector/unescapeSelector.js",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/src/selector/unescapeSelector.js"
+   ],
+   "elapsed_ms": 39.04
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/src/selector/unescapeSelector.js",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/src/selector/unescapeSelector.js"
+   ],
+   "elapsed_ms": 40.41
+  },
+  {
+   "language": "javascript",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/docs/extra/fluff.js",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/docs/extra/fluff.js"
+   ],
+   "elapsed_ms": 266.47
+  },
+  {
+   "language": "javascript",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/docs/extra/fluff.js",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/docs/extra/fluff.js"
+   ],
+   "elapsed_ms": 109.24
+  },
+  {
+   "language": "javascript",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/docs/extra/fluff.js",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/docs/extra/fluff.js"
+   ],
+   "elapsed_ms": 116.9
+  },
+  {
+   "language": "javascript",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/docs/extra/fluff.js",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/docs/extra/fluff.js"
+   ],
+   "elapsed_ms": 116.15
+  },
+  {
+   "language": "javascript",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/doc/pdb/index.js",
+   "license": "LGPL-3.0-only",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/doc/pdb/index.js"
+   ],
+   "elapsed_ms": 590.61
+  },
+  {
+   "language": "javascript",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/doc/pdb/index.js",
+   "license": "LGPL-3.0-only",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/doc/pdb/index.js"
+   ],
+   "elapsed_ms": 310.11
+  },
+  {
+   "language": "javascript",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/doc/pdb/index.js",
+   "license": "LGPL-3.0-only",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/doc/pdb/index.js"
+   ],
+   "elapsed_ms": 287.49
+  },
+  {
+   "language": "javascript",
+   "package": "radare2",
+   "path": "radare2-7987c26b93/doc/pdb/index.js",
+   "license": "LGPL-3.0-only",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "radare2-7987c26b93/doc/pdb/index.js"
+   ],
+   "elapsed_ms": 276.06
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js",
+   "license": "BSD-3-Clause",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js"
+   ],
+   "elapsed_ms": 837.5
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js",
+   "license": "BSD-3-Clause",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js"
+   ],
+   "elapsed_ms": 606.15
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js",
+   "license": "BSD-3-Clause",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js"
+   ],
+   "elapsed_ms": 586.09
+  },
+  {
+   "language": "javascript",
+   "package": "django",
+   "path": "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js",
+   "license": "BSD-3-Clause",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "django-1b40abab06/django/contrib/admin/static/admin/js/admin/RelatedObjectLookups.js"
+   ],
+   "elapsed_ms": 547.84
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/termynal.js",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/termynal.js"
+   ],
+   "elapsed_ms": 647.01
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/termynal.js",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/termynal.js"
+   ],
+   "elapsed_ms": 349.83
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/termynal.js",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/termynal.js"
+   ],
+   "elapsed_ms": 375.12
+  },
+  {
+   "language": "javascript",
+   "package": "fastapi",
+   "path": "fastapi-69ddc2badf/docs/en/docs/js/termynal.js",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "fastapi-69ddc2badf/docs/en/docs/js/termynal.js"
+   ],
+   "elapsed_ms": 339.92
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js"
+   ],
+   "elapsed_ms": 135.73
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js"
+   ],
+   "elapsed_ms": 110.82
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js"
+   ],
+   "elapsed_ms": 103.91
+  },
+  {
+   "language": "javascript",
+   "package": "jquery",
+   "path": "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "jquery-c2f27864e4/test/bundler_smoke_tests/run-jsdom-tests.js"
+   ],
+   "elapsed_ms": 92.78
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/html5ever/src/encoding.rs",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/html5ever/src/encoding.rs"
+   ],
+   "elapsed_ms": 885.35
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/html5ever/src/encoding.rs",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/html5ever/src/encoding.rs"
+   ],
+   "elapsed_ms": 220.56
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/html5ever/src/encoding.rs",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/html5ever/src/encoding.rs"
+   ],
+   "elapsed_ms": 244.8
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/html5ever/src/encoding.rs",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/html5ever/src/encoding.rs"
+   ],
+   "elapsed_ms": 208.29
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs"
+   ],
+   "elapsed_ms": 142.51
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs"
+   ],
+   "elapsed_ms": 53.11
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs"
+   ],
+   "elapsed_ms": 51.28
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/input/mod.rs"
+   ],
+   "elapsed_ms": 48.59
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs"
+   ],
+   "elapsed_ms": 364.57
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs"
+   ],
+   "elapsed_ms": 95.85
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs"
+   ],
+   "elapsed_ms": 91.86
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/xml5ever/src/tokenizer/interface.rs"
+   ],
+   "elapsed_ms": 87.94
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs"
+   ],
+   "elapsed_ms": 535.28
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs"
+   ],
+   "elapsed_ms": 206.35
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs"
+   ],
+   "elapsed_ms": 225.84
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/py_gc.rs"
+   ],
+   "elapsed_ms": 205.37
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/markup5ever/interface/tree_builder.rs",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/markup5ever/interface/tree_builder.rs"
+   ],
+   "elapsed_ms": 539.81
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/markup5ever/interface/tree_builder.rs",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/markup5ever/interface/tree_builder.rs"
+   ],
+   "elapsed_ms": 266.49
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/markup5ever/interface/tree_builder.rs",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/markup5ever/interface/tree_builder.rs"
+   ],
+   "elapsed_ms": 285.52
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/markup5ever/interface/tree_builder.rs",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/markup5ever/interface/tree_builder.rs"
+   ],
+   "elapsed_ms": 264.77
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/counter.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/json_or_python.rs"
+   ],
+   "elapsed_ms": 779.08
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/counter.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/json_or_python.rs"
+   ],
+   "elapsed_ms": 421.56
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/counter.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/json_or_python.rs"
+   ],
+   "elapsed_ms": 402.37
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/frozendict.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/validators/counter.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/json_or_python.rs"
+   ],
+   "elapsed_ms": 380.62
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/rcdom/examples/html2html.rs",
+   "license": "Apache-2.0",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/rcdom/examples/html2html.rs"
+   ],
+   "elapsed_ms": 167.79
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/rcdom/examples/html2html.rs",
+   "license": "Apache-2.0",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/rcdom/examples/html2html.rs"
+   ],
+   "elapsed_ms": 67.99
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/rcdom/examples/html2html.rs",
+   "license": "Apache-2.0",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/rcdom/examples/html2html.rs"
+   ],
+   "elapsed_ms": 70.58
+  },
+  {
+   "language": "rust",
+   "package": "html5ever",
+   "path": "html5ever-7760920edf/rcdom/examples/html2html.rs",
+   "license": "Apache-2.0",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "html5ever-7760920edf/rcdom/examples/html2html.rs"
+   ],
+   "elapsed_ms": 65.05
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+   "license": "MIT",
+   "mutation": "identity",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/literal.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/nullable.rs"
+   ],
+   "elapsed_ms": 307.31
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+   "license": "MIT",
+   "mutation": "comment_inject",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/literal.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/nullable.rs"
+   ],
+   "elapsed_ms": 244.46
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+   "license": "MIT",
+   "mutation": "reformat",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/literal.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/nullable.rs"
+   ],
+   "elapsed_ms": 212.47
+  },
+  {
+   "language": "rust",
+   "package": "pydantic",
+   "path": "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+   "license": "MIT",
+   "mutation": "rename",
+   "detected": true,
+   "package_detected": true,
+   "top1": true,
+   "corroborated": true,
+   "cross_package_false_blocks": 0,
+   "matched_paths": [
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/url.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/literal.rs",
+    "pydantic-37dc34b4f0/pydantic-core/src/serializers/type_serializers/nullable.rs"
+   ],
+   "elapsed_ms": 210.93
+  }
+ ]
+}

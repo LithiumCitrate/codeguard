@@ -1,6 +1,6 @@
 {
   "platform": "Windows 11 x64",
-  "artifact": "CodeGuard.zip",
+  "artifact": "CodeGuard-Windows-x64.zip",
   "relocated_unicode_path": true,
   "cwd_outside_application": true,
   "bundled_python": true,
@@ -8,7 +8,7 @@
     "stats": {
       "index_version": "1.2",
       "documents": 1717,
-      "chunks": 138928,
+      "chunks": 127156,
       "packages": 32,
       "licenses": [
         "AGPL-3.0-only",
@@ -46,10 +46,10 @@
         "lit": 4
       },
       "sketch_bytes_per_chunk": 160,
-      "payload_bytes": 38899840,
+      "payload_bytes": 35603680,
       "payload_bytes_per_chunk": 280,
-      "buckets": 2942081,
-      "built_at": 1792779245
+      "buckets": 2716895,
+      "built_at": 1795619502
     },
     "corpus": {
       "total": 1717,
@@ -70,14 +70,14 @@
     {
       "case": "copy",
       "blocking": true,
-      "findings": 2,
-      "input_sha256": "5d33f4d108943e5268ec86c3ce500a15bf45f277d4fa389c33ecee088f1aa91f"
+      "findings": 1,
+      "input_sha256": "a459e1f8a421649b60473c28ec1655e7f83bc193f6e1af0e5d696bdefdea600a"
     },
     {
       "case": "rename",
       "blocking": true,
-      "findings": 2,
-      "input_sha256": "5d33f4d108943e5268ec86c3ce500a15bf45f277d4fa389c33ecee088f1aa91f"
+      "findings": 1,
+      "input_sha256": "f679297add444bb137f498ef6aa9a029ba14f4523e237c0995be11a0a8f46f13"
     },
     {
       "case": "clean",
@@ -86,16 +86,5 @@
       "input_sha256": "c4348223fe03ea08ad3f3555064d8c8c8e2bd3aa3221a14e9d5f68b89af49004"
     }
   ],
-  "tree_assist": {
-    "files": 2,
-    "blocked": 1,
-    "summary_offline": true,
-    "summary_chars": 181
-  },
-  "status": "passed",
-  "note": "2026-11-17 复测：与决赛提交 CodeGuard.zip 内便携包同批；readable=1717，离线判定，无外部调用；文件夹审查后 AI 摘要可用",
-  "webprobe_endpoint": "present (HTTP 400, expected without keys)",
-  "exe_sha256": "b37e8d6f4948f502d093e5ae6423052da22645aef2e1ced4cb615f3194d2f4c0",
-  "index_sha256": "35b1c62ecd5da283351b8d0c6066960335bf1aa8a653487cf5efe63e44366d0e",
-  "generated_at": "2026-11-17T20:59:09+08:00"
+  "status": "passed"
 }
