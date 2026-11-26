@@ -277,3 +277,55 @@ def test_http_json_retries_transient_drop(monkeypatch):
     monkeypatch.setattr(llm.time, 'sleep', lambda s: None)
     assert llm._http_json(urllib.request.Request('https://api.example.com/v1/chat'), 10) == {'ok': True}
     assert calls['n'] == 2
+
+
+def test_chat_with_search_deduplicates_normalized_queries(stub):
+    SearchStubHandler.chat_mode = 'loop'
+    text, searches = provider(stub).chat_with_search('问题', max_rounds=3)
+    assert text == 'STUB-SEARCH-PROSE'
+    assert len(searches) == 3
+    assert searches[0].get('cached') is None
+    assert searches[1].get('cached') is True
+    assert searches[2].get('cached') is True
+    # Only ONE actual Tavily HTTP request should have been sent
+    assert len(SearchStubHandler.tavily_requests) == 1
+    tool_msgs = [m for m in SearchStubHandler.chat_requests[-1]['messages'] if m.get('role') == 'tool']
+    assert any('"cached": true' in m['content'] for m in tool_msgs)
+
+
+def test_search_summary_and_qa_compact_digest_and_ground_corroboration(stub):
+    big_digest = {
+        'target': '文件夹审查：50 个文件',
+        'target_license': 'MIT',
+        'usage': 'distribution',
+        'blocking': False,
+        'findings': [
+            {
+                'file': f'f_{i}.py', 'package': 'glances', 'version': '4.5.7',
+                'path': 'glances/main.py', 'license_spdx': 'LGPL-3.0-only',
+                'risk': 'S2', 'confidence': 0.55, 'coverage': 0.05,
+                'matched_spans': 2, 'max_verbatim_run': 5, 'corroborated': False,
+                'obligations': ['a' * 300], 'conflicts': [],
+            }
+            for i in range(40)
+        ],
+    }
+    p = provider(stub)
+    text, _ = p.summarize_with_search(big_digest)
+    assert text == 'STUB-SEARCH-PROSE'
+    prompt = SearchStubHandler.chat_requests[0]['messages'][0]['content']
+    assert 'corroborated' in prompt and '严禁声称' in prompt
+    # Extract the JSON object from the prompt to prove it was not sliced mid-string
+    start = prompt.index('{"target":')
+    end = prompt.index('\n佐证口径')
+    parsed = json.loads(prompt[start:end])
+    assert parsed['findings_omitted'] > 0
+
+    SearchStubHandler.chat_requests.clear()
+    text2, _ = p.answer_question_with_search('要整改吗？', big_digest)
+    assert text2 == 'STUB-SEARCH-PROSE'
+    prompt2 = SearchStubHandler.chat_requests[0]['messages'][0]['content']
+    s2 = prompt2.index('{"target":')
+    e2 = prompt2.index('\n问题：')
+    parsed2 = json.loads(prompt2[s2:e2])
+    assert parsed2['findings_omitted'] > 0

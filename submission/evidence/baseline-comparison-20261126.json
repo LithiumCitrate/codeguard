@@ -1,0 +1,231 @@
+{
+  "schema": "codeguard.baseline-comparison/v1",
+  "generated_at": "2026-11-26T05:09:38Z",
+  "tool_version": "0.6.0",
+  "index_fingerprint": "121bb5650b959fc2912e5285f57fe09d",
+  "corpus": {
+    "origin_files": 24,
+    "origin_packages": 18,
+    "mutations": [
+      "identity",
+      "rename",
+      "reformat",
+      "partial",
+      "comment_inject",
+      "compound"
+    ],
+    "positive_cases": 144,
+    "negative_cases": 9,
+    "chars_cap": 5000,
+    "seed": 20260101,
+    "index_documents": 1717,
+    "index_chunks": 127156,
+    "index_packages": 32
+  },
+  "methods": [
+    {
+      "per_mutation": {
+        "identity": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        },
+        "rename": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        },
+        "reformat": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        },
+        "partial": {
+          "hits": 2,
+          "total": 24,
+          "recall": 0.0833
+        },
+        "comment_inject": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        },
+        "compound": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        }
+      },
+      "tp": 52,
+      "fn": 92,
+      "fp": 0,
+      "tn": 9,
+      "positives": 144,
+      "negatives": 9,
+      "overall_recall": 0.3611,
+      "negative_fpr": 0.0,
+      "precision": 1.0,
+      "f1": 0.5306,
+      "elapsed_seconds": 0.044,
+      "id": "header_spdx",
+      "label": "Header / SPDX Keyword Scanner",
+      "notes": "仅检测文件内显式 SPDX/许可证名/版权声明/常见许可套话；不依赖语料库，但对无文件头源码及截取片段(partial)漏检严重，且无法归因无头抄袭。"
+    },
+    {
+      "per_mutation": {
+        "identity": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "rename": {
+          "hits": 10,
+          "total": 24,
+          "recall": 0.4167
+        },
+        "reformat": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "partial": {
+          "hits": 23,
+          "total": 24,
+          "recall": 0.9583
+        },
+        "comment_inject": {
+          "hits": 19,
+          "total": 24,
+          "recall": 0.7917
+        },
+        "compound": {
+          "hits": 3,
+          "total": 24,
+          "recall": 0.125
+        }
+      },
+      "tp": 103,
+      "fn": 41,
+      "fp": 0,
+      "tn": 9,
+      "positives": 144,
+      "negatives": 9,
+      "overall_recall": 0.7153,
+      "negative_fpr": 0.0,
+      "precision": 1.0,
+      "f1": 0.834,
+      "elapsed_seconds": 2.311,
+      "id": "verbatim_line_hash",
+      "label": "Verbatim Line-Hash Matcher",
+      "index_seconds": 2.273,
+      "notes": "按非空归一化行构建 k=5 连续行块哈希倒排索引（1,717 文档），匹配覆盖率 ≥ 0.25 判定命中。"
+    },
+    {
+      "per_mutation": {
+        "identity": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "rename": {
+          "hits": 15,
+          "total": 24,
+          "recall": 0.625
+        },
+        "reformat": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "partial": {
+          "hits": 17,
+          "total": 24,
+          "recall": 0.7083
+        },
+        "comment_inject": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "compound": {
+          "hits": 14,
+          "total": 24,
+          "recall": 0.5833
+        }
+      },
+      "tp": 118,
+      "fn": 26,
+      "fp": 0,
+      "tn": 9,
+      "positives": 144,
+      "negatives": 9,
+      "overall_recall": 0.8194,
+      "negative_fpr": 0.0,
+      "precision": 1.0,
+      "f1": 0.9008,
+      "elapsed_seconds": 57.646,
+      "id": "raw_token_jaccard_l1",
+      "label": "Raw Token Jaccard (L1-only)",
+      "index_seconds": 55.959,
+      "notes": "仅使用原始代码 token 6-gram（L1 字面层，无 AST 别名/角色/结构边归一化，无 IDF 与判定模型），经 LSH 召回后以 Jaccard ≥ 0.30 判定命中。"
+    },
+    {
+      "per_mutation": {
+        "identity": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "rename": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "reformat": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "partial": {
+          "hits": 18,
+          "total": 24,
+          "recall": 0.75
+        },
+        "comment_inject": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        },
+        "compound": {
+          "hits": 24,
+          "total": 24,
+          "recall": 1.0
+        }
+      },
+      "tp": 138,
+      "fn": 6,
+      "fp": 0,
+      "tn": 9,
+      "positives": 144,
+      "negatives": 9,
+      "overall_recall": 0.9583,
+      "negative_fpr": 0.0,
+      "precision": 1.0,
+      "f1": 0.9787,
+      "elapsed_seconds": 33.237,
+      "id": "codeguard",
+      "label": "CodeGuard (4-Layer + 12-Dim Judge)",
+      "pre_corroboration_hits": {
+        "identity": 24,
+        "rename": 24,
+        "reformat": 24,
+        "partial": 19,
+        "comment_inject": 24,
+        "compound": 24
+      },
+      "pre_corroboration_total_hits": 139,
+      "pre_corroboration_neg_findings": 2,
+      "notes": "完整生产管线：L2/L3/L4 多层 MinHash+LSH 召回 + 4 层精确验证(含 L1 逐字连续运行) + IDF 加权 + 12 维逻辑回归判定 + 佐证门槛(corroborated)；未达佐证门槛的弱命中仅作 S0/S2 观察提示、不触发门禁阻断。"
+    }
+  ]
+}

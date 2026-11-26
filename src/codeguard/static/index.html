@@ -95,9 +95,9 @@
               </g>
             </svg>
             <div class="reticle-stamp">CG<small>TRACE</small></div>
-            <span class="reticle-coord rc-a">X 032</span>
-            <span class="reticle-coord rc-b">Y 1717</span>
-            <span class="reticle-coord rc-c">L 138928</span>
+            <span class="reticle-coord rc-a" id="rcPkgs">X —</span>
+            <span class="reticle-coord rc-b" id="rcDocs">Y —</span>
+            <span class="reticle-coord rc-c" id="rcChunks">L —</span>
           </div>
           <ul class="facts" aria-label="知识底座规模">
             <li><small>语料文件 / FILES</small><b class="fc" id="factDocs">—</b></li>
@@ -257,9 +257,10 @@
           </div>
           <div class="hatch-band" aria-hidden="true"></div>
           <div id="exports" class="export-list" hidden>
-            <button class="btn small" data-export="receipt">出处证书<small>JSON</small></button>
-            <button class="btn small" data-export="sbom">物料清单<small>CycloneDX</small></button>
-            <button class="btn small" data-export="html">审查报告<small>HTML</small></button>
+            <button class="btn small" data-export="receipt" type="button">出处证书<small>JSON</small></button>
+            <button class="btn small" data-export="sbom" type="button">物料清单<small>CycloneDX</small></button>
+            <button class="btn small" data-export="sarif" type="button">静态告警<small>SARIF</small></button>
+            <button class="btn small" data-export="html" type="button">审查报告<small>HTML</small></button>
           </div>
           <p class="note" id="exportNote">审查完成后可导出证书、物料清单与离线报告；导出内容与页面证据一致，不写回语料。</p>
         </section>
@@ -289,7 +290,7 @@
           <div id="tree" class="tree" role="tree"></div>
           <p class="note" id="treeNote"></p>
         </div>
-        <p id="demoNote" class="note">输入或导入源代码，建议优先使用 Python 文件。其他语言使用词法回退，准确性未充分评估。</p>
+        <p id="demoNote" class="note">输入或导入源代码，支持 Python、C、Go、JavaScript、Rust 五种语言的语法规范化与来源溯源。</p>
         <label class="field" for="name"><span>文件名称 / SUBJECT</span><input id="name" value="review.py" maxlength="120"></label>
         <label class="field code-field" for="code"><span>源代码 / SOURCE <b id="codeCount" class="count">0 字符</b></span><textarea id="code" spellcheck="false" placeholder="粘贴需要审查的源代码…&#10;&#10;代码只用于相似度分析，不会被执行。"></textarea></label>
         <div class="field-row">
@@ -308,6 +309,14 @@
           <label class="check" title="扫描后附 AI 文件解读；未配置大模型时回退本机确定性标记提取"><input id="aiInterpret" type="checkbox"> AI 解读</label>
           <label class="check" title="需已配置大模型与 Tavily；扫描后附语料外联网溯源补充提示，不改变离线结论"><input id="webProbe" type="checkbox"> 联网溯源</label>
         </div>
+        <details class="policy-box" id="policyBox">
+          <summary>合规策略 / POLICY（可选：包豁免 / 禁用许可）</summary>
+          <div class="policy-fields">
+            <label class="field" for="policyAllow"><span>包白名单 / ALLOW PACKAGES</span><input id="policyAllow" type="text" autocomplete="off" spellcheck="false" placeholder="如：requests, click（逗号分隔，豁免降级为 S1）"></label>
+            <label class="field" for="policyDeny"><span>禁用许可证 / DENY LICENSES</span><input id="policyDeny" type="text" autocomplete="off" spellcheck="false" placeholder="如：AGPL-3.0-only, GPL-3.0-only（逗号分隔，强制升级 S4）"></label>
+            <label class="field" for="policyReason"><span>豁免/审计理由 / REASON</span><input id="policyReason" type="text" maxlength="200" autocomplete="off" placeholder="豁免/审计理由（可选，写入审计轨迹）"></label>
+          </div>
+        </details>
         <p class="note">多层检索 → 精确验证 → 判定模型 → 许可证推理。未命中只代表当前语料内没有足够证据。</p>
       </section>
 

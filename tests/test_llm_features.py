@@ -11,9 +11,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import pytest
 
 from helpers import build_index, make_corpus, read_negative
-from codeguard.llm import (OpenAICompatProvider, clear_llm_settings,
-                           extract_license_markers, list_models,
-                           load_llm_settings, mask_key, save_llm_settings)
+from codeguard.llm import (OpenAICompatProvider, _compact_digest,
+                           clear_llm_settings, extract_license_markers,
+                           list_models, load_llm_settings, mask_key,
+                           save_llm_settings)
 from codeguard.web import Workbench
 
 KEY = 'sk-test-key-1234567890'
@@ -129,6 +130,80 @@ def test_markers_deterministic_extraction():
     assert markers['source_urls']
     empty = extract_license_markers('x = 1\n')
     assert '未在注释或声明中发现显式许可证标记' in empty['summary']
+
+
+def test_markers_ignore_code_calls_and_bare_c_parens():
+    js_code = (
+        "class PeerRoom {\n"
+        "  init() {\n"
+        "    this.peer.on('connection', c => this.accept(c));\n"
+        "  }\n"
+        "  accept(c) {\n"
+        "    return cardText(c);\n"
+        "  }\n"
+        "}\n"
+        "def helper():\n"
+        '    """Test helper based on standard fixture."""\n'
+        "    return self._parse_config_item(c)\n"
+    )
+    markers = extract_license_markers(js_code)
+    assert markers['copyright_lines'] == []
+    assert markers['vendored_hints'] == []
+
+    bare_c = "# (c) Alice without year or notice\n"
+    assert extract_license_markers(bare_c)['copyright_lines'] == []
+
+    real_headers = (
+        "/*\n * Copyright (c) 2017 STMicroelectronics.\n * © 2025 Acme Corp\n"
+        " * adapted from https://github.com/org/repo/blob/main/a.c\n */\n"
+        "int accept(int c) { return c; }\n"
+    )
+    m2 = extract_license_markers(real_headers)
+    assert len(m2['copyright_lines']) == 2
+    assert len(m2['vendored_hints']) == 1
+
+
+def test_compact_digest_keeps_valid_json_and_counts_omitted(stub):
+    digest = {
+        'target': '文件夹审查：30 个文件',
+        'target_license': 'MIT',
+        'usage': 'distribution',
+        'blocking': False,
+        'findings_omitted': 2,
+        'findings': [
+            {
+                'file': 'mod_%02d.py' % i,
+                'package': 'glances',
+                'version': '4.5.7',
+                'path': 'glances/main.py',
+                'license_spdx': 'LGPL-3.0-only',
+                'risk': 'S2',
+                'confidence': 0.55,
+                'coverage': 0.04,
+                'matched_spans': 1,
+                'max_verbatim_run': 5,
+                'corroborated': False,
+                'obligations': ['x' * 120],
+                'conflicts': [],
+            }
+            for i in range(40)
+        ],
+    }
+    snapshot = json.dumps(digest, sort_keys=True)
+    compacted = _compact_digest(digest, max_chars=1200)
+    assert len(compacted) <= 1200
+    parsed = json.loads(compacted)
+    assert parsed['findings_omitted'] == 2 + (40 - len(parsed['findings']))
+    assert len(parsed['findings']) < 40
+    assert json.dumps(digest, sort_keys=True) == snapshot
+
+    provider = OpenAICompatProvider(stub, KEY, 'model-a')
+    provider.summarize_scan(digest)
+    prompt_sum = StubHandler.last_chat['messages'][0]['content']
+    assert 'corroborated' in prompt_sum and '严禁声称' in prompt_sum
+    provider.answer_question('需要修改吗？', digest)
+    prompt_qa = StubHandler.last_chat['messages'][0]['content']
+    assert 'corroborated' in prompt_qa
 
 
 # ------------------------------------------------------------- provider tasks

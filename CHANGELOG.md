@@ -8,6 +8,21 @@ abides by semantic versioning.
 
 ### Added
 
+- **Web Workbench SARIF 2.1.0 export & Compliance Policy UI** (`src/codeguard/web.py`, `src/codeguard/static/index.html`, `src/codeguard/static/app.js`, `src/codeguard/static/style.css`):
+  - Added SARIF 2.1.0 download (`codeguard-report.sarif.json`) alongside JSON/CycloneDX/HTML in the Review tab.
+  - Added collapsible project compliance policy panel (`allow_packages`, `deny_licenses`, `policy_reason`) wired to `/api/scan` and `/api/scan_tree`, displaying `policy_audit` banners and `waived`/`denied` badges.
+  - Made home reticle coordinates (`#rcPkgs`, `#rcDocs`, `#rcChunks`) dynamically bound to `/api/health`.
+- **Reproducible baseline comparison & real-user 6-repo validation** (`scripts/eval_baselines.py`, `submission/evidence/baseline-comparison-20261126.*`, `submission/evidence/real-user-eval-20261126.*`):
+  - Quantitative comparison across 144 mutated positives + 9 clean negatives on the full 1,717-doc index: Header/SPDX scanner **38.9% (F1 0.560)**, Verbatim line-hash **71.5% (F1 0.834)**, Raw L1 token Jaccard **81.9% (F1 0.901)** vs **CodeGuard 95.8% (F1 0.979, 0/9 FPR)**.
+  - Audited 6 real public repositories (1,325 files / 23.20 MB across Python/JS/C) offline + live `dots3-note-prev` + Tavily (`0` exceptions, `0` false blocks; out-of-corpus `stm32h7xx_hal.c` deterministically verified 138/138 spans and overrode LLM-guessed `MIT` → `BSD-3-Clause`).
+
+### Fixed
+
+- **Real-user precision, grounding, and frontend fixes** (`src/codeguard/adjudicate.py`, `src/codeguard/llm.py`, `src/codeguard/web.py`, `src/codeguard/web_evidence.py`, `src/codeguard/license_intel.py`, `src/codeguard/static/app.js`):
+  - Added cross-language candidate filtering, C preprocessor `#define`/`#include` span suppression, and ultra-weak single-span coincidence downgrade (`S2` FPs across 1,325 real files slashed **198 → 70 (-64.6%)**, cross-language FPs **13 → 0**, zero recall regression).
+  - Replaced raw `[:8000]` digest slicing with structured `_compact_digest()`, added `corroborated` grounding guards and session-level `web_search` query deduplication, and restricted `extract_license_markers()` `(c)` matching to comment/header lines.
+  - Hoisted `Scanner` out of `Workbench.scan_tree()` loop (**4.42× speedup** on `Mini-Bot`), ignored `.git/node_modules/dist/build/__pycache__/*.min.js` in folder upload, fixed `Apache-2.0` `source_offer=False`, accepted direct raw URLs in `harvest_search_urls()`, and fixed 4 frontend state bugs (`#webProbe` disabled guard, folder/file mode reset, `#aiCards` clearing on re-scan, `#licenceExplain` deterministic-first slot).
+  - Expanded automated test suite to **231 passing tests** (`pytest`).
 - **Language-aware C / Go / JavaScript / Rust normalization & offline multilang benchmark**
   (`src/codeguard/normalize.py`, `src/codeguard/adjudicate.py`,
   `src/codeguard/index.py`, `src/codeguard/evidence.py`, `src/codeguard/cli.py`,

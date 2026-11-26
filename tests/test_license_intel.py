@@ -50,6 +50,8 @@ class VerdictTests(unittest.TestCase):
     def test_apache_patent_grant_needs_notice(self):
         v = analyze("Apache-2.0", "MIT", "distribution")
         self.assertTrue(any("NOTICE" in o for o in v.obligations))
+        self.assertFalse(profile_for("Apache-2.0").source_offer)
+        self.assertFalse(any("源码" in o for o in v.obligations), v.obligations)
 
     def test_unknown_is_never_auto_passed(self):
         v = analyze("Weird-Custom-1.0", "MIT", "distribution")

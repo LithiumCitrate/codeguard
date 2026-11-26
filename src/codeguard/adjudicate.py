@@ -12,6 +12,7 @@ Stage layout matters for the results table as much as for runtime:
 from __future__ import annotations
 
 import os
+import re
 import time
 from dataclasses import dataclass, field
 
@@ -150,6 +151,57 @@ class ScanResult:
         return out
 
 
+_C_COMMENT_OR_STR_RE = re.compile(
+    r'//[^\n]*|/\*[\s\S]*?\*/|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+_C_PREPROC_RE = re.compile(
+    r'^#\s*(?:include|define|ifdef|ifndef|if|elif|else|endif|pragma|undef|error|warning|line)\b')
+
+
+def _c_preproc_line_flags(text: str) -> tuple[list[bool], list[bool]]:
+    """Return per-line (non_empty, is_preprocessor) masks with C comments stripped."""
+    def _strip(match):
+        chunk = match.group(0)
+        if chunk.startswith('//'):
+            return ''
+        if chunk.startswith('/*'):
+            return '\n' * chunk.count('\n')
+        return chunk
+
+    cleaned = _C_COMMENT_OR_STR_RE.sub(_strip, text)
+    non_empty: list[bool] = []
+    preproc: list[bool] = []
+    in_cont = False
+    for line in cleaned.splitlines():
+        s = line.strip()
+        ne = bool(s)
+        pp = False
+        if ne:
+            if in_cont or _C_PREPROC_RE.match(s):
+                pp = True
+            in_cont = pp and line.rstrip().endswith('\\')
+        else:
+            in_cont = False
+        non_empty.append(ne)
+        preproc.append(pp)
+    return non_empty, preproc
+
+
+def _is_pure_c_preproc_span(flags: tuple[list[bool], list[bool]],
+                            start_line: int, end_line: int) -> bool:
+    """True when >=75% of non-empty code lines in the span are C preprocessor lines."""
+    non_empty, preproc = flags
+    lo = max(1, start_line) - 1
+    hi = min(len(non_empty), end_line)
+    ne_count = 0
+    pp_count = 0
+    for idx in range(lo, hi):
+        if non_empty[idx]:
+            ne_count += 1
+            if preproc[idx]:
+                pp_count += 1
+    return ne_count > 0 and (pp_count / ne_count) >= 0.75
+
+
 class Scanner:
     def __init__(self, index, model=None, threshold: float = 0.5,
                  min_span_prob: float = DEFAULT_MIN_SPAN_PROB,
@@ -183,7 +235,8 @@ class Scanner:
         row = [feats[name] for name in self.model.feature_names]
         return round(self.model.score_row(row), 4)
 
-    def verify_span(self, ord_no, span, fp, hits, self_package: str):
+    def verify_span(self, ord_no, span, fp, hits, self_package: str,
+                    language: str = ""):
         ranked = sorted(hits.items(), key=lambda kv: (-kv[1], kv[0]))
         best: PairScore | None = None
         best_prob = 0.0
@@ -192,6 +245,10 @@ class Scanner:
             chunk = self.index.chunk(chunk_index)
             doc = self.index.doc_for(chunk.doc_id)
             if self.exclude_same_package and doc.package == self_package:
+                continue
+            if (language and language != "generic"
+                    and doc.language and doc.language != "generic"
+                    and doc.language != language):
                 continue
             if considered >= self.top_verify and best is not None:
                 break
@@ -218,12 +275,16 @@ class Scanner:
         t0 = time.time()
         probe = self.index.probe(text, language=language, min_band_hits=1)
         t1 = time.time()
+        c_preproc = _c_preproc_line_flags(text) if language == "c" else None
         per_span = []
         considered = 0
         for ord_no, span, fp, hits in probe:
             if not hits:
                 continue
-            match, n = self.verify_span(ord_no, span, fp, hits, package_hint)
+            if c_preproc and _is_pure_c_preproc_span(c_preproc, span.start_line, span.end_line):
+                continue
+            match, n = self.verify_span(ord_no, span, fp, hits, package_hint,
+                                        language=language)
             considered += n
             if match:
                 per_span.append(match)
@@ -252,7 +313,10 @@ class Scanner:
                                         self.corroborate_verbatim,
                                         self.corroborate_confidence)
             risk = risk_level(verdict.status, confidence, self.usage)
-            if risk in ("S3", "S4") and not corroborated:
+            if (not corroborated and len(matches) == 1
+                    and coverage < 0.15 and verbatim < 6):
+                risk = "S0"
+            elif risk in ("S3", "S4") and not corroborated:
                 risk = "S2"
                 downgraded += 1
             findings.append(Finding(

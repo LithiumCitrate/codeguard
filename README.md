@@ -102,7 +102,11 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 外部干净负例在查询窗口优化后复测：HumanEval 164 个独立实现 **0/164 阻断（95% 单侧上限 1.81%）**，任意命中仅 2，扫描 p50 **26.4 ms**（见 `submission/evidence/humaneval-20261125.*`）。
 
-**多语言语法感知基准（`scripts/eval_multilang.py`，2026-11-25 离线实测）**：针对 C / Go / JavaScript / Rust（各抽样 8 份真实语料 × 4 类变异 + 61 份干净与跨语言负例），文件级精确检出 **124/128（96.9%）**，同包级归因 **128/128（100.0%）**（C/JS/Rust 均 **100%**，Go 文件级 87.5% / 同包级 100%），**0 误阻断**（见 `submission/evidence/multilang-eval-20261125.*`）。同时新增项目级合规策略 `--policy`（`src/codeguard/policy.py`，支持 `allow_packages` 豁免降级留痕与 `deny_licenses` 黑名单阻断）。
+**多语言语法感知基准（`scripts/eval_multilang.py`，2026-11-25 离线实测）**：针对 C / Go / JavaScript / Rust（各抽样 8 份真实语料 × 4 类变异 + 61 份干净与跨语言负例），文件级精确检出 **124/128（96.9%）**，同包级归因 **128/128（100.0%）**（C/JS/Rust 均 **100%**，Go 文件级 87.5% / 同包级 100%），**0 误阻断**（见 `submission/evidence/multilang-eval-20261125.*`）。同时新增项目级合规策略 `--policy`（`src/codeguard/policy.py`，已在 CLI 与 Web 工作台全链路接入，支持 `allow_packages` 豁免降级留痕与 `deny_licenses` 黑名单阻断）。
+
+**基线定量对比与真实用户仓库闭环验证（2026-11-26）**：
+- 同源 24 文件 × 6 变异（144 正例）+ 9 负例基线对比（`scripts/eval_baselines.py`，全量 1,717 篇索引）：许可证头扫描召回 **38.9%（F1 0.560）**、逐字行哈希 **71.5%（F1 0.834）**、纯 L1 词法 **81.9%（F1 0.901）**，**CodeGuard 达 95.8%（F1 0.979，重命名与复合变异均 100%，0/9 负例误报）**（见 `submission/evidence/baseline-comparison-20261126.*`）。
+- 真实用户仓库验证（`LithiumCitrate` + `Aliceykr` 共 6 个公开仓库、**1,325 个源码文件 / 23.20 MB**，覆盖 Python/JS/C）：全量扫描 **0 异常、0 误阻断（S3/S4=0）**；库外真实文件 `stm32h7xx_hal.c` 经 `dots3-note-prev` + Tavily 联网核证命中 **138/138 片段**，并由 `LICENSE.md` 确定性纠偏将模型误猜的 `MIT` 覆盖为 `BSD-3-Clause`；基于真实扫描暴露的问题完成跨语言过滤、C 预处理常量表过滤、结构化摘要压缩与 `Scanner` 缓存复用后，6 仓库 S2 噪音下降 **64.6%（198→70）**、跨语言误报 **13→0**、`scan_tree` 提速 **4.42×**，离线自动化测试增至 **231 项全通**（见 `submission/evidence/real-user-eval-20261126.*`）。
 
 工程指标：1717 文档 / 127156 片段索引 31.7 MB（约 255 B/片段），buckets 2.72 M；50 k 字符真实文件扫描秒级。
 

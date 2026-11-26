@@ -209,9 +209,10 @@ def ground_license(source_url: str, max_tries: int | None = None,
     if not m:
         return _grounding_failure("unsupported-host-or-url", attempts)
     root = m.group(1) + m.group(2) + "/"
+    cache_key = root.lower()
     cache = {} if _cache is None else _cache
-    if root in cache:
-        cached = dict(cache[root])
+    if cache_key in cache:
+        cached = dict(cache[cache_key])
         cached["cache_hit"] = True
         return cached
     names = _LIC_NAMES if max_tries is None else _LIC_NAMES[:max_tries]
@@ -231,13 +232,13 @@ def ground_license(source_url: str, max_tries: int | None = None,
             result = {"status": "verified", "reason": "license-text-classified",
                       "spdx": spdx, "url": src["url"], "sha256": src["sha256"],
                       "root": root, "attempts": attempts, "cache_hit": False}
-            cache[root] = result
+            cache[cache_key] = result
             return result
     reason = ("all-candidates-unavailable" if
               all(a["outcome"] == "fetch_failed" for a in attempts)
               else "no-recognised-license-text")
     result = _grounding_failure(reason, attempts, root)
-    cache[root] = result
+    cache[cache_key] = result
     return result
 
 
@@ -293,15 +294,25 @@ def blob_to_raw(url: str) -> str:
 def harvest_search_urls(searches, name: str) -> list:
     """The search often locates the exact upstream file even when the model's
     JSON candidate mis-guesses the path. Harvest raw-convertible source links
-    from the already-fetched results (no extra API cost); verification still
-    gates every one, so this only adds recall, never false positives."""
+    or already-valid raw URLs from the already-fetched results (no extra API
+    cost); verification still gates every one, so this only adds recall, never
+    false positives."""
     ext = os.path.splitext(name)[1].lower()
     exts = {ext} if ext in _CODE_EXTS else _CODE_EXTS
     out = []
+    seen = set()
     for trace in searches or []:
         for result in trace.get("results", []):
-            raw = blob_to_raw(result.get("url", ""))
-            if raw and os.path.splitext(urllib.parse.urlsplit(raw).path)[1].lower() in exts:
+            url = str(result.get("url", "") or "").strip()
+            raw = blob_to_raw(url)
+            if not raw and url:
+                try:
+                    raw = validate_fetch_url(url)
+                except ValueError:
+                    raw = ""
+            if (raw and raw not in seen
+                    and os.path.splitext(urllib.parse.urlsplit(raw).path)[1].lower() in exts):
+                seen.add(raw)
                 out.append(raw)
     return out
 

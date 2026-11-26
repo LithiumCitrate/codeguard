@@ -71,13 +71,13 @@
       "case": "copy",
       "blocking": true,
       "findings": 1,
-      "input_sha256": "a459e1f8a421649b60473c28ec1655e7f83bc193f6e1af0e5d696bdefdea600a"
+      "input_sha256": "0551018974d35d2a5487b67e20b799b19b4b92eb39d36c630a1bedc655f98b17"
     },
     {
       "case": "rename",
       "blocking": true,
       "findings": 1,
-      "input_sha256": "f679297add444bb137f498ef6aa9a029ba14f4523e237c0995be11a0a8f46f13"
+      "input_sha256": "53e766df0c60c23dca87cb57b4d85a5d12b10871a244fb1736ae48cebaffbd53"
     },
     {
       "case": "clean",

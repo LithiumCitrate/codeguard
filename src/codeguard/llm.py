@@ -239,12 +239,85 @@ def tavily_search(query, api_key, max_results: int = 5, timeout: int = 20) -> li
 _LICENSE_WORDS = re.compile(
     r"\b(GPL-[0-9.]+(?:-only|-or-later)?|AGPL-[0-9.]+(?:-only|-or-later)?|LGPL-[0-9.]+"
     r"|Apache-[0-9.]+|MIT(?:/X11)?|BSD-[234]-Clause|MPL-[0-9.]+|CDDL|EPL-[0-9.]+|Unlicense|CC0-[0-9.]+)\b")
-_COPYRIGHT = re.compile(r"(copyright|\(c\)|©|版权所有|著作权)", re.IGNORECASE)
+_COPYRIGHT = re.compile(
+    r"(?:\bcopyright\b|版权所有|著作权"
+    r"|(?:\(c\)|©)[^\r\n]*(?:19|20)\d{2}"
+    r"|(?:19|20)\d{2}[^\r\n]*(?:\(c\)|©))",
+    re.IGNORECASE,
+)
 _VENDORED = re.compile(r"(vendored|copied from|adapted from|based on|ported from|"
                        r"taken from|modified from|复制自|改编自|摘自|来源[::]|参考[::])",
                        re.IGNORECASE)
 _SOURCE_URL = re.compile(r"https?://(?:[\w.-]+\.)?(?:github\.com|gitlab\.com|bitbucket\.org|"
                          r"pypi\.org|gitee\.com|apache\.org|gnu\.org)/\S+")
+_PREPROC_DIRECTIVE = re.compile(
+    r"^#\s*(?:include|define|ifdef|ifndef|if|elif|else|endif|pragma|undef|error|warning|line)\b"
+)
+_CODE_DECL_START = re.compile(
+    r"^(?:import |from |def |class |function |const |let |var |package |use |pub |fn |struct |typedef )"
+)
+
+
+def _comment_and_header_lines(code: str) -> list[str]:
+    """Extract comment lines and leading file-header text, skipping code bodies."""
+    out = []
+    in_c_block = False
+    in_py_doc = ""
+    seen_code = False
+    for idx, raw in enumerate(code.splitlines(), 1):
+        s = raw.strip()
+        if not s:
+            continue
+        if in_c_block:
+            out.append(s)
+            if "*/" in s:
+                in_c_block = False
+            continue
+        if in_py_doc:
+            out.append(s)
+            if in_py_doc in s:
+                in_py_doc = ""
+            continue
+        if not seen_code and idx <= 60 and (s.startswith('"""') or s.startswith("'''")):
+            quote = s[:3]
+            out.append(s)
+            if s.count(quote) == 1:
+                in_py_doc = quote
+            continue
+        if s.startswith("//") or s.startswith("<!--"):
+            out.append(s)
+            continue
+        if s.startswith("/*"):
+            out.append(s)
+            if "*/" not in s[2:]:
+                in_c_block = True
+            continue
+        if s.startswith("#") and not _PREPROC_DIRECTIVE.match(s):
+            out.append(s)
+            continue
+        if (not seen_code and idx <= 60
+                and not any(ch in s for ch in ("{", "}", ";", "=>"))
+                and not _CODE_DECL_START.match(s)):
+            out.append(s)
+            continue
+        seen_code = True
+        for marker in ("//", "/*", "#"):
+            pos = s.find(marker)
+            while pos >= 0:
+                if marker == "//" and pos > 0 and s[pos - 1] == ":":
+                    pos = s.find(marker, pos + 2)
+                    continue
+                if marker == "#" and pos == 0:
+                    break
+                prefix = s[:pos]
+                if prefix.count('"') % 2 == 0 and prefix.count("'") % 2 == 0:
+                    tail = s[pos:]
+                    out.append(tail)
+                    if marker == "/*" and "*/" not in tail[2:]:
+                        in_c_block = True
+                    break
+                pos = s.find(marker, pos + len(marker))
+    return out
 
 
 def extract_license_markers(code: str) -> dict:
@@ -253,14 +326,15 @@ def extract_license_markers(code: str) -> dict:
     Fingerprints answer "which corpus document does this resemble"; markers
     answer "what does the file itself declare". Same input, same output.
     """
-    head = "\n".join(code.splitlines()[:60])
-    spdx = sorted(set(re.findall(r"SPDX-License-Identifier:\s*([^\r\n*]+)", code)))
-    licenses = sorted(set(_LICENSE_WORDS.findall(code)))[:12]
-    copyright_lines = [line.strip()[:160] for line in code.splitlines()
+    comment_lines = _comment_and_header_lines(code)
+    comment_text = "\n".join(comment_lines)
+    spdx = sorted(set(re.findall(r"SPDX-License-Identifier:\s*([^\r\n*]+)", comment_text)))
+    licenses = sorted(set(_LICENSE_WORDS.findall(comment_text)))[:12]
+    copyright_lines = [line[:160] for line in comment_lines
                        if _COPYRIGHT.search(line)][:8]
-    vendored = [line.strip()[:160] for line in code.splitlines()
+    vendored = [line[:160] for line in comment_lines
                 if _VENDORED.search(line)][:8]
-    urls = sorted(set(_SOURCE_URL.findall(code)))[:8]
+    urls = sorted(set(_SOURCE_URL.findall(comment_text)))[:8]
     lines = []
     if spdx:
         lines.append("文件内声明了 SPDX 许可证标识：" + "、".join(spdx))
@@ -277,6 +351,48 @@ def extract_license_markers(code: str) -> dict:
     return {"spdx": spdx, "licenses": licenses, "copyright_lines": copyright_lines,
             "vendored_hints": vendored, "source_urls": urls, "summary": "\n".join(lines)}
 
+
+
+def _compact_digest(digest: dict, max_chars: int = 7500) -> str:
+    """Serialize scan digest into complete, valid JSON within ``max_chars``."""
+    out = dict(digest or {})
+    text = json.dumps(out, ensure_ascii=False)
+    if len(text) <= max_chars:
+        return text
+    findings = list(out.get("findings") or [])
+    base_omitted = int(out.get("findings_omitted") or 0)
+    lo, hi = 0, len(findings)
+    best_k = 0
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        candidate = dict(out)
+        candidate["findings"] = findings[:mid]
+        omitted = base_omitted + (len(findings) - mid)
+        if omitted or "findings_omitted" in out:
+            candidate["findings_omitted"] = omitted
+        s = json.dumps(candidate, ensure_ascii=False)
+        if len(s) <= max_chars:
+            best_k = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    out["findings"] = findings[:best_k]
+    omitted = base_omitted + (len(findings) - best_k)
+    if omitted or "findings_omitted" in out:
+        out["findings_omitted"] = omitted
+    text = json.dumps(out, ensure_ascii=False)
+    if len(text) > max_chars and isinstance(out.get("policy_audit"), dict):
+        pa = dict(out["policy_audit"])
+        pa.pop("waived", None)
+        pa.pop("denied", None)
+        pa["truncated"] = True
+        out["policy_audit"] = pa
+        text = json.dumps(out, ensure_ascii=False)
+    return text
+
+
+def _norm_query(query: str) -> str:
+    return " ".join(str(query or "").lower().split())
 
 
 class OfflineTemplateProvider:
@@ -394,6 +510,7 @@ class OpenAICompatProvider:
             raise ValueError("未配置 Tavily API Key，无法联网检索")
         messages = [{"role": "user", "content": prompt}]
         searches = []
+        seen_queries: set[str] = set()
         for attempt in range(max_rounds):
             payload = {"model": self.model, "messages": messages,
                        "temperature": 0.2, "tools": [self._SEARCH_TOOL]}
@@ -413,7 +530,7 @@ class OpenAICompatProvider:
                              "content": message.get("content") or "",
                              "tool_calls": calls})
             for call in calls[:4]:
-                trace, tool_content = self._run_search_call(call)
+                trace, tool_content = self._run_search_call(call, seen_queries)
                 searches.append(trace)
                 messages.append({"role": "tool",
                                  "tool_call_id": str(call.get("id", "")),
@@ -422,7 +539,7 @@ class OpenAICompatProvider:
                                 "temperature": 0.2}, timeout)
         return str(self._message_of(data).get("content") or "").strip(), searches
 
-    def _run_search_call(self, call: dict):
+    def _run_search_call(self, call: dict, seen_queries: set[str] | None = None):
         function = call.get("function") or {}
         try:
             args = json.loads(function.get("arguments") or "{}")
@@ -431,6 +548,13 @@ class OpenAICompatProvider:
         query = str(args.get("query", "")).strip()[:_QUERY_LIMIT]
         if not query:
             return {"query": query, "results": [], "error": "查询词为空"}, {"error": "查询词为空"}
+        norm = _norm_query(query)
+        if seen_queries is not None:
+            if norm in seen_queries:
+                note = "该检索词在本会话已查询过，请直接参考前次工具返回结果或换用不同关键词。"
+                return {"query": query, "results": [], "cached": True}, {
+                    "query": query, "cached": True, "note": note}
+            seen_queries.add(norm)
         try:
             results = tavily_search(query, self.tavily_api_key)
         except ValueError as exc:
@@ -441,7 +565,16 @@ class OpenAICompatProvider:
 
     def _search_fallback(self, prompt: str, seed_queries, timeout: int):
         searches, blocks = [], []
-        for query in [q for q in seed_queries if q][:3]:
+        seen: set[str] = set()
+        unique_seeds = []
+        for q in seed_queries:
+            if not q:
+                continue
+            norm = _norm_query(q)
+            if norm and norm not in seen:
+                seen.add(norm)
+                unique_seeds.append(q)
+        for query in unique_seeds[:3]:
             try:
                 results = tavily_search(query, self.tavily_api_key)
             except ValueError as exc:
@@ -469,7 +602,9 @@ class OpenAICompatProvider:
 
     _PROMPT = (
         "你是开源合规助手。仅依据给定证据撰写一段面向开发者的中文处置建议，"
-        "不得新增证据之外的法律结论，不得声称这是法律意见。证据：{}")
+        "不得新增证据之外的法律结论，不得声称这是法律意见。"
+        "若证据中 corroborated 为 false，须说明其为未佐证的弱相似度候选片段、需人工对比核实，"
+        "严禁断言待审查代码“引用/依赖/动态链接”了该库。证据：{}")
 
     def describe(self, finding) -> str:
         try:
@@ -483,7 +618,11 @@ class OpenAICompatProvider:
 
     _GUARD = ("要求：只依据给定材料回答，不得编造证据或行号；风险与许可结论以"
               "CodeGuard 确定性引擎给出的为准，你只做解读；不得提供法律意见；"
-              "用简体中文，输出不超过 400 字，分点陈述。")
+              "用简体中文，严格控制输出不超过 400 字，分点陈述。")
+    _CORROBORATION_GUARD = (
+        "佐证口径（必须遵守）：当某条命中的 corroborated 为 false（未达佐证门槛）时，"
+        "只能将其描述为“未佐证的弱相似度候选（需人工核查，可能为通用写法巧合）”，"
+        "严禁声称或推断待审查项目“引用/依赖/使用了/动态链接”了该第三方库。")
 
     def interpret_file(self, code: str, name: str, markers: dict) -> str:
         prompt = (
@@ -500,8 +639,9 @@ class OpenAICompatProvider:
         prompt = (
             "你是开源合规助手。以下是一次代码来源审查的结构化结果摘要，"
             "请面向开发者写一份 200 字左右的执行摘要：整体风险、最重要的 1-3 个命中、"
-            "下一步动作。不得新增摘要之外的事实。\n摘要数据：\n%s\n%s"
-            % (json.dumps(digest, ensure_ascii=False)[:8000], self._GUARD))
+            "下一步动作。不得新增摘要之外的事实；若 findings_omitted > 0 说明部分低优先级命中已省略。\n"
+            "摘要数据：\n%s\n%s\n%s"
+            % (_compact_digest(digest), self._CORROBORATION_GUARD, self._GUARD))
         return self.chat(prompt, timeout=60)
 
     def summarize_with_search(self, digest: dict):
@@ -509,8 +649,10 @@ class OpenAICompatProvider:
             "你是开源合规助手。以下是一次代码来源审查的结构化结果摘要，"
             "请面向开发者写一份 200 字左右的执行摘要：整体风险、最重要的 1-3 个命中、"
             "下一步动作；可联网核实来源项目的许可证与重新授权公告作佐证，引用处给出 URL。"
-            "不得新增摘要与检索之外的事实。\n摘要数据：\n%s\n%s\n%s"
-            % (json.dumps(digest, ensure_ascii=False)[:8000], self._GUARD, self._SEARCH_GUARD))
+            "不得新增摘要与检索之外的事实；若 findings_omitted > 0 说明部分低优先级命中已省略。\n"
+            "摘要数据：\n%s\n%s\n%s\n%s"
+            % (_compact_digest(digest), self._CORROBORATION_GUARD,
+               self._GUARD, self._SEARCH_GUARD))
         seeds = ["%s %s license" % (f.get("package", ""), f.get("license_spdx", ""))
                  for f in (digest.get("findings") or [])[:2] if f.get("package")]
         return self.chat_with_search(prompt, seeds)
@@ -518,9 +660,9 @@ class OpenAICompatProvider:
     def answer_question(self, question: str, digest: dict) -> str:
         prompt = (
             "你是开源合规助手。开发者就刚才的审查结果提问，请只依据审查摘要回答；"
-            "若摘要中没有答案，明确说当前证据不足以回答，并建议在语料或人工层面如何补证。\n"
-            "审查摘要：\n%s\n问题：%s\n%s"
-            % (json.dumps(digest, ensure_ascii=False)[:8000], question, self._GUARD))
+            "若摘要中没有答案（或 findings_omitted > 0），明确说当前证据不足以回答，并建议在语料或人工层面如何补证。\n"
+            "审查摘要：\n%s\n问题：%s\n%s\n%s"
+            % (_compact_digest(digest), question, self._CORROBORATION_GUARD, self._GUARD))
         return self.chat(prompt, timeout=60)
 
     def explain_licence(self, analysis: dict) -> str:
@@ -535,7 +677,8 @@ class OpenAICompatProvider:
 
     def describe_with_search(self, finding):
         evidence = json.dumps(finding.as_dict(), ensure_ascii=False)[:6000]
-        prompt = (self._PROMPT.format(evidence) + "\n" + self._SEARCH_GUARD +
+        prompt = (self._PROMPT.format(evidence) + "\n" + self._CORROBORATION_GUARD + "\n"
+                  + self._SEARCH_GUARD +
                   "\n请联网核实：该来源项目的官方仓库与当前许可证（是否发生过重新授权）、"
                   "该版本的相关公告，并给出更具体的处置步骤；引用处给出 URL。")
         seeds = ["%s %s license" % (finding.package, finding.license_spdx),
@@ -546,9 +689,9 @@ class OpenAICompatProvider:
         prompt = (
             "你是开源合规助手。开发者就刚才的审查结果提问，请依据审查摘要回答，"
             "并可联网检索公开资料佐证；若证据与检索均不足以回答，明确说明，并建议如何补证。\n"
-            "审查摘要：\n%s\n问题：%s\n%s\n%s"
-            % (json.dumps(digest, ensure_ascii=False)[:8000], question,
-               self._GUARD, self._SEARCH_GUARD))
+            "审查摘要：\n%s\n问题：%s\n%s\n%s\n%s"
+            % (_compact_digest(digest), question,
+               self._CORROBORATION_GUARD, self._GUARD, self._SEARCH_GUARD))
         seeds = ["%s %s license obligations" % (f.get("package", ""), f.get("license_spdx", ""))
                  for f in (digest.get("findings") or [])[:2] if f.get("package")]
         return self.chat_with_search(prompt, seeds)

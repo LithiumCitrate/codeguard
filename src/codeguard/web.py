@@ -26,7 +26,8 @@ from .llm import (DISCLOSURE, clear_llm_settings, extract_license_markers,
                   list_models, load_llm_settings, mask_key, provider_from_settings,
                   save_llm_settings, validate_base_url)
 from .llm import get_provider
-from .report import provenance_receipt, to_cyclonedx, to_html
+from .policy import AllowRule, Policy, apply_policy
+from .report import provenance_receipt, to_cyclonedx, to_html, to_sarif
 
 USAGES = {'internal_use', 'inline_copy', 'static_link', 'dynamic_link', 'distribution', 'network_service'}
 RISK_ORDER = ['S0', 'S1', 'S2', 'S3', 'S4']
@@ -45,6 +46,59 @@ def _sanitize_tree_path(raw) -> str:
     if not parts or any(p == '..' or ':' in p for p in parts):
         raise ValueError('文件路径不允许越出上传目录')
     return '/'.join(parts)[-260:]
+
+
+def _parse_web_policy(data: dict, target_license: str, usage: str) -> Policy | None:
+    raw = data.get('policy')
+    if raw is None:
+        return None
+    if not isinstance(raw, dict):
+        raise ValueError('合规策略参数必须是对象')
+    allow_raw = raw.get('allow_packages')
+    if allow_raw is None:
+        allow_raw = []
+    deny_raw = raw.get('deny_licenses')
+    if deny_raw is None:
+        deny_raw = []
+    reason_raw = raw.get('reason')
+    if reason_raw is None:
+        reason_raw = ''
+    if not isinstance(allow_raw, list) or not isinstance(deny_raw, list) or not isinstance(reason_raw, str):
+        raise ValueError('合规策略字段类型无效')
+    allow_pkgs = []
+    for item in allow_raw:
+        if not isinstance(item, str):
+            raise ValueError('白名单包名必须是字符串')
+        pkg = item.strip()
+        if pkg:
+            allow_pkgs.append(pkg)
+    deny_lics = []
+    for item in deny_raw:
+        if not isinstance(item, str):
+            raise ValueError('禁用许可证必须是字符串')
+        lic = item.strip()
+        if lic:
+            deny_lics.append(lic)
+    if not allow_pkgs and not deny_lics:
+        return None
+    reason = reason_raw.strip()[:200]
+    digest = hashlib.sha256(json.dumps({
+        'allow_packages': allow_pkgs,
+        'deny_licenses': deny_lics,
+        'reason': reason,
+        'project_license': target_license,
+        'usage': usage,
+    }, sort_keys=True, ensure_ascii=False).encode('utf-8')).hexdigest()
+    rules = tuple(AllowRule(pkg, reason) if reason else AllowRule(pkg) for pkg in allow_pkgs)
+    return Policy(
+        path='workbench:inline',
+        sha256=digest,
+        project_license=target_license,
+        usage=usage,
+        fail_on=('S3', 'S4'),
+        allow_packages=rules,
+        deny_licenses=tuple(deny_lics),
+    )
 
 
 class Workbench:
@@ -233,6 +287,7 @@ class Workbench:
         license_id = data.get('license', 'MIT')
         if usage not in USAGES or not isinstance(license_id, str) or len(license_id) > 100:
             raise ValueError('许可证或使用方式无效')
+        policy = _parse_web_policy(data, license_id, usage)
         if not self.health()['ready']:
             raise ValueError('语料原文缺失或哈希不一致，无法完成可信验证；请重新建立语料')
         prepared = []
@@ -260,10 +315,19 @@ class Workbench:
         flat = []
         risk_counts = {'S0': 0, 'S1': 0, 'S2': 0, 'S3': 0, 'S4': 0}
         blocked = 0
+        waived_all, denied_all, total_policy_findings = [], [], 0
         with self.lock:
+            scanner = Scanner(self.index, model=self.model, usage=usage)
             for path, content in prepared:
-                result = Scanner(self.index, model=self.model, usage=usage).scan_text(
+                result = scanner.scan_text(
                     content, target=path, target_license=license_id, language=language_for(path))
+                if policy is not None:
+                    file_audit = apply_policy(result, policy)
+                    for w in file_audit.get('waived', []):
+                        waived_all.append({**w, 'file': path})
+                    for d in file_audit.get('denied', []):
+                        denied_all.append({**d, 'file': path})
+                    total_policy_findings += file_audit.get('total_findings', 0)
                 risks = [f.risk for f in result.findings] or ['S0']
                 top_risk = max(risks, key=lambda r: RISK_ORDER.index(r))
                 risk_counts[top_risk] += 1
@@ -287,8 +351,23 @@ class Workbench:
                 })
         results.sort(key=lambda r: (-RISK_ORDER.index(r['risk']), r['path']))
         overall = results[0]['risk'] if results else 'S0'
+        tree_policy_audit = None
+        if policy is not None:
+            tree_policy_audit = {
+                'policy_path': policy.path,
+                'policy_sha256': policy.sha256,
+                'project_license': license_id,
+                'usage': usage,
+                'fail_on': list(policy.fail_on) if policy.fail_on is not None else [],
+                'waived_count': len(waived_all),
+                'denied_count': len(denied_all),
+                'total_findings': total_policy_findings,
+                'waived': waived_all,
+                'denied': denied_all,
+            }
         # 文件夹审查与单文件审查共用 AI 摘要/追问入口：digest 缺失会让
         # assist 永远报"先完成一次来源审查"。按整夹聚合，命中截断保前 50。
+        flat.sort(key=lambda pf: (-RISK_ORDER.index(pf[1].risk), -pf[1].confidence, pf[0]))
         capped = flat[:50]
         self.last_findings = [f for _, f in capped]
         self.last_digest = {
@@ -302,16 +381,23 @@ class Workbench:
             'findings': [{'file': p, 'package': f.package, 'version': f.version,
                           'path': f.path, 'license_spdx': f.license_spdx, 'risk': f.risk,
                           'risk_label': RISK_LABELS[f.risk], 'confidence': f.confidence,
-                          'coverage': f.coverage, 'max_verbatim_run': f.max_verbatim_run,
+                          'coverage': f.coverage, 'matched_spans': len(f.spans),
+                          'max_verbatim_run': f.max_verbatim_run,
+                          'corroborated': f.corroborated,
                           'status': f.verdict.status, 'obligations': f.verdict.obligations,
-                          'conflicts': f.verdict.conflicts}
+                          'conflicts': f.verdict.conflicts,
+                          **({'policy_action': f.policy_action, 'policy_reason': f.policy_reason}
+                             if f.policy_action else {})}
                          for p, f in capped]}
+        if tree_policy_audit is not None:
+            self.last_digest['policy_audit'] = tree_policy_audit
         return {'summary': {
                     'files': len(results), 'risk_counts': risk_counts, 'blocked': blocked,
                     'overall_risk': overall, 'overall_label': RISK_LABELS[overall],
                     'license': license_id, 'usage': usage,
                     'findings_files': sum(1 for r in results if r['findings'])},
-                'results': results}
+                'results': results,
+                'policy_audit': tree_policy_audit}
 
     def health(self):
         total, readable = self.index.corpus_health()
@@ -341,6 +427,7 @@ class Workbench:
         license_id = data.get('license', 'MIT')
         if usage not in USAGES or not isinstance(license_id, str) or len(license_id) > 100:
             raise ValueError('许可证或使用方式无效')
+        policy = _parse_web_policy(data, license_id, usage)
         if not self.health()['ready']:
             raise ValueError('语料原文缺失或哈希不一致，无法完成可信验证；请重新建立语料')
         name = str(data.get('name', 'review.py'))[:120].replace('\\', '/').split('/')[-1]
@@ -348,6 +435,7 @@ class Workbench:
         with self.lock:
             result = Scanner(self.index, model=self.model, usage=usage).scan_text(
                 code, target=name, target_license=license_id, language=language_for(name))
+            policy_audit = apply_policy(result, policy) if policy is not None else None
             configured = provider_from_settings(self.root)
             use_llm = bool(data.get('assist')) or bool(configured and configured.tavily_api_key)
             llm_provider = configured if use_llm else None
@@ -396,13 +484,21 @@ class Workbench:
                 'findings': [{'package': f.package, 'version': f.version, 'path': f.path,
                               'license_spdx': f.license_spdx, 'risk': f.risk,
                               'risk_label': RISK_LABELS[f.risk], 'confidence': f.confidence,
-                              'coverage': f.coverage, 'max_verbatim_run': f.max_verbatim_run,
+                              'coverage': f.coverage, 'matched_spans': len(f.spans),
+                              'max_verbatim_run': f.max_verbatim_run,
+                              'corroborated': f.corroborated,
                               'status': f.verdict.status,
                               'obligations': f.verdict.obligations,
-                              'conflicts': f.verdict.conflicts}
+                              'conflicts': f.verdict.conflicts,
+                              **({'policy_action': f.policy_action, 'policy_reason': f.policy_reason}
+                                 if f.policy_action else {})}
                              for f in result.findings]}
+            if policy_audit is not None:
+                self.last_digest['policy_audit'] = policy_audit
             return {'scan': result.as_dict(), 'blocking': result.blocking, 'findings': details,
-                    'receipt': receipt, 'sbom': to_cyclonedx(result, self.index), 'html': to_html(receipt),
+                    'receipt': receipt, 'sbom': to_cyclonedx(result, self.index),
+                    'sarif': to_sarif(result, self.index), 'html': to_html(receipt),
+                    'policy_audit': policy_audit,
                     'llm_assisted': bool(llm_provider),
                     'llm_model': llm_provider.model if llm_provider else ''}
 
@@ -411,15 +507,19 @@ class Workbench:
             path = Path(__file__).parent / 'data' / 'negatives' / 'word_tally.py'
             return {'name': 'independent_word_tally.py', 'code': path.read_text(encoding='utf-8'),
                     'note': '自研独立实现负例；未命中只代表当前语料覆盖范围内未发现来源。'}
-        docs = [d for d in self.index.docs if d.license_spdx.startswith(('GPL-', 'AGPL-')) and d.tokens > 250]
+        docs = [d for d in self.index.docs
+                if d.license_spdx.startswith(('GPL-', 'AGPL-')) and d.tokens > 250 and d.path.endswith('.py')]
+        if not docs:
+            docs = [d for d in self.index.docs if d.license_spdx.startswith(('GPL-', 'AGPL-')) and d.tokens > 250]
         if not docs:
             raise ValueError('当前语料没有可用的 copyleft 演示来源')
         doc = sorted(docs, key=lambda d: (d.tokens, d.path))[0]
         code = Path(self.index.corpus_file(doc)).read_text(encoding='utf-8', errors='replace')
-        if kind == 'rename':
+        if kind == 'rename' and doc.path.endswith('.py'):
             from .mutations import apply_mutation
             code = apply_mutation(code, 'rename', 2026)
-        return {'name': 'ai_generated_demo.py', 'code': code,
+        ext = Path(doc.path).suffix or '.py'
+        return {'name': 'ai_generated_demo' + ext, 'code': code,
                 'note': '受控来源演示：%s@%s / %s；%s。该案例不等同于真实模型泄漏实验。' %
                         (doc.package, doc.version, doc.license_spdx, '变量改名' if kind == 'rename' else '原文复制')}
 

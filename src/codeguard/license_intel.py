@@ -70,7 +70,7 @@ PROFILES = {x.spdx: x for x in [
       osi_approved=False,
       clauses=("Advertising clause makes it incompatible with most copyleft licences",)),
     P("Apache-2.0", "Apache License 2.0", "permissive", NONE, notice=True,
-      source_offer=True, patent_grant=True, state_changes=True,
+      source_offer=False, patent_grant=True, state_changes=True,
       clauses=("[2] grant of copyright + patent licence",
                "[3] must retain NOTICE and state changes",
                "[4] derivatives may be licensed under different terms",

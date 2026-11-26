@@ -411,5 +411,142 @@ class CorpusReproducibilityTests(unittest.TestCase):
         self.assertEqual(pins, shipped)
 
 
+class Round2AccuracyTests(unittest.TestCase):
+    def test_cross_language_candidates_are_filtered_for_known_languages(self):
+        tmp = tempdir()
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        corpus = os.path.join(tmp, "corpus")
+        os.makedirs(os.path.join(corpus, "radare2"), exist_ok=True)
+        # C struct pointer assignment that tokenizes very similarly to JS property assignment
+        c_code = "\n".join(
+            "ac->field_%d = cfg->field_%d;" % (i, i) for i in range(18)
+        ) + "\n"
+        c_path = os.path.join(corpus, "radare2", "arch_config.c")
+        with open(c_path, "w", encoding="utf-8") as fh:
+            fh.write(c_code)
+        doc_c = DocRecord(
+            0, "radare2", "5.9", "radare2/arch_config.c", "LGPL-3.0-only",
+            "test", "c", 18, len(tokenize_source(c_code, "c")),
+            hashlib.sha256(c_code.encode()).hexdigest(), len(c_code),
+        )
+        index = FingerprintIndex(Params())
+        index.corpus_root = corpus
+        index.add_document(doc_c, c_code, language="c")
+        index.finalize()
+
+        js_code = "\n".join(
+            "g.field_%d = s.field_%d;" % (i, i) for i in range(18)
+        ) + "\n"
+        scanner = Scanner(index, model=None, min_span_prob=0.35, usage="distribution")
+        # Scanning as javascript must filter out C corpus doc
+        js_scan = scanner.scan_text(js_code, target="game.js", language="javascript")
+        self.assertEqual(js_scan.findings, [])
+        # Scanning same tokens as generic (or matching language) still works
+        gen_scan = scanner.scan_text(c_code, target="arch_config.c", language="c")
+        self.assertTrue(gen_scan.findings)
+
+    def test_c_pure_preprocessor_macro_tables_are_skipped(self):
+        tmp = tempdir()
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        corpus = os.path.join(tmp, "corpus")
+        os.makedirs(os.path.join(corpus, "tcc"), exist_ok=True)
+        macro_table = "\n".join(
+            "#define REG_VAL_%02d 0x%04X /* macro entry */" % (i, i * 16)
+            for i in range(28)
+        ) + "\n"
+        c_path = os.path.join(corpus, "tcc", "tcc.h")
+        with open(c_path, "w", encoding="utf-8") as fh:
+            fh.write(macro_table)
+        doc = DocRecord(
+            0, "tcc", "1.0", "tcc/tcc.h", "LGPL-3.0-only", "test", "c",
+            28, len(tokenize_source(macro_table, "c")),
+            hashlib.sha256(macro_table.encode()).hexdigest(), len(macro_table),
+        )
+        index = FingerprintIndex(Params())
+        index.corpus_root = corpus
+        index.add_document(doc, macro_table, language="c")
+        index.finalize()
+
+        query_macros = "\n".join(
+            "#define PMU_EVT_%02d 0x%04X /* event */" % (i, i * 16)
+            for i in range(28)
+        ) + "\n"
+        scanner = Scanner(index, model=None, min_span_prob=0.35, usage="distribution")
+        scan = scanner.scan_text(query_macros, target="pmu.h", language="c")
+        self.assertEqual(scan.findings, [])
+
+        # Non-preprocessor C code inside #ifdef still matches normally
+        func_code = "#ifdef USE_IMPL\n" + "\n".join(
+            "int val_%d = compute_item(buf, %d);" % (i, i) for i in range(16)
+        ) + "\n#endif\n"
+        os.makedirs(os.path.join(corpus, "lib"), exist_ok=True)
+        func_path = os.path.join(corpus, "lib", "impl.c")
+        with open(func_path, "w", encoding="utf-8") as fh:
+            fh.write(func_code)
+        doc2 = DocRecord(
+            0, "lib", "1.0", "lib/impl.c", "GPL-3.0-only", "test", "c",
+            18, len(tokenize_source(func_code, "c")),
+            hashlib.sha256(func_code.encode()).hexdigest(), len(func_code),
+        )
+        index2 = FingerprintIndex(Params())
+        index2.corpus_root = corpus
+        index2.add_document(doc2, func_code, language="c")
+        index2.finalize()
+        func_scan = Scanner(index2, model=None, min_span_prob=0.35, usage="distribution").scan_text(
+            func_code, target="copy.c", language="c")
+        self.assertTrue(func_scan.findings)
+
+    def test_ultra_weak_single_span_coincidence_downgraded_to_s0(self):
+        tmp = tempdir()
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        corpus = os.path.join(tmp, "corpus")
+        os.makedirs(os.path.join(corpus, "glances"), exist_ok=True)
+        # Shared 1-span boilerplate with short verbatim run (<6) inside a much larger file
+        boilerplate = (
+            "def configure_cli(parser, cfg):\n"
+            "    parser.add_argument('--host', default='127.0.0.1')\n"
+            "    parser.add_argument('--port', dest='port', default=8080)\n"
+            "    parser.add_argument('--mode', choices=cfg, default='fast')\n"
+            "    return parser.parse_args()\n"
+        )
+        src_path = os.path.join(corpus, "glances", "main.py")
+        with open(src_path, "w", encoding="utf-8") as fh:
+            fh.write(boilerplate)
+        doc = DocRecord(
+            0, "glances", "4.5", "glances/main.py", "LGPL-3.0-only", "test",
+            "python", 5, len(tokenize_source(boilerplate, "python")),
+            hashlib.sha256(boilerplate.encode()).hexdigest(), len(boilerplate),
+        )
+        index = FingerprintIndex(Params())
+        index.corpus_root = corpus
+        index.add_document(doc, boilerplate, language="python")
+        index.finalize()
+
+        # Renamed variables give verbatim_run < 6, and 10+ unrelated functions keep coverage < 0.15
+        renamed_head = (
+            "def setup_options(cli_op, opt):\n"
+            "    cli_op.add_argument('--bind', default='127.0.0.2')\n"
+            "    cli_op.add_argument('--nums', dest='nums', default=9090)\n"
+            "    cli_op.add_argument('--kind', choices=opt, default='slow')\n"
+            "    return cli_op.parse_args()\n"
+        )
+        filler = "\n".join(
+            "def unrelated_%d(x_%d, y_%d):\n    z_%d = x_%d * %d + y_%d\n    return z_%d - %d\n"
+            % (i, i, i, i, i, i + 3, i, i, i + 1)
+            for i in range(18)
+        )
+        scanner = Scanner(index, model=None, min_span_prob=0.45, usage="distribution")
+        scan = scanner.scan_text(renamed_head + "\n" + filler,
+                                 target="cli.py", target_license="MIT", language="python")
+        self.assertEqual(len(scan.findings), 1)
+        f = scan.findings[0]
+        self.assertFalse(f.corroborated)
+        self.assertEqual(len(f.spans), 1)
+        self.assertLess(f.coverage, 0.15)
+        self.assertLess(f.max_verbatim_run, 6)
+        self.assertEqual(f.risk, "S0")
+        self.assertFalse(scan.blocking)
+
+
 if __name__ == "__main__":
     unittest.main()

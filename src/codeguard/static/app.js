@@ -164,6 +164,26 @@ function list(parent, title, items) {
   parent.append(ul);
 }
 
+function policyBadge(finding) {
+  if (!finding || !finding.policy_action) return null;
+  if (finding.policy_action === 'waived') return node('span', '已豁免 (waived)', 'policy-tag is-waived');
+  if (finding.policy_action === 'denied') return node('span', '策略禁用 (denied)', 'policy-tag is-denied');
+  return node('span', finding.policy_action, 'policy-tag');
+}
+
+function renderPolicyBanner(root, audit) {
+  if (!audit) return;
+  const banner = node('div', undefined, 'policy-audit');
+  const title = node('b', `合规策略生效 · 豁免 ${audit.waived_count || 0} 条 · 禁用阻断 ${audit.denied_count || 0} 条`);
+  const metaParts = [];
+  if (audit.policy_sha256) metaParts.push('sha256 ' + audit.policy_sha256.slice(0, 12));
+  if (audit.project_license) metaParts.push('目标许可 ' + audit.project_license);
+  if (audit.usage) metaParts.push('场景 ' + audit.usage);
+  banner.append(title);
+  if (metaParts.length) banner.append(node('span', metaParts.join(' │ '), 'policy-audit-meta'));
+  root.append(banner);
+}
+
 function render(data) {
   $('empty').hidden = true;
   $('result').hidden = false;
@@ -180,15 +200,23 @@ function render(data) {
     : data.findings.length ? '发现来源，请核查许可义务' : '当前语料内未发现足够的来源证据'));
   decision.append(node('p', `${data.findings.length} 个候选来源 │ ${data.scan.matched_spans}/${data.scan.total_spans} 片段命中 │ 最高 ${top ? top.risk + ' ' + top.risk_label : '无命中'}`));
   root.append(decision);
+  renderPolicyBanner(root, data.policy_audit);
 
   data.findings.forEach((finding, index) => {
     const card = node('article', undefined, 'finding');
     const head = node('div', undefined, 'finding-head');
     const name = node('b');
     name.append(node('span', `No.${String(index + 1).padStart(2, '0')} `), document.createTextNode(`${finding.package} @ ${finding.version}`));
-    head.append(name, node('span', `${finding.risk} · ${RISK_ZH[finding.risk] || finding.risk_label}`, `risk ${finding.risk}`));
+    const badges = node('div', undefined, 'finding-badges');
+    const pBadge = policyBadge(finding);
+    if (pBadge) badges.append(pBadge);
+    badges.append(node('span', `${finding.risk} · ${RISK_ZH[finding.risk] || finding.risk_label}`, `risk ${finding.risk}`));
+    head.append(name, badges);
     card.append(head, node('div', finding.path, 'source-path'));
     card.append(node('div', `${finding.license_spdx} │ 证据评分 ${(finding.confidence * 100).toFixed(1)}% │ 覆盖 ${(finding.coverage * 100).toFixed(1)}% │ 最长逐字 ${finding.max_verbatim_run} token`, 'evidence-stats'));
+    if (finding.policy_reason) {
+      card.append(node('div', '策略依据：' + finding.policy_reason, 'policy-reason'));
+    }
     const explanation = node('details');
     explanation.append(node('summary', '判定说明与处置建议'), node('p', finding.explanation));
     card.append(explanation);
@@ -259,7 +287,11 @@ function count() {
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll('#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#assistScan,#aiInterpret,#webProbe,#assistSummary,#askInput').forEach((el) => { el.disabled = value || (el.id === 'assistSummary' && !latest); });
+  document.querySelectorAll('#scan,#file,#folder,#treeRoot,#name,#code,#targetLicense,#usage,#policyAllow,#policyDeny,#policyReason,#assistScan,#aiInterpret,#webProbe,#assistSummary,#askInput').forEach((el) => {
+    if (el.id === 'webProbe') el.disabled = value || !llm.tavily;
+    else if (el.id === 'assistSummary') el.disabled = value || !latest;
+    else el.disabled = value;
+  });
   const scan = $('scan');
   const label = scan.querySelector('span');
   const ai = $('aiInterpret').checked || $('webProbe').checked || $('assistScan').checked;
@@ -320,21 +352,49 @@ document.addEventListener('keydown', (event) => {
 
 $('code').addEventListener('input', () => { count(); invalidate(); });
 ['name', 'targetLicense', 'usage'].forEach((id) => $(id).addEventListener('change', invalidate));
+['policyAllow', 'policyDeny', 'policyReason'].forEach((id) => $(id).addEventListener('input', invalidate));
 
 /* ------------------------------------------------------- 文件夹目录树 */
 const tree = { files: new Map(), root: '', selected: '', selectedIsFile: false };
 
 const TREE_EXTS = ['.py', '.js', '.ts', '.java', '.c', '.cpp', '.h', '.go', '.rs', '.txt',
   '.mjs', '.jsx', '.tsx', '.cc', '.hpp', '.rb', '.php', '.md'];
+const TREE_SKIP_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', '__pycache__']);
+
+function clearTreeState() {
+  tree.files.clear();
+  tree.root = '';
+  tree.selected = '';
+  tree.selectedIsFile = false;
+  $('treeBox').hidden = true;
+  $('tree').replaceChildren();
+  $('treeNote').textContent = '';
+  $('treeSel').textContent = '整个文件夹';
+  const folderInput = $('folder');
+  if (folderInput) folderInput.value = '';
+}
+
+function readPolicyPayload() {
+  const splitList = (raw) => raw.split(/[,，\n]/).map((s) => s.trim()).filter(Boolean);
+  const allow_packages = splitList($('policyAllow').value);
+  const deny_licenses = splitList($('policyDeny').value);
+  const reason = $('policyReason').value.trim();
+  if (!allow_packages.length && !deny_licenses.length) return null;
+  return { allow_packages, deny_licenses, reason };
+}
 
 $('folder').addEventListener('change', async (event) => {
   const list = [...event.target.files];
   if (!list.length) return;
+  $('file').value = '';
   tree.files.clear();
   tree.root = list[0].webkitRelativePath.split('/')[0] || 'uploaded';
   let skipped = 0;
   for (const f of list) {
-    const rel = (f.webkitRelativePath || f.name).split('/').slice(1).join('/') || f.name;
+    const rel = (f.webkitRelativePath || f.name).replace(/\\/g, '/').split('/').slice(1).join('/') || f.name;
+    const parts = rel.split('/');
+    if (parts.slice(0, -1).some((p) => TREE_SKIP_DIRS.has(p))) { skipped += 1; continue; }
+    if (f.name.toLowerCase().endsWith('.min.js')) { skipped += 1; continue; }
     const ext = '.' + (f.name.split('.').pop() || '').toLowerCase();
     if (!TREE_EXTS.includes(ext)) { skipped += 1; continue; }
     if (f.size > 200000) { skipped += 1; continue; }
@@ -346,7 +406,7 @@ $('folder').addEventListener('change', async (event) => {
   buildTree();
   $('treeSel').textContent = '整个文件夹 · ' + tree.root;
   $('treeNote').textContent = `已载入 ${tree.files.size} 个可分析文件` +
-    (skipped ? `（跳过 ${skipped} 个：类型不支持或超过 200KB）` : '') +
+    (skipped ? `（跳过 ${skipped} 个：构建依赖目录、类型不支持或超过 200KB）` : '') +
     '。默认分析整个文件夹的风险；点击文件或子文件夹可缩小范围。';
   $('name').value = tree.root;
   count();
@@ -432,6 +492,7 @@ $('file').addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file) return;
   if (file.size > 200000) { toast('文件超过 200 KB，请拆分后导入'); return; }
+  clearTreeState();
   $('code').value = await file.text();
   $('name').value = file.name;
   $('demoNote').textContent = '已导入本地文件：' + file.name;
@@ -449,15 +510,20 @@ $('scan').addEventListener('click', async () => {
   $('exports').hidden = true;
   $('result').hidden = true;
   $('empty').hidden = false;
+  $('aiCards').hidden = true;
+  $('aiCards').replaceChildren();
+  $('askForm').hidden = true;
   $('resultBadge').className = 'state';
   $('resultBadge').textContent = useTree && !singleFile ? '正在分析文件夹…' : '正在分析';
   try {
     let data;
+    const policy = readPolicyPayload();
     if (useTree && !singleFile) {
       const { picked, skipped } = await filesUnderSelection();
       if (!picked.length) { toast('所选范围内没有可分析的文本文件'); return; }
-      data = await api('/api/scan_tree', { files: picked,
-        license: $('targetLicense').value, usage: $('usage').value });
+      const payload = { files: picked, license: $('targetLicense').value, usage: $('usage').value };
+      if (policy) payload.policy = policy;
+      data = await api('/api/scan_tree', payload);
       renderTree(data, skipped);
     } else {
       if (singleFile) {
@@ -465,9 +531,11 @@ $('scan').addEventListener('click', async () => {
         $('name').value = tree.selected;
         count();
       }
-      data = await api('/api/scan', { code: $('code').value, name: $('name').value,
+      const payload = { code: $('code').value, name: $('name').value,
         license: $('targetLicense').value, usage: $('usage').value,
-        assist: $('assistScan').checked && llm.configured });
+        assist: $('assistScan').checked && llm.configured };
+      if (policy) payload.policy = policy;
+      data = await api('/api/scan', payload);
       render(data);
       // 勾选的 AI 增强随本次审查一并执行；各自失败只提示，不影响已出的离线结论
       const code = $('code').value, name = $('name').value;
@@ -497,6 +565,7 @@ function renderTree(data, skipped) {
   $('result').hidden = false;
   $('exports').hidden = true;
   $('askForm').hidden = false;
+  $('assistSummary').disabled = false;
   const s = data.summary;
   $('resultBadge').className = 'state' + (s.blocked ? ' is-alert' : '');
   $('resultBadge').textContent = s.blocked ? '文件夹内有阻断级风险' : '文件夹分析完成';
@@ -513,6 +582,7 @@ function renderTree(data, skipped) {
   head.append(chips, node('p', `最高风险 ${s.overall_risk}（${s.overall_label}） · ${s.findings_files} 个文件存在命中` +
     (skipped ? ` · ${skipped} 个文件被跳过（超限或读取失败）` : '')));
   root.append(head);
+  renderPolicyBanner(root, data.policy_audit);
 
   const table = node('div', undefined, 'tree-table');
   for (const r of data.results) {
@@ -524,7 +594,11 @@ function renderTree(data, skipped) {
     row.append(summary);
     if (r.findings.length) {
       for (const f of r.findings) {
-        const line = node('p', `${f.package}@${f.version} · ${f.license_spdx} · 评分 ${(f.confidence * 100).toFixed(1)}% · 覆盖 ${(f.coverage * 100).toFixed(1)}% · 来源 ${f.path}`, 'tree-finding');
+        const line = node('p', undefined, 'tree-finding');
+        line.append(document.createTextNode(`${f.package}@${f.version} · ${f.license_spdx} · 评分 ${(f.confidence * 100).toFixed(1)}% · 覆盖 ${(f.coverage * 100).toFixed(1)}% · 来源 ${f.path}`));
+        const pBadge = policyBadge(f);
+        if (pBadge) line.append(pBadge);
+        if (f.policy_reason) line.append(document.createTextNode(` · ${f.policy_reason}`));
         row.append(line);
       }
     } else {
@@ -552,21 +626,30 @@ document.querySelectorAll('[data-export]').forEach((button) => button.addEventLi
   const url = URL.createObjectURL(blob);
   const link = node('a');
   link.href = url;
-  link.download = 'codeguard-' + kind + (kind === 'html' ? '.html' : '.json');
+  link.download = kind === 'sarif' ? 'codeguard-report.sarif.json' : 'codeguard-' + kind + (kind === 'html' ? '.html' : '.json');
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }));
+
+function renderLicenseAnalysis(data) {
+  const root = $('licenseResult');
+  const analysisBox = node('div', undefined, 'license-analysis');
+  analysisBox.append(node('h3', ({ compatible: '兼容', conditional: '有条件兼容', incompatible: '存在冲突', unknown: '授权未知' })[data.status] || data.status));
+  list(analysisBox, '许可义务', data.obligations);
+  list(analysisBox, '冲突', data.conflicts);
+  list(analysisBox, '说明', data.notes);
+  const aiSlot = node('div', undefined, 'license-ai-slot');
+  aiSlot.hidden = true;
+  root.replaceChildren(analysisBox, aiSlot);
+  return aiSlot;
+}
 
 $('reason').addEventListener('click', async () => {
   const button = $('reason');
   button.disabled = true;
   try {
     const data = await api('/api/licenses', { source: $('sourceLicense').value, target: $('destinationLicense').value, usage: $('licenseUsage').value });
-    const root = $('licenseResult');
-    root.replaceChildren(node('h3', ({ compatible: '兼容', conditional: '有条件兼容', incompatible: '存在冲突', unknown: '授权未知' })[data.status] || data.status));
-    list(root, '许可义务', data.obligations);
-    list(root, '冲突', data.conflicts);
-    list(root, '说明', data.notes);
+    renderLicenseAnalysis(data);
   } catch (error) { toast(error.message); } finally { button.disabled = false; }
 });
 
@@ -833,9 +916,10 @@ $('licenceExplain').addEventListener('click', async () => {
   try {
     const data = await api('/api/license/explain', {
       source: $('sourceLicense').value, target: $('destinationLicense').value, usage: $('licenseUsage').value });
+    const aiSlot = renderLicenseAnalysis(data.analysis);
     if (data.llm && data.llm.text) {
-      const wrap = $('licenseResult');
-      wrap.append(node('b', 'AI 通俗解释 · ' + data.llm.model), node('p', data.llm.text, 'ai-inline'));
+      aiSlot.hidden = false;
+      aiSlot.replaceChildren(node('b', 'AI 通俗解释 · ' + data.llm.model), node('p', data.llm.text, 'ai-inline'));
     } else if (data.llm && data.llm.error) {
       toast(data.llm.error);
     } else {
@@ -878,6 +962,9 @@ api('/api/health').then((data) => {
   $('factChunks').textContent = fmt(stats.chunks);
   $('factPkgs').textContent = fmt(stats.packages);
   $('factLic').textContent = ((stats.licenses || []).length) + ' 种';
+  if ($('rcPkgs')) $('rcPkgs').textContent = `X ${String(stats.packages).padStart(3, '0')}`;
+  if ($('rcDocs')) $('rcDocs').textContent = `Y ${stats.documents}`;
+  if ($('rcChunks')) $('rcChunks').textContent = `L ${stats.chunks}`;
   const ready = data.ready;
   $('connection').textContent = ready ? '● 本机引擎就绪' : '● 语料缺失';
   $('connection').classList.toggle('is-ready', ready);

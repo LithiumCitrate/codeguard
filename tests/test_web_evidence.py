@@ -151,6 +151,45 @@ def test_harvest_search_urls_filters_to_source():
                    "https://raw.githubusercontent.com/ranger/ranger/master/ranger/core/actions.py"]
 
 
+def test_harvest_search_urls_accepts_direct_raw_urls():
+    searches = [{"results": [
+        {"url": "https://raw.githubusercontent.com/org/repo/main/mod.py"},
+        {"url": "https://gitlab.com/org/repo/-/raw/main/helper.py"},
+        {"url": "https://gitee.com/org/repo/raw/master/util.py"},
+        {"url": "https://raw.githubusercontent.com/org/repo/main/mod.py"},  # duplicate
+        {"url": "https://raw.githubusercontent.com/org/repo/main/README.md"},
+        {"url": "http://raw.githubusercontent.com/org/repo/main/insecure.py"},
+    ]}]
+    out = web_evidence.harvest_search_urls(searches, "target.py")
+    assert out == [
+        "https://raw.githubusercontent.com/org/repo/main/mod.py",
+        "https://gitlab.com/org/repo/-/raw/main/helper.py",
+        "https://gitee.com/org/repo/raw/master/util.py",
+    ]
+
+
+def test_ground_license_canonicalizes_cache_key_lowercase(monkeypatch):
+    calls = []
+
+    def fetch(url, timeout=web_evidence.FETCH_TIMEOUT):
+        calls.append(url)
+        if url.endswith("/LICENSE"):
+            return {"url": url, "text": GPL3_TEXT, "bytes": len(GPL3_TEXT),
+                    "sha256": "l" * 64, "fetched_at": 1}
+        raise ValueError("404")
+
+    monkeypatch.setattr(web_evidence, "fetch_source", fetch)
+    cache = {}
+    first = web_evidence.ground_license(
+        "https://raw.githubusercontent.com/FakeOrg/MyRepo/Main/a.py", _cache=cache)
+    n_after_first = len(calls)
+    second = web_evidence.ground_license(
+        "https://raw.githubusercontent.com/fakeorg/myrepo/main/b.py", _cache=cache)
+    assert first["spdx"] == "GPL-3.0-only" and first["cache_hit"] is False
+    assert second["spdx"] == "GPL-3.0-only" and second["cache_hit"] is True
+    assert len(calls) == n_after_first
+
+
 def test_search_harvest_recovers_wrong_model_path(base_index, monkeypatch):
     web_text = read_negative("word_tally.py")
 
