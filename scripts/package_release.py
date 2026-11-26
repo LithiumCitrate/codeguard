@@ -35,6 +35,10 @@ for entry in integrity:
     shutil.copyfile(source, archives/source.name)
 for name in ['LICENSE','NOTICE','THIRD_PARTY_NOTICES.md']:
     shutil.copyfile(root/name,app/name)
+(app / '启动工作台.cmd').write_text(
+    '@echo off\r\ncd /d "%~dp0"\r\nstart "" "%~dp0CodeGuard.exe" %*\r\n',
+    encoding='utf-8',
+)
 shutil.copyfile(root/'docs/WORKBENCH.md',app/'使用说明.md')
 shutil.copyfile(root/'submission/evidence/corpus-integrity.json',app/'corpus-integrity.json')
 shutil.copyfile(Path(sys.base_prefix)/'LICENSE.txt',app/'PYTHON-LICENSE.txt')

@@ -204,7 +204,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
                    eval_webprobe.py（联网溯源边际收益评测，AI 必要性证据）
-tests/             216 个用例，全部离线跑在 fixture 上
+tests/             231 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  WEBPROBE.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -214,7 +214,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 216 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 231 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```
