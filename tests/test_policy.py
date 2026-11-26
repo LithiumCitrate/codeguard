@@ -186,7 +186,11 @@ class PolicyUnitTests(unittest.TestCase):
             "--policy", deny_policy, "--out", out_scan,
         ])
         self.assertEqual(code, 0)
-        scan_receipt = json.load(open(os.path.join(out_scan, "copied_roman.provenance.json"), encoding="utf-8"))
+        scan_reports = [f for f in os.listdir(out_scan)
+                        if f.startswith("copied_roman-") and f.endswith(".provenance.json")]
+        self.assertEqual(len(scan_reports), 1, os.listdir(out_scan))
+        with open(os.path.join(out_scan, scan_reports[0]), encoding="utf-8") as fh:
+            scan_receipt = json.load(fh)
         self.assertEqual(scan_receipt["subject"]["target_license"], "MIT")
         self.assertEqual(scan_receipt["subject"]["usage_mode"], "distribution")
         self.assertEqual(scan_receipt["findings"][0]["risk"], "S4")

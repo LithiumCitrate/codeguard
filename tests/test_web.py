@@ -344,3 +344,16 @@ def test_static_app_js_skips_vendor_and_minified_paths():
     app_js = (Path(__file__).resolve().parents[1] / 'src' / 'codeguard' / 'static' / 'app.js').read_text(encoding='utf-8')
     for token in ('.git', 'node_modules', 'dist', 'build', '__pycache__', '.min.js'):
         assert token in app_js
+
+
+def test_static_markdown_renderer_is_safe_and_styled():
+    static_dir = Path(__file__).resolve().parents[1] / 'src' / 'codeguard' / 'static'
+    app_js = (static_dir / 'app.js').read_text(encoding='utf-8')
+    style_css = (static_dir / 'style.css').read_text(encoding='utf-8')
+    assert 'function renderMarkdown(' in app_js
+    assert 'innerHTML' not in app_js
+    assert 'ai-text md-body' in app_js
+    assert 'ai-inline md-body' in app_js
+    assert 'renderMarkdown(finding.explanation)' in app_js
+    assert '.md-body' in style_css
+    assert '.md-body .md-h' in style_css

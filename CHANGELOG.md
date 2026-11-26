@@ -8,6 +8,10 @@ abides by semantic versioning.
 
 ### Added
 
+- **Safe DOM Markdown rendering, multi-language CLI scan default, and collision-safe report names** (`src/codeguard/static/app.js`, `src/codeguard/static/style.css`, `src/codeguard/cli.py`, `src/codeguard/report.py`):
+  - Added XSS-safe DOM-only `renderMarkdown()` (headings, lists, bold, inline code, `http(s)` links, zero `innerHTML`) for AI cards, finding explanations, and license explanations.
+  - Updated `codeguard scan --ext` default from `"py"` to `"py,c,h,go,js,mjs,jsx,rs"` so multi-language repositories work out of the box.
+  - Added deterministic 6-char path hash suffixes in `report.write_outputs()` for nested targets so identically named files (`pkg_a/__init__.py` vs `pkg_b/__init__.py`) never overwrite each other; expanded test suite to **234 passing tests**.
 - **Web Workbench SARIF 2.1.0 export & Compliance Policy UI** (`src/codeguard/web.py`, `src/codeguard/static/index.html`, `src/codeguard/static/app.js`, `src/codeguard/static/style.css`):
   - Added SARIF 2.1.0 download (`codeguard-report.sarif.json`) alongside JSON/CycloneDX/HTML in the Review tab.
   - Added collapsible project compliance policy panel (`allow_packages`, `deny_licenses`, `policy_reason`) wired to `/api/scan` and `/api/scan_tree`, displaying `policy_audit` banners and `waived`/`denied` badges.

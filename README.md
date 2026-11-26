@@ -106,7 +106,7 @@ python scripts/eval_realworld.py   # 真实 GitHub 项目扫描（本地克隆�
 
 **基线定量对比与真实用户仓库闭环验证（2026-11-26）**：
 - 同源 24 文件 × 6 变异（144 正例）+ 9 负例基线对比（`scripts/eval_baselines.py`，全量 1,717 篇索引）：许可证头扫描召回 **38.9%（F1 0.560）**、逐字行哈希 **71.5%（F1 0.834）**、纯 L1 词法 **81.9%（F1 0.901）**，**CodeGuard 达 95.8%（F1 0.979，重命名与复合变异均 100%，0/9 负例误报）**（见 `submission/evidence/baseline-comparison-20261126.*`）。
-- 真实用户仓库验证（`LithiumCitrate` + `Aliceykr` 共 6 个公开仓库、**1,325 个源码文件 / 23.20 MB**，覆盖 Python/JS/C）：全量扫描 **0 异常、0 误阻断（S3/S4=0）**；库外真实文件 `stm32h7xx_hal.c` 经 `dots3-note-prev` + Tavily 联网核证命中 **138/138 片段**，并由 `LICENSE.md` 确定性纠偏将模型误猜的 `MIT` 覆盖为 `BSD-3-Clause`；基于真实扫描暴露的问题完成跨语言过滤、C 预处理常量表过滤、结构化摘要压缩与 `Scanner` 缓存复用后，6 仓库 S2 噪音下降 **64.6%（198→70）**、跨语言误报 **13→0**、`scan_tree` 提速 **4.42×**，离线自动化测试增至 **231 项全通**（见 `submission/evidence/real-user-eval-20261126.*`）。
+- 真实用户仓库验证（`LithiumCitrate` + `Aliceykr` 共 6 个公开仓库、**1,325 个源码文件 / 23.20 MB**，覆盖 Python/JS/C）：全量扫描 **0 异常、0 误阻断（S3/S4=0）**；库外真实文件 `stm32h7xx_hal.c` 经 `dots3-note-prev` + Tavily 联网核证命中 **138/138 片段**，并由 `LICENSE.md` 确定性纠偏将模型误猜的 `MIT` 覆盖为 `BSD-3-Clause`；基于真实扫描暴露的问题完成跨语言过滤、C 预处理常量表过滤、结构化摘要压缩与 `Scanner` 缓存复用后且经第二轮修复 S2 噪音降 **64.6%（198→70）**、跨语言误报 **13→0**、`scan_tree` 提速 **4.42×**，离线自动化测试增至 **234 项全通**（见 `submission/evidence/real-user-eval-20261126.*`）。
 
 工程指标：1717 文档 / 127156 片段索引 31.7 MB（约 255 B/片段），buckets 2.72 M；50 k 字符真实文件扫描秒级。
 
@@ -204,7 +204,7 @@ scripts/           reproduce.sh（一键复现）· demo_gate.py（门禁演示�
                    eval_humaneval.py（外部干净负例，URL + SHA-256 校验）
                    eval_realworld.py（真实 GitHub 项目扫描，本地克隆）
                    eval_webprobe.py（联网溯源边际收益评测，AI 必要性证据）
-tests/             231 个用例，全部离线跑在 fixture 上
+tests/             234 个用例，全部离线跑在 fixture 上
 docs/              TUTORIAL.md  DESIGN.md  BENCHMARK.md  EVALUATION.md  WEBPROBE.md  INTEGRATIONS.md  ROADMAP.md
 SECURITY.md        漏洞报告范围与响应流程
 submission/evidence/  基准、HumanEval、真实仓库、SBOM/Provenance 与截图佐证数据
@@ -214,7 +214,7 @@ hooks/pre-commit · .github/workflows/codeguard-gate.yml
 ## 8. 开发
 
 ```bash
-python -m pytest                 # 231 个用例，全部离线跑在自带 fixture 上，无需语料/网络
+python -m pytest                 # 234 个用例，全部离线跑在自带 fixture 上，无需语料/网络
 python -m codeguard doctor
 sh scripts/reproduce.sh --offline  # 复用本地语料，重跑索引 + 基准 + 测试 + 门禁自检
 ```

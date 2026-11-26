@@ -217,6 +217,41 @@ class EvidenceTests(PipelineTestBase):
         self.assertEqual(sarif["runs"][0]["tool"]["driver"]["name"], "CodeGuard")
         self.assertTrue(sarif["runs"][0]["results"])
 
+    def test_write_outputs_avoids_filename_collisions_for_nested_paths(self):
+        plain = self.scanner().scan_text(read_negative("ring_cache.py"),
+                                          target="feature_flags.py")
+        out = os.path.join(self.tmp, "collision-reports")
+        plain_written = write_outputs(plain, self.load(), out, None, ("json",))
+        self.assertEqual([os.path.basename(p) for p in plain_written],
+                         ["feature_flags.provenance.json"])
+
+        scan_a = self.scanner().scan_text(read_negative("ring_cache.py"),
+                                           target="pkg_a/__init__.py")
+        scan_b = self.scanner().scan_text(read_negative("roman_form.py"),
+                                           target="pkg_b/__init__.py")
+        written_a = write_outputs(scan_a, self.load(), out, None,
+                                  ("json", "cdx", "html", "sarif"))
+        written_b = write_outputs(scan_b, self.load(), out, None,
+                                  ("json", "cdx", "html", "sarif"))
+        names_a = {os.path.basename(p) for p in written_a}
+        names_b = {os.path.basename(p) for p in written_b}
+        self.assertEqual(len(names_a), 4)
+        self.assertEqual(len(names_b), 4)
+        self.assertFalse(names_a & names_b, "nested targets must not collide")
+
+        hash_a = hashlib.sha256(b"pkg_a/__init__.py").hexdigest()[:6]
+        self.assertIn(f"__init__-{hash_a}.provenance.json", names_a)
+        with open(os.path.join(out, f"__init__-{hash_a}.provenance.json"), encoding="utf-8") as fh:
+            self.assertEqual(json.load(fh)["subject"]["target"], "pkg_a/__init__.py")
+
+        # Backslashes normalize identically to forward slashes.
+        out_win = os.path.join(self.tmp, "win-reports")
+        scan_win = self.scanner().scan_text(read_negative("ring_cache.py"),
+                                             target="pkg_a\\__init__.py")
+        written_win = write_outputs(scan_win, self.load(), out_win, None, ("json",))
+        self.assertEqual([os.path.basename(p) for p in written_win],
+                         [f"__init__-{hash_a}.provenance.json"])
+
     def test_sarif_carries_both_sides_of_the_evidence(self):
         scan = self.scanner().scan_text(read_negative("ring_cache.py"),
                                         target="copied.py")
@@ -358,9 +393,119 @@ class CliTests(PipelineTestBase):
         out = os.path.join(self.tmp, "partial-reports")
         self.assertEqual(self.run_cli(["scan", self._fixture_copy(), "--out", out,
                                        "--allow-partial-corpus"]), 0)
-        with open(os.path.join(out, "copied.provenance.json"), encoding="utf-8") as fh:
+        reports = [f for f in os.listdir(out)
+                   if f.startswith("copied-") and f.endswith(".provenance.json")]
+        self.assertEqual(len(reports), 1, os.listdir(out))
+        with open(os.path.join(out, reports[0]), encoding="utf-8") as fh:
             receipt = json.load(fh)
         self.assertTrue(any("语料原文不完整" in n for n in receipt["notes"]), receipt["notes"])
+
+    def test_scan_defaults_to_multilang_extensions_and_respects_ext_flag(self):
+        c_src = "\n".join(
+            "int sum_step_%d(int acc, int v) { return acc + v * %d; }" % (i, i + 1)
+            for i in range(1, 9)
+        ) + "\n"
+        go_src = "package mathutil\n\n" + "\n".join(
+            "func AddStep%d(acc int, v int) int { return acc + v*%d }" % (i, i + 1)
+            for i in range(1, 9)
+        ) + "\n"
+        js_src = "\n".join(
+            "export function stepCalc%d(acc, v) { return acc + v * %d; }" % (i, i + 1)
+            for i in range(1, 9)
+        ) + "\n"
+        rs_src = "\n".join(
+            "pub fn step_calc_%d(acc: i32, v: i32) -> i32 { acc + v * %d }" % (i, i + 1)
+            for i in range(1, 9)
+        ) + "\n"
+
+        ml_root = os.path.join(self.tmp, "ml")
+        ml_corpus = os.path.join(ml_root, "corpus")
+        ml_ws = os.path.join(ml_root, "workspace")
+        os.makedirs(ml_ws)
+        samples = [
+            ("c_pkg", "1.0", "c_pkg/calc.c", "c", c_src),
+            ("go_pkg", "1.0", "go_pkg/calc.go", "go", go_src),
+            ("js_pkg", "1.0", "js_pkg/calc.js", "javascript", js_src),
+            ("rs_pkg", "1.0", "rs_pkg/calc.rs", "rust", rs_src),
+        ]
+        docs, texts = [], []
+        for idx, (pkg, ver, rel, lang, code) in enumerate(samples):
+            p = os.path.join(ml_corpus, rel.replace("/", os.sep))
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            with open(p, "w", encoding="utf-8") as fh:
+                fh.write(code)
+            docs.append(DocRecord(
+                idx, pkg, ver, rel, "GPL-3.0-only", "test", lang,
+                code.count("\n") + 1, len(tokenize_source(code, lang)),
+                hashlib.sha256(code.encode("utf-8")).hexdigest(), len(code),
+            ))
+            texts.append(code)
+        index = FingerprintIndex(Params())
+        index.corpus_root = ml_corpus
+        for doc, code in zip(docs, texts):
+            index.add_document(doc, code, language=doc.language)
+        index.finalize()
+        index.save(os.path.join(ml_ws, "index.bin"))
+
+        src_dir = os.path.join(self.tmp, "mixed_repo")
+        os.makedirs(src_dir)
+        files = {
+            "app.py": read_negative("attempt_loop.py"),
+            "calc.c": c_src,
+            "defs.h": "int header_helper(int a, int b);\n",
+            "calc.go": go_src,
+            "calc.js": js_src,
+            "mod.mjs": "export const versionTag = 1;\n",
+            "view.jsx": "export function Badge() { return null; }\n",
+            "calc.rs": rs_src,
+            "notes.txt": "plain text should not be picked up by default\n",
+        }
+        for name, content in files.items():
+            with open(os.path.join(src_dir, name), "w", encoding="utf-8") as fh:
+                fh.write(content)
+
+        out_default = os.path.join(self.tmp, "out-ml-default")
+        with _capture():
+            code = main(["--workspace", ml_ws, "scan", src_dir,
+                         "--out", out_default, "--format", "json"])
+        self.assertEqual(code, 0)
+        emitted = sorted(os.listdir(out_default))
+        self.assertEqual(len(emitted), 8, emitted)
+        receipts = {}
+        for fname in emitted:
+            with open(os.path.join(out_default, fname), encoding="utf-8") as fh:
+                rec = json.load(fh)
+            receipts[os.path.basename(rec["subject"]["target"])] = rec
+        self.assertEqual(set(receipts), {
+            "app.py", "calc.c", "defs.h", "calc.go",
+            "calc.js", "mod.mjs", "view.jsx", "calc.rs",
+        })
+        for matched_name, expected_pkg in [
+            ("calc.c", "c_pkg"), ("calc.go", "go_pkg"),
+            ("calc.js", "js_pkg"), ("calc.rs", "rs_pkg"),
+        ]:
+            pkgs = [f["source"]["package"] for f in receipts[matched_name]["findings"]]
+            self.assertIn(expected_pkg, pkgs, receipts[matched_name])
+
+        # Explicit --ext py still narrows directory scans to .py only.
+        out_py = os.path.join(self.tmp, "out-ml-py")
+        with _capture():
+            code = main(["--workspace", ml_ws, "scan", src_dir,
+                         "--ext", "py", "--out", out_py, "--format", "json"])
+        self.assertEqual(code, 0)
+        emitted_py = os.listdir(out_py)
+        self.assertEqual(len(emitted_py), 1, emitted_py)
+        self.assertTrue(emitted_py[0].startswith("app-"), emitted_py)
+
+        # Explicit single non-py file path scans seamlessly.
+        out_single = os.path.join(self.tmp, "out-ml-single")
+        with _capture():
+            code = main(["--workspace", ml_ws, "scan", os.path.join(src_dir, "calc.rs"),
+                         "--out", out_single, "--format", "json"])
+        self.assertEqual(code, 0)
+        emitted_single = os.listdir(out_single)
+        self.assertEqual(len(emitted_single), 1, emitted_single)
+        self.assertTrue(emitted_single[0].startswith("calc-"), emitted_single)
 
     def test_doctor_reports_corpus_health(self):
         os.remove(os.path.join(self.corpus, "fixture-0.1.0", "ring_cache.py"))

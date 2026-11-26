@@ -229,8 +229,10 @@ def cmd_scan(args):
     caveat = check_corpus(index, args.allow_partial_corpus)
     results = []
     targets = []
+    exts = tuple("." + e.strip().lstrip(".") for e in args.ext.split(",")
+                 if e.strip().lstrip("."))
     for item in args.paths:
-        targets.extend(iter_sources(item, tuple("." + e for e in args.ext.split(","))))
+        targets.extend(iter_sources(item, exts))
     if not targets:
         _die("codeguard: 没有匹配到待扫描文件（退出码 2）")
     scanner = _scanner(index, args, usage)
@@ -535,7 +537,8 @@ def build_parser():
                             "static_link", "dynamic_link", "tool_interface",
                             "network_service", "distribution"],
                    help="使用方式（默认 inline_copy）")
-    p.add_argument("--ext", default="py")
+    p.add_argument("--ext", default="py,c,h,go,js,mjs,jsx,rs",
+                   help="扫描目录时包含的文件扩展名，逗号分隔")
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--min-span-prob", type=float, default=0.55)
     p.add_argument("--top-verify", type=int, default=4)

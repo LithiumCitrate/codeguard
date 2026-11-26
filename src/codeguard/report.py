@@ -421,8 +421,11 @@ def to_sarif(scan, index) -> dict:
 def write_outputs(scan, index, out_dir: str, explanations: dict | None = None,
                   formats=("json", "cdx", "html")) -> list:
     os.makedirs(out_dir, exist_ok=True)
-    base = os.path.splitext(os.path.basename(scan.target.replace(os.sep, "/")))[0] \
-        or "snippet"
+    norm_target = scan.target.replace(os.sep, "/").replace("\\", "/")
+    base = os.path.splitext(os.path.basename(norm_target))[0] or "snippet"
+    if "/" in norm_target:
+        h = hashlib.sha256(norm_target.encode("utf-8")).hexdigest()[:6]
+        base = f"{base}-{h}"
     receipt = provenance_receipt(scan, index, explanations)
     written = []
     if "json" in formats:

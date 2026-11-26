@@ -22,6 +22,104 @@ function node(tag, text, cls) {
   if (cls) el.className = cls;
   return el;
 }
+function safeHttpUrl(raw) {
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return parsed.href;
+  } catch (_) { /* reject malformed or non-HTTP(S) URLs */ }
+  return '';
+}
+function renderInline(text, depth = 0, inLink = false) {
+  const frag = document.createDocumentFragment();
+  const src = String(text == null ? '' : text);
+  if (!src) return frag;
+  if (depth > 2) {
+    frag.append(document.createTextNode(src));
+    return frag;
+  }
+  const re = /`([^`\n]+)`|\*\*(.+?)\*\*|\[([^\]\n]+)\]\(([^)\s\n]+)\)/g;
+  let last = 0;
+  let match;
+  while ((match = re.exec(src)) !== null) {
+    if (match.index > last) frag.append(document.createTextNode(src.slice(last, match.index)));
+    if (match[1] !== undefined) {
+      frag.append(node('code', match[1]));
+    } else if (match[2] !== undefined) {
+      const strong = document.createElement('strong');
+      strong.append(renderInline(match[2], depth + 1, inLink));
+      frag.append(strong);
+    } else if (!inLink && match[3] !== undefined && match[4] !== undefined) {
+      const href = safeHttpUrl(match[4]);
+      if (href) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.append(renderInline(match[3], depth + 1, true));
+        frag.append(a);
+      } else {
+        frag.append(document.createTextNode(match[0]));
+      }
+    } else {
+      frag.append(document.createTextNode(match[0]));
+    }
+    last = re.lastIndex;
+  }
+  if (last < src.length) frag.append(document.createTextNode(src.slice(last)));
+  return frag;
+}
+function renderMarkdown(text) {
+  const frag = document.createDocumentFragment();
+  const lines = String(text == null ? '' : text).replace(/\r\n?/g, '\n').split('\n');
+  let paraLines = [];
+  let listEl = null;
+  let listTag = '';
+  const flushPara = () => {
+    if (!paraLines.length) return;
+    const p = document.createElement('p');
+    paraLines.forEach((line, idx) => {
+      if (idx > 0) p.append(document.createElement('br'));
+      p.append(renderInline(line));
+    });
+    frag.append(p);
+    paraLines = [];
+  };
+  const flushList = () => { listEl = null; listTag = ''; };
+  const appendListItem = (tag, content) => {
+    flushPara();
+    if (!listEl || listTag !== tag) {
+      listEl = document.createElement(tag);
+      listTag = tag;
+      frag.append(listEl);
+    }
+    const li = document.createElement('li');
+    li.append(renderInline(content));
+    listEl.append(li);
+  };
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) { flushPara(); flushList(); continue; }
+    const heading = line.match(/^(#{1,4})\s+(.+)$/);
+    if (heading) {
+      flushPara();
+      flushList();
+      const h = document.createElement(heading[1].length <= 2 ? 'h4' : 'h5');
+      h.className = 'md-h';
+      h.append(renderInline(heading[2]));
+      frag.append(h);
+      continue;
+    }
+    const ulMatch = line.match(/^[-*]\s+(.+)$/);
+    if (ulMatch) { appendListItem('ul', ulMatch[1]); continue; }
+    const olMatch = line.match(/^\d+\.\s+(.+)$/);
+    if (olMatch) { appendListItem('ol', olMatch[1]); continue; }
+    flushList();
+    paraLines.push(line);
+  }
+  flushPara();
+  flushList();
+  return frag;
+}
 async function api(path, data) {
   const response = await fetch(path, data ? {
     method: 'POST',
@@ -218,7 +316,9 @@ function render(data) {
       card.append(node('div', '策略依据：' + finding.policy_reason, 'policy-reason'));
     }
     const explanation = node('details');
-    explanation.append(node('summary', '判定说明与处置建议'), node('p', finding.explanation));
+    const expBody = node('div', undefined, 'md-body');
+    expBody.append(renderMarkdown(finding.explanation));
+    explanation.append(node('summary', '判定说明与处置建议'), expBody);
     card.append(explanation);
     list(card, '待满足的许可义务', finding.verdict && finding.verdict.obligations);
     list(card, '冲突', finding.verdict && finding.verdict.conflicts);
@@ -690,7 +790,8 @@ function renderAiCard(kind, { model = '', text = '', offline = false, note = '',
   head.append(node('b', aiCardTitle(kind)),
     node('span', offline ? '确定性输出 · 本机' : 'AI 生成 · ' + (model || '外部模型'), offline ? 'tag' : 'tag ai'));
   card.append(head);
-  const body = node('p', text, 'ai-text');
+  const body = node('div', undefined, 'ai-text md-body');
+  body.append(renderMarkdown(text));
   card.append(body);
   renderSearchTrace(card, searches);
   if (note) card.append(node('p', note, 'note'));
@@ -919,7 +1020,9 @@ $('licenceExplain').addEventListener('click', async () => {
     const aiSlot = renderLicenseAnalysis(data.analysis);
     if (data.llm && data.llm.text) {
       aiSlot.hidden = false;
-      aiSlot.replaceChildren(node('b', 'AI 通俗解释 · ' + data.llm.model), node('p', data.llm.text, 'ai-inline'));
+      const body = node('div', undefined, 'ai-inline md-body');
+      body.append(renderMarkdown(data.llm.text));
+      aiSlot.replaceChildren(node('b', 'AI 通俗解释 · ' + data.llm.model), body);
     } else if (data.llm && data.llm.error) {
       toast(data.llm.error);
     } else {
